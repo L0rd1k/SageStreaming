@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Исходные файлы">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Файлы заголовков">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Файлы ресурсов">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Patterns">
+      <UniqueIdentifier>{1a17dd5f-a094-421a-8323-eaae0c09b637}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Patterns\Creational">
+      <UniqueIdentifier>{efcd4d8e-762d-4b0d-b327-a608f4b6001b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Patterns\Structural">
+      <UniqueIdentifier>{64a4d346-9713-4b3b-806f-8c9e4b10a85c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Patterns\Behavioral">
+      <UniqueIdentifier>{66dd7fe0-30af-4d3c-b0e9-e853b25cdbbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Patterns\Creational\AbstractFactory">
+      <UniqueIdentifier>{42b1c9e5-09ab-45b6-9079-83bcec1e76ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Patterns\Creational\Singleton">
+      <UniqueIdentifier>{04301c5c-6e02-43ad-8018-aafd64660dc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Threads">
+      <UniqueIdentifier>{22119b80-eddc-4377-81e9-1265efa1eb10}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="UltimateMod.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Patterns\Creational\AbstractFactory\BritishArcher.cpp">
+      <Filter>Patterns\Creational\AbstractFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="Patterns\Creational\AbstractFactory\BritishArmy.cpp">
+      <Filter>Patterns\Creational\AbstractFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="Patterns\Creational\AbstractFactory\BritishCannon.cpp">
+      <Filter>Patterns\Creational\AbstractFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="Patterns\Creational\AbstractFactory\BritishSwordsMan.cpp">
+      <Filter>Patterns\Creational\AbstractFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="Patterns\Creational\AbstractFactory\FrenchArcher.cpp">
+      <Filter>Patterns\Creational\AbstractFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="Patterns\Creational\AbstractFactory\FrenchArmy.cpp">
+      <Filter>Patterns\Creational\AbstractFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="Patterns\Creational\AbstractFactory\FrenchCannon.cpp">
+      <Filter>Patterns\Creational\AbstractFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="Patterns\Creational\AbstractFactory\FrenchSwordsMan.cpp">
+      <Filter>Patterns\Creational\AbstractFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="Patterns\Creational\Singleton\HeroCamp.cpp">
+      <Filter>Patterns\Creational\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Patterns\Creational\Singleton\HeroCampMultithread.cpp">
+      <Filter>Patterns\Creational\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Patterns\Patterns.cpp">
+      <Filter>Patterns</Filter>
+    </ClCompile>
+    <ClCompile Include="Threads\Thread.cpp">
+      <Filter>Threads</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="INFO.txt">
+      <Filter>Patterns\Creational\AbstractFactory</Filter>
+    </Text>
+    <Text Include="README.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Patterns\Creational\AbstractFactory\Archer.h">
+      <Filter>Patterns\Creational\AbstractFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="Patterns\Creational\AbstractFactory\Army.h">
+      <Filter>Patterns\Creational\AbstractFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="Patterns\Creational\AbstractFactory\BritishArcher.h">
+      <Filter>Patterns\Creational\AbstractFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="Patterns\Creational\AbstractFactory\BritishArmy.h">
+      <Filter>Patterns\Creational\AbstractFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="Patterns\Creational\AbstractFactory\BritishCannon.h">
+      <Filter>Patterns\Creational\AbstractFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="Patterns\Creational\AbstractFactory\BritishSwordsMan.h">
+      <Filter>Patterns\Creational\AbstractFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="Patterns\Creational\AbstractFactory\Cannon.h">
+      <Filter>Patterns\Creational\AbstractFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="Patterns\Creational\AbstractFactory\FrenchArcher.h">
+      <Filter>Patterns\Creational\AbstractFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="Patterns\Creational\AbstractFactory\FrenchArmy.h">
+      <Filter>Patterns\Creational\AbstractFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="Patterns\Creational\AbstractFactory\FrenchCannon.h">
+      <Filter>Patterns\Creational\AbstractFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="Patterns\Creational\AbstractFactory\FrenchSwordsMan.h">
+      <Filter>Patterns\Creational\AbstractFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="Patterns\Creational\AbstractFactory\SwordsMan.h">
+      <Filter>Patterns\Creational\AbstractFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="Patterns\Creational\Singleton\HeroCamp.h">
+      <Filter>Patterns\Creational\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="Patterns\Creational\Singleton\HeroCampMultithread.h">
+      <Filter>Patterns\Creational\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="Patterns\Patterns.h">
+      <Filter>Patterns</Filter>
+    </ClInclude>
+    <ClInclude Include="Threads\Thread.h">
+      <Filter>Threads</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

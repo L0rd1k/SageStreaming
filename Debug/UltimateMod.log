@@ -1,0 +1,3 @@
+﻿  Thread.cpp
+D:\Projects\Cpp\UltimateMod\Threads\Thread.cpp(170,1): warning C4067: непредвиденные лексемы за директивой препроцессора, требуется newline
+  UltimateMod.vcxproj -> D:\Projects\Cpp\UltimateMod\Debug\UltimateMod.exe
