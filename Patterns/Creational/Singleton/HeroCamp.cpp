@@ -14,7 +14,6 @@ HeroCamp* HeroCamp::GetInstance(const std::string& value) {
 }
 
 void HeroCamp::BusinessLogic() {
-
 }
 
 std::string HeroCamp::getValue() const {

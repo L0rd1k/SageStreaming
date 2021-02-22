@@ -34,6 +34,12 @@
     <Filter Include="Threads">
       <UniqueIdentifier>{22119b80-eddc-4377-81e9-1265efa1eb10}</UniqueIdentifier>
     </Filter>
+    <Filter Include="General">
+      <UniqueIdentifier>{04cbc7ce-059d-4f7c-a0dd-b0bffa518d00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tasks">
+      <UniqueIdentifier>{6a1f035f-104e-45bb-bdaf-db2cd61c9384}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UltimateMod.cpp">
@@ -74,6 +80,15 @@
     </ClCompile>
     <ClCompile Include="Threads\Thread.cpp">
       <Filter>Threads</Filter>
+    </ClCompile>
+    <ClCompile Include="General\Features.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Tasks\MainGeek.cpp">
+      <Filter>Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="Tasks\AdventOfCode.cpp">
+      <Filter>Tasks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -130,6 +145,15 @@
     </ClInclude>
     <ClInclude Include="Threads\Thread.h">
       <Filter>Threads</Filter>
+    </ClInclude>
+    <ClInclude Include="General\Features.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Tasks\MainGeek.h">
+      <Filter>Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="Tasks\AdventOfCode.h">
+      <Filter>Tasks</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

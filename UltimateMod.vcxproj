@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="General\Features.cpp" />
     <ClCompile Include="Patterns\Creational\AbstractFactory\BritishArcher.cpp" />
     <ClCompile Include="Patterns\Creational\AbstractFactory\BritishArmy.cpp" />
     <ClCompile Include="Patterns\Creational\AbstractFactory\BritishCannon.cpp" />
@@ -150,6 +151,8 @@
     <ClCompile Include="Patterns\Creational\Singleton\HeroCamp.cpp" />
     <ClCompile Include="Patterns\Creational\Singleton\HeroCampMultithread.cpp" />
     <ClCompile Include="Patterns\Patterns.cpp" />
+    <ClCompile Include="Tasks\AdventOfCode.cpp" />
+    <ClCompile Include="Tasks\MainGeek.cpp" />
     <ClCompile Include="Threads\Thread.cpp" />
     <ClCompile Include="UltimateMod.cpp" />
   </ItemGroup>
@@ -158,6 +161,7 @@
     <Text Include="README.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="General\Features.h" />
     <ClInclude Include="Patterns\Creational\AbstractFactory\Archer.h" />
     <ClInclude Include="Patterns\Creational\AbstractFactory\Army.h" />
     <ClInclude Include="Patterns\Creational\AbstractFactory\BritishArcher.h" />
@@ -173,6 +177,8 @@
     <ClInclude Include="Patterns\Creational\Singleton\HeroCamp.h" />
     <ClInclude Include="Patterns\Creational\Singleton\HeroCampMultithread.h" />
     <ClInclude Include="Patterns\Patterns.h" />
+    <ClInclude Include="Tasks\AdventOfCode.h" />
+    <ClInclude Include="Tasks\MainGeek.h" />
     <ClInclude Include="Threads\Thread.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -10,14 +10,18 @@
 //#define FUNCTION_POINTER
 //#define FUNCTION_OBJECTS
 //#define FUNCTION_LAMBDAS
+
+//#define PASSING_ARGUMENT_EXAMPLE 
+//#define SHARING_DATA
+
 //#define FUTURE_PROMISE_EXAMPLE
 //#define CONDITION_VARIABLES_EXAMPLE
 //#define EVENT_HANDLING_EXAMPLE
-//#define RACE_CONDITIONS_EXAMPLE
+#define RACE_CONDITIONS_EXAMPLE
 //#define ARGUMENT_EXAMPLE
-//#define SHARING_DATA
 //#define ASYNC_EXAMPLE
-#define PACKAGE_TASK_EXAMPLE
+//#define PACKAGE_TASK_EXAMPLE
+
 class DisplayThread {
 public:
 	void operator()();
@@ -27,7 +31,7 @@ class DummyClass {
 public:
 	DummyClass();
 	DummyClass(const DummyClass& obj);
-	void sampleMemberFunction(int x);
+	void sampleMemberFunction(int &x);
 };
 
 // RACE CONDITIONS

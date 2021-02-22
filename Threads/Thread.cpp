@@ -28,8 +28,9 @@ DummyClass::DummyClass() {
 DummyClass::DummyClass(const DummyClass& obj) {
 }
 
-void DummyClass::sampleMemberFunction(int x) {
+void DummyClass::sampleMemberFunction(int &x) {
 	std::cout << "Inside sampleMemberFunction " << x << std::endl;
+	x++;
 }
 
 //=================================================================
@@ -167,7 +168,7 @@ void Thread::mainExecutor() {
 	}
 #endif
 
-#ifdef PASSING ARGUMENT_EXAMPLE
+#ifdef PASSING_ARGUMENT_EXAMPLE
 	int value = 100;
 	std::cout << "In Main Thread : Before Thread Start value = " << value << std::endl;
 	std::thread threadObject(threadFunctionCallback, std::ref(value));
@@ -178,8 +179,11 @@ void Thread::mainExecutor() {
 #ifdef SHARING_DATA
 	DummyClass dummyObj;
 	int value = 100;
-	std::thread threadObj(&DummyClass::sampleMemberFunction, &dummyObj, value);
+	std::cout << "In Main Thread : Before Thread Start value = " << value << std::endl;
+	std::thread threadObj(&DummyClass::sampleMemberFunction, &dummyObj, std::ref(value));
 	threadObj.join();
+	std::cout << "In Main Thread : After Thread Joins value = " << value << std::endl;
+
 #endif
 
 #ifdef RACE_CONDITIONS_EXAMPLE
