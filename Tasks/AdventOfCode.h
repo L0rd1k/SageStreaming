@@ -7,6 +7,8 @@
 #include <string>
 #include <array>
 #include <map>
+#include <regex>
+
 class AdventOfCode
 {
 public:
