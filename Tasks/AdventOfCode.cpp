@@ -1,10 +1,10 @@
 #include "AdventOfCode.h"
 
 AdventOfCode::AdventOfCode() {
-	// Day1_ReportRepair("./Data/stage_1.txt");
-	// Day2_Password_Philosophy("./Data/stage_2.txt");
-	// Day3_Toboggan_Trajectory("./Data/stage_3.txt");
-	Day4_Passport_Processing("./Data/stage_4.txt");
+	// Day1_ReportRepair("../Data/stage_1.txt");
+	// Day2_Password_Philosophy("../Data/stage_2.txt");
+	// Day3_Toboggan_Trajectory("../Data/stage_3.txt");
+	Day4_Passport_Processing("../Data/stage_4.txt");
 }
 
 AdventOfCode::~AdventOfCode() {
@@ -298,5 +298,7 @@ void AdventOfCode::Day4_Passport_Processing(std::string filePath) {
 		}
 		std::cout << "Valid counter 1: " << valid_counter_step1 << std::endl;
 		std::cout << "Valid counter: " << valid_counter << std::endl;
-	}
+	} else {
+	std::cout << "Can't open file!" << std::endl;	
+}
 }
