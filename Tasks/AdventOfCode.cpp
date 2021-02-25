@@ -5,7 +5,7 @@ AdventOfCode::AdventOfCode() {
 	// Day2_Password_Philosophy("../Data/stage_2.txt");
 	// Day3_Toboggan_Trajectory("../Data/stage_3.txt");
 	// Day4_Passport_Processing("./Data/stage_4.txt");
-	// Day5_BinaryBoarding("./Data/stage_4.txt");
+	Day5_BinaryBoarding("./Data/stage_5.txt");
 }
 
 AdventOfCode::~AdventOfCode() {
@@ -124,7 +124,7 @@ void AdventOfCode::Day3_Toboggan_Trajectory(std::string filePath) {
 	if (file.is_open()) {
 		std::string line;
 		std::vector<std::vector<char>> input_vec;
-		unsigned int hill_width = 0;
+		size_t hill_width = 0;
 		unsigned int general_counter = 1;
 		int arr[5][2] = { {1,1} , {3,1}, {5,1}, {7,1}, {1,2} };
 		while (!file.eof()) {
@@ -307,10 +307,43 @@ void AdventOfCode::Day4_Passport_Processing(std::string filePath) {
 void AdventOfCode::Day5_BinaryBoarding(std::string filePath) {
 	std::ifstream file(filePath);
 	if (file.is_open()) {
+		int max_value = 0;
+
 		while (!file.eof()) {
+
 			std::string seat_partitioning;
+			int min_Value = 0, max_Value = 128;
+			int mid_Value = 128 / 2;
+			int mid_range = 8 / 2, min_range = 0, max_range = 8;
 			file >> seat_partitioning;
-			std::cout << seat_partitioning << std::endl;
+			// std::cout << seat_partitioning.substr(0, 7) << " " << seat_partitioning.substr(7, 10) << std::endl;
+			// std::cout << min_Value << " " << max_Value << " - " << mid_Value << std::endl;
+			for (auto& elem : seat_partitioning) {
+				if (elem == 'F') {
+					min_Value = min_Value;
+					max_Value = mid_Value;
+					// std::cout << min_Value << " " << max_Value << " - " << mid_Value << std::endl;
+				} else if (elem == 'B') {
+					min_Value = mid_Value;
+					max_Value = max_Value;
+					// std::cout << min_Value << " " << max_Value << " - " << mid_Value << std::endl;
+				} else if (elem == 'L') {
+					min_range = min_range;
+					max_range = mid_range;
+					// std::cout << min_range << " " << max_range << " - " << mid_range << std::endl;
+				} else if (elem == 'R') {
+					min_range = mid_range;
+					max_range = max_range;
+					// std::cout << min_range << " " << max_range << " - " << mid_range << std::endl;
+				}
+				mid_Value = (min_Value + max_Value) / 2;
+				mid_range = (min_range + max_range) / 2;
+			}			
+			if ((mid_Value * 8 + mid_range) > max_value) {
+				max_value = (mid_Value * 8 + mid_range);
+			}
+			// std::cout << " ========================== " << std::endl;
 		}
+		std::cout << "Max value: " << max_value << std::endl;
 	}
 }
