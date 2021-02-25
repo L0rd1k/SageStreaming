@@ -19,5 +19,6 @@ private:
 	void Day2_Password_Philosophy(std::string filePath);
 	void Day3_Toboggan_Trajectory(std::string filePath);
 	void Day4_Passport_Processing(std::string filePath);
+	void Day5_BinaryBoarding(std::string filePath);
 };
 

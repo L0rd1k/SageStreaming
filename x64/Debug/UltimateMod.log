@@ -1,0 +1,3 @@
+﻿  AdventOfCode.cpp
+D:\Projects\Cpp\UltimadeMode\Tasks\AdventOfCode.cpp(133,30): warning C4267: =: преобразование из "size_t" в "unsigned int"; возможна потеря данных
+  UltimateMod.vcxproj -> D:\Projects\Cpp\UltimadeMode\x64\Debug\UltimateMod.exe

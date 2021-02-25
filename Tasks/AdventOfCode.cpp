@@ -4,7 +4,8 @@ AdventOfCode::AdventOfCode() {
 	// Day1_ReportRepair("../Data/stage_1.txt");
 	// Day2_Password_Philosophy("../Data/stage_2.txt");
 	// Day3_Toboggan_Trajectory("../Data/stage_3.txt");
-	Day4_Passport_Processing("../Data/stage_4.txt");
+	// Day4_Passport_Processing("./Data/stage_4.txt");
+	// Day5_BinaryBoarding("./Data/stage_4.txt");
 }
 
 AdventOfCode::~AdventOfCode() {
@@ -159,17 +160,14 @@ void AdventOfCode::Day4_Passport_Processing(std::string filePath) {
 	if (file.is_open()) {
 		std::string string_data, str;
 		int valid_counter = 0;
-		int valid_counter_step1 = 0;
 		std::map<std::string, std::string> passportData;
-		int inner_itr = 0;
-
 		while (!file.eof()) {
 			getline(file, str);
 			string_data += " " + str;
 			if (str.empty() || file.eof()) {
 				std::size_t pos_end = string_data.length();
 				std::size_t pos_start = 0;
-				
+
 #ifdef DAY4_PART_1
 				std::vector<std::string> fields;
 				while ((pos_end = string_data.find(":", pos_start)) != std::string::npos) {
@@ -181,8 +179,9 @@ void AdventOfCode::Day4_Passport_Processing(std::string filePath) {
 				bool valid = false;
 				if (fields.size() == 8) {
 					valid = true;
-				} else if (fields.size() >= 7) {
-					if (!(std::find(fields.begin(), fields.end(), "cid") != fields.end())) 
+				}
+				else if (fields.size() >= 7) {
+					if (!(std::find(fields.begin(), fields.end(), "cid") != fields.end()))
 						valid = true;
 				}
 				if (valid) valid_counter++;
@@ -211,8 +210,8 @@ void AdventOfCode::Day4_Passport_Processing(std::string filePath) {
 				bool validity_size = false;
 				if (passportData.size() == 8) {
 					validity_size = true;
-				} 
-				else if (passportData.size() >= 7) {
+				}
+				else if (passportData.size() == 7) {
 					for (auto& itr : passportData) {
 						if (itr.first == "cid") {
 							validity_size = false;
@@ -222,60 +221,63 @@ void AdventOfCode::Day4_Passport_Processing(std::string filePath) {
 					}
 				}
 
-				if (validity_size) valid_counter_step1++;
+				string_data.clear();
 
-				//for (auto &i : passportData) {
-				//	std::cout << i.first << " " << i.second << std::endl;
-				//}
-				//std::cout << "=============" << std::endl;
-
-				bool passportData_validity = true;
 				if (validity_size) {
-					for (auto const &value : passportData) {
+					bool passportData_validity = true;
+					for (auto value : passportData) {
+						std::cout << value.first << ":" << value.second << std::endl;
 						if (value.first == "byr") {
-							if (value.second.length() != 4 || std::stoi(value.second) < 1920 || std::stoi(value.second) > 2020) {
+							if (std::stoi(value.second) < 1920 || std::stoi(value.second) > 2002) {
 								passportData_validity = false;
 								break;
 							}
-						} else if (value.first == "iyr") {
-							if (value.second.length() != 4 || std::stoi(value.second) < 2010 || std::stoi(value.second) > 2020) {
+						}
+						else if (value.first == "iyr") {
+							if (std::stoi(value.second) < 2010 || std::stoi(value.second) > 2020) {
 								passportData_validity = false;
 								break;
 							}
-						} else if (value.first == "eyr") {
-							if (value.second.length() != 4 || std::stoi(value.second) < 2020 || std::stoi(value.second) > 2030) {
+						}
+						else if (value.first == "eyr") {
+							if (std::stoi(value.second) < 2020 || std::stoi(value.second) > 2030) {
 								passportData_validity = false;
 								break;
 							}
-						} 
+						}
 						else if (value.first == "hgt") {
 							std::string measure_value = value.second.substr(0, value.second.length() - 2);
 							std::string measure = value.second.substr(value.second.length() - 2, value.second.length());
-							std::cout << measure_value << " " << measure << std::endl;
 							if (measure == "cm") {
 								if (std::stoi(measure_value) < 150 || (std::stoi(measure_value) > 193)) {
 									passportData_validity = false;
 									break;
 								}
-							} else if (measure == "in") {
+							}
+							else if (measure == "in") {
 								if (std::stoi(measure_value) < 59 || (std::stoi(measure_value) > 76)) {
 									passportData_validity = false;
 									break;
 								}
 							}
-						} 
+							else {
+								passportData_validity = false;
+							}
+						}
 						else if (value.first == "hcl") {
 							std::regex regular_exp("[a-z0-9]+");
-							if ((value.second[0] != '#') || (value.second.length() != 7) || !(std::regex_match(value.second.substr(1,6), regular_exp))) {
+							std::cout << value.second.substr(1, 7) << std::endl;
+							if ((value.second[0] != '#') || (value.second.length() != 7) || !(std::regex_match(value.second.substr(1, 7), regular_exp))) {
 								passportData_validity = false;
 								break;
 							}
 						}
-						 else if (value.first == "ecl") {
-							passportData_validity = false;
-							for (auto &elem : { "amb","blu","brn","gry","grn","hzl","oth" })
-								if (value.second == elem) 
-									passportData_validity = true;
+						else if (value.first == "ecl") {
+							std::vector<std::string> colors{ "amb","blu","brn","gry","grn","hzl","oth" };
+							if (!(std::find(colors.begin(), colors.end(), value.second) != colors.end())) {
+								passportData_validity = false;
+								break;
+							}
 						}
 						else if (value.first == "pid") {
 							if (value.second.length() != 9) {
@@ -284,21 +286,31 @@ void AdventOfCode::Day4_Passport_Processing(std::string filePath) {
 							}
 						}
 					}
-				}
-				
-				if (passportData_validity) {
-					valid_counter++;
+					std::cout << passportData_validity << std::endl;
+
+					if (passportData_validity) {
+						valid_counter++;
+						std::cout << valid_counter << std::endl;
+					}
+					std::cout << "=======================" << std::endl;
 				}
 
-				string_data.clear();
 				passportData.clear();
 #endif
 			}
-			
+
 		}
-		std::cout << "Valid counter 1: " << valid_counter_step1 << std::endl;
-		std::cout << "Valid counter: " << valid_counter << std::endl;
-	} else {
-	std::cout << "Can't open file!" << std::endl;	
+		std::cout << "Valid counter 2: " << valid_counter << std::endl;
+	}
 }
+
+void AdventOfCode::Day5_BinaryBoarding(std::string filePath) {
+	std::ifstream file(filePath);
+	if (file.is_open()) {
+		while (!file.eof()) {
+			std::string seat_partitioning;
+			file >> seat_partitioning;
+			std::cout << seat_partitioning << std::endl;
+		}
+	}
 }
