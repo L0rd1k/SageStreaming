@@ -308,7 +308,7 @@ void AdventOfCode::Day5_BinaryBoarding(std::string filePath) {
 	std::ifstream file(filePath);
 	if (file.is_open()) {
 		int max_value = 0;
-
+		std::vector<int> id_values;
 		while (!file.eof()) {
 
 			std::string seat_partitioning;
@@ -339,11 +339,21 @@ void AdventOfCode::Day5_BinaryBoarding(std::string filePath) {
 				mid_Value = (min_Value + max_Value) / 2;
 				mid_range = (min_range + max_range) / 2;
 			}			
+
+			id_values.push_back(mid_Value * 8 + mid_range);
 			if ((mid_Value * 8 + mid_range) > max_value) {
 				max_value = (mid_Value * 8 + mid_range);
 			}
 			// std::cout << " ========================== " << std::endl;
 		}
 		std::cout << "Max value: " << max_value << std::endl;
+		std::sort(id_values.begin(), id_values.end());
+
+		for (std::vector<int>::size_type i = 1; i != id_values.size() - 1; i++) {
+			if (id_values[i - 1] + 2 == id_values[i]) {
+				std::cout << "Result task_2: " << id_values[i] - 1 << std::endl;
+			}
+		}
+
 	}
 }
