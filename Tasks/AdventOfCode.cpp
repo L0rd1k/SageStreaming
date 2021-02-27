@@ -5,7 +5,8 @@ AdventOfCode::AdventOfCode() {
 	// Day2_Password_Philosophy("../Data/stage_2.txt");
 	// Day3_Toboggan_Trajectory("../Data/stage_3.txt");
 	// Day4_Passport_Processing("./Data/stage_4.txt");
-	Day5_BinaryBoarding("./Data/stage_5.txt");
+	// Day5_BinaryBoarding("./Data/stage_5.txt");
+	Day6_Custom_Customs("./Data/stage_6.txt");
 }
 
 AdventOfCode::~AdventOfCode() {
@@ -110,9 +111,7 @@ void AdventOfCode::Day2_Password_Philosophy(std::string filePath) {
 #endif
 
 		}
-		// std::cout << "PART_1: Valid passwords number: " << valid_password << "\n";
-		std::cout << "PART_2: Valid passwords number: " << valid_password << "\n";
-
+		std::cout << "PART_1: Valid passwords number: " << valid_password << "\n";
 	}
 
 
@@ -355,5 +354,56 @@ void AdventOfCode::Day5_BinaryBoarding(std::string filePath) {
 			}
 		}
 
+	}
+}
+
+void AdventOfCode::Day6_Custom_Customs(std::string filePath) {
+	std::ifstream file(filePath);
+	if (file.is_open()) {
+		char string_data[27];
+		std::string data;
+		int sum = 0;
+		memset(string_data, 0, 27 * sizeof(char));
+		std::bitset<26> current_group(0);
+		std::bitset<26> result_group;
+		result_group.set(); // set all bitset to 1
+
+		while (getline(file, data)) {
+#ifdef TASK_1
+			if (data != "") {
+				for (int i = 0; i < data.size(); i++) {
+					if (string_data[data[i] - 'a'] == 0) {
+						++sum;
+						string_data[data[i] - 'a'] = 1;
+					}
+				}
+				//for (int i = 0; i < data.size(); i++) {
+				//	std::cout << data[i] << std::endl;
+				//}
+			}
+			else {
+				//std::cout << "=================" << std::endl;
+				memset(string_data, 0, 27 * sizeof(char));
+			}
+#endif
+#ifndef TASK_2
+			if (data != "") {
+				std::cout << data << std::endl;
+				for (int i = 0; i < data.size(); ++i) {
+					current_group[data[i]-'a'] = 1;
+				}
+				result_group &= current_group;
+				current_group.reset();
+			} else {
+				std::cout << result_group << std::endl;
+				std::cout << "======================" << std::endl;
+				sum += result_group.count();
+				result_group.set();
+			} 
+#endif
+		}
+		sum += result_group.count();
+		result_group.set();
+		std::cout << sum << "\n";
 	}
 }

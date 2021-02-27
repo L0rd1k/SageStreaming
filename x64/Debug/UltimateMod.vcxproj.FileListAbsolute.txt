@@ -1,2 +1,0 @@
-D:\Projects\Cpp\UltimadeMode\x64\Debug\UltimateMod.exe
-D:\Projects\Cpp\UltimadeMode\x64\Debug\UltimateMod.pdb

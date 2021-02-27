@@ -8,6 +8,7 @@
 #include <array>
 #include <map>
 #include <regex>
+#include <bitset>
 
 class AdventOfCode
 {
@@ -20,5 +21,6 @@ private:
 	void Day3_Toboggan_Trajectory(std::string filePath);
 	void Day4_Passport_Processing(std::string filePath);
 	void Day5_BinaryBoarding(std::string filePath);
+	void Day6_Custom_Customs(std::string filePath);
 };
 
