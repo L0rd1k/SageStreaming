@@ -7,4 +7,6 @@ GeekForGeeks - https://www.geeksforgeeks.org
 
 #### Creational
 - AbstractFactory
-- Singleton
+- Singleton 
+- Observer
+
