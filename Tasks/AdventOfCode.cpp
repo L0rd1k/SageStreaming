@@ -6,7 +6,8 @@ AdventOfCode::AdventOfCode() {
 	// Day3_Toboggan_Trajectory("../Data/stage_3.txt");
 	// Day4_Passport_Processing("./Data/stage_4.txt");
 	// Day5_BinaryBoarding("./Data/stage_5.txt");
-	Day6_Custom_Customs("./Data/stage_6.txt");
+	// Day6_Custom_Customs("./Data/stage_6.txt");
+	Day7_Handy_Haversacks("../Data/stage_7.txt");
 }
 
 AdventOfCode::~AdventOfCode() {
@@ -405,5 +406,17 @@ void AdventOfCode::Day6_Custom_Customs(std::string filePath) {
 		sum += result_group.count();
 		result_group.set();
 		std::cout << sum << "\n";
+	}
+}
+
+void AdventOfCode::Day7_Handy_Haversacks(std::string filePath) {
+	std::ifstream file;
+	file.open(filePath);
+	if(file.is_open()) {
+		std::string currentString;
+		while(getline(file, currentString)) {
+			// std::cout << currentString  << std::endl;
+			std::cout << currentString.substr(0, currentString.find(" bags contain", 0))  << "|" << std::endl;
+		}
 	}
 }

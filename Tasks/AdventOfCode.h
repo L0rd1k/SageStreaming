@@ -22,5 +22,6 @@ private:
 	void Day4_Passport_Processing(std::string filePath);
 	void Day5_BinaryBoarding(std::string filePath);
 	void Day6_Custom_Customs(std::string filePath);
+	void Day7_Handy_Haversacks(std::string filePath);
 };
 
