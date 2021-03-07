@@ -31,6 +31,7 @@ Patterns/Creational/AbstractFactory/FrenchCannon.cpp
 Patterns/Creational/AbstractFactory/FrenchSwordsMan.cpp
 Tasks/AdventOfCode.cpp
 Tasks/MainGeek.cpp
+ML/LinearRegression.cpp
 )
 
 set ( HEADERS
@@ -50,6 +51,7 @@ Creational/AbstractFactory/FrenchArcher.h
 Creational/AbstractFactory/FrenchArmy.h
 Creational/AbstractFactory/FrenchCannon.h
 Creational/AbstractFactory/FrenchSwordsMan.h
+ML/LinearRegression.h
 )
 
 get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
