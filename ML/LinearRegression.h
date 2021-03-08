@@ -3,6 +3,9 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include <numeric>
+#include <math.h>
+
 class LinearRegression {
 public:
     LinearRegression();
@@ -17,5 +20,12 @@ private:
     double learning_rate = 0.01;
 private:
     void run_GradientDescent(int values_size, int epochs_num);
-    void run_testSample();
+    void run_testSample(double slope, double intercept);
+
+    void run_linearRegression(std::vector<double> &train_X, std::vector<double> &train_Y, double slope = 1, double intercept = 0);
+
+
+    double getSlope(std::vector<double> &train_X, std::vector<double> &train_Y);
+    double getIntercept(std::vector<double> &train_X, std::vector<double> &train_Y, double slope);
+    double getCost(std::vector<double> &train_X, std::vector<double> &train_Y, double slope, double intercept, double &deriv_slope, double &deriv_intercept);
 };
