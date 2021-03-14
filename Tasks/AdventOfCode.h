@@ -9,6 +9,8 @@
 #include <map>
 #include <regex>
 #include <bitset>
+#include <cassert>
+#include <iterator>
 
 class AdventOfCode
 {

@@ -7,10 +7,10 @@
 #include "ML/LinearRegression.h"
 
 int main() {
-	// AdventOfCode _adventCode;
+	AdventOfCode _adventCode;
 	// MainGeek _mainGeek;
 	// Thread _objThread;
 	// Patterns _pattern;
-	LinearRegression lg;
+	// LinearRegression lg;
 	return 0;
 }

@@ -40,6 +40,9 @@
     <Filter Include="Tasks">
       <UniqueIdentifier>{6a1f035f-104e-45bb-bdaf-db2cd61c9384}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ML">
+      <UniqueIdentifier>{0ee66863-e03d-4ca7-8380-2e9052b166b2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UltimateMod.cpp">
@@ -89,6 +92,9 @@
     </ClCompile>
     <ClCompile Include="Tasks\AdventOfCode.cpp">
       <Filter>Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="ML\LinearRegression.cpp">
+      <Filter>ML</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -154,6 +160,9 @@
     </ClInclude>
     <ClInclude Include="Tasks\AdventOfCode.h">
       <Filter>Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="ML\LinearRegression.h">
+      <Filter>ML</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

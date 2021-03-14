@@ -1,4 +1,4 @@
-#include "ML/LinearRegression.h"
+#include "LinearRegression.h"
 
 LinearRegression::LinearRegression() {
     run_GradientDescent(x_train.size(), 100);

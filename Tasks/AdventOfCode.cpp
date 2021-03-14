@@ -7,7 +7,7 @@ AdventOfCode::AdventOfCode() {
 	// Day4_Passport_Processing("./Data/stage_4.txt");
 	// Day5_BinaryBoarding("./Data/stage_5.txt");
 	// Day6_Custom_Customs("./Data/stage_6.txt");
-	Day7_Handy_Haversacks("../Data/stage_7.txt");
+	Day7_Handy_Haversacks("./Data/stage_7.txt");
 }
 
 AdventOfCode::~AdventOfCode() {
@@ -414,9 +414,37 @@ void AdventOfCode::Day7_Handy_Haversacks(std::string filePath) {
 	file.open(filePath);
 	if(file.is_open()) {
 		std::string currentString;
+
+		std::regex input_value_pattern(R"((\w+ \w+) bags contain)");
+		std::regex inherited_value_pattern(R"(,? (\d+) (\w+ \w+) bags?)");
+		
+		std::smatch root_match;
+		std::smatch inherited_root_match;
 		while(getline(file, currentString)) {
-			// std::cout << currentString  << std::endl;
-			std::cout << currentString.substr(0, currentString.find(" bags contain", 0))  << "|" << std::endl;
+
+			// std::regex int_expression("(\\+|-)?[[:digit:]]+");
+			// std::regex double_expression("((\\+|-)?[[:digit:]]+)(\\.(([[:digit:]]+)?))?");
+			// std::cout << currentString.substr(0, currentString.find(" bags contain", 0))  << "|" << std::endl;
+			
+
+
+			assert(std::regex_search(currentString, root_match, input_value_pattern));
+
+			auto words_begin = std::sregex_iterator(currentString.begin(), currentString.end(), inherited_value_pattern);
+			auto words_end = std::sregex_iterator();
+
+			std::cout << "Found " << std::distance(words_begin, words_end) << " words:\n";
+
+			std::cout << root_match[0] << " - " << root_match[1] << std::endl;
+
+			for (std::sregex_iterator i = words_begin; i != words_end; ++i) {
+				std::smatch match = *i;
+				std::string match_str = match.str();
+				std::cout << match_str << '\n';
+			}
+			std::cout << "---------------------------" << std::endl;
+
 		}
 	}
+
 }

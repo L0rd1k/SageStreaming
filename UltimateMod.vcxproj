@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="General\Features.cpp" />
+    <ClCompile Include="ML\LinearRegression.cpp" />
     <ClCompile Include="Patterns\Creational\AbstractFactory\BritishArcher.cpp" />
     <ClCompile Include="Patterns\Creational\AbstractFactory\BritishArmy.cpp" />
     <ClCompile Include="Patterns\Creational\AbstractFactory\BritishCannon.cpp" />
@@ -162,6 +163,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="General\Features.h" />
+    <ClInclude Include="ML\LinearRegression.h" />
     <ClInclude Include="Patterns\Creational\AbstractFactory\Archer.h" />
     <ClInclude Include="Patterns\Creational\AbstractFactory\Army.h" />
     <ClInclude Include="Patterns\Creational\AbstractFactory\BritishArcher.h" />
