@@ -70,28 +70,26 @@ double slope, double intercept, double &deriv_slope, double &deriv_intercept) {
 }
 
 void LinearRegression::run_linearRegression(std::vector<double> &train_X, std::vector<double> &train_Y, double slope, double intercept) {
-    double lrate = 0.0002;
+    double learning_rate = 0.0002;
     double threshold = 0.0001;
     int iter = 0;
+
     while(true) {
         double derivative_slope = 0;
         double derivative_intercept = 0;
-
         double cost = getCost(train_X, train_Y, slope, intercept, derivative_slope, derivative_intercept);
-
         if(iter % 1000 == 0) {
             std::cout << "Iter: " << iter << 
-            " cost = " << cost << 
-            " derivative slope = " << derivative_slope <<
+            " cost = " << cost << " derivative slope = " << derivative_slope <<
             " derivative intercept = " << derivative_intercept << std::endl;
         }
         iter++;
         if(std::abs(derivative_slope) < threshold && std::abs(derivative_intercept) < threshold) {
-            std::cout << "y = " << slope << " * x + " << intercept << std::endl;
+            std::cout << "Final Slope/Intercept: y = " << slope << " * x + " << intercept << std::endl;
             break;
         }
-        slope = slope - lrate * derivative_slope;
-        intercept = intercept - lrate * derivative_intercept;
+        slope = slope - learning_rate * derivative_slope;
+        intercept = intercept - learning_rate * derivative_intercept;
     }
 }
 
@@ -119,18 +117,20 @@ void LinearRegression::run_GradientDescent(int values_size, int epochs_num) {
 #endif
 
 #ifndef METHOD_2
-    std::vector<double> xSub = {10, 13, 6};
-    std::vector<double> ySub = {8, 3, 14};
+    std::vector<double> xSub = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    std::vector<double> ySub = {1, 3, 2, 5, 7, 8, 8, 9, 10, 12};
+
     double slopeSub =getSlope(xSub,ySub);
     double interceptSub = getIntercept(xSub, ySub, slopeSub);
-    std::cout << "y = " << slopeSub <<" * x + " << interceptSub << std::endl;
+    std::cout << "Calculated Slope/Intercept: y = " << slopeSub <<" * x + " << interceptSub << std::endl;
     run_linearRegression(x_train, y_train, slopeSub, interceptSub);
+    std::cout << std::string(100, '-') << std::endl;
+    run_testSample(slopeSub, interceptSub);
 
     std::cout << "Compare with ground truth" << std::endl;
     double slope = getSlope(x_train, y_train);
     double intercept = getIntercept(x_train, y_train, slope);
     std::cout<< "y = " << slope << " * x + " << intercept << std::endl;  
-
     run_testSample(slope, intercept);
 #endif
 

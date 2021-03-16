@@ -5,12 +5,15 @@
 #include "Tasks/MainGeek.h"
 #include "Tasks/AdventOfCode.h"
 #include "ML/LinearRegression.h"
-
+#include "Utils/Log.h"
 int main() {
-	AdventOfCode _adventCode;
+	// AdventOfCode _adventCode;
 	// MainGeek _mainGeek;
 	// Thread _objThread;
 	// Patterns _pattern;
-	// LinearRegression lg;
+	//LinearRegression lg;
+
+	Log() << "My check test\n";
+	Log::printTime();
 	return 0;
 }

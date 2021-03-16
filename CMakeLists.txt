@@ -6,13 +6,17 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON) 
 
 
-#IF(UNIX)
-#  set(OpenCV_DIR "/usr/local/opencv_3.4.7/share/OpenCV")
-#  find_package(OpenCV REQUIRED)
-#  if (NOT ${OPENCV_FOUND})
-#     message(SEND_ERROR "Failed to find OpenCV")
-#     return()
-#ENDIF(UNIX)
+if (UNIX)
+	set(OpenCV_DIR "/usr/local/opencv_3.4.7/share/OpenCV")
+	find_package(OpenCV REQUIRED)
+  	if (NOT ${OPENCV_FOUND})
+     		message(SEND_ERROR "Failed to find OpenCV")
+     		return()
+	endif()
+elseif (WIN32)
+message("")
+
+endif()
 
 
 set ( SOURCES
@@ -32,6 +36,7 @@ Patterns/Creational/AbstractFactory/FrenchSwordsMan.cpp
 Tasks/AdventOfCode.cpp
 Tasks/MainGeek.cpp
 ML/LinearRegression.cpp
+Utils/Log.cpp
 )
 
 set ( HEADERS
@@ -52,6 +57,7 @@ Creational/AbstractFactory/FrenchArmy.h
 Creational/AbstractFactory/FrenchCannon.h
 Creational/AbstractFactory/FrenchSwordsMan.h
 ML/LinearRegression.h
+Utils/Log.cpp
 )
 
 get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
