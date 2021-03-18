@@ -3,10 +3,13 @@ cmake_minimum_required(VERSION 2.8)
 project(SWGeneral)
 cmake_policy(SET CMP0015 NEW) #supress link warning
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+
 find_package(PythonLibs REQUIRED)
 
 include_directories(../SWMachineLearning)
 include_directories(../SWLib)
+include_directories(../SWGraphics)
 include_directories(${PYTHON_INCLUDE_DIRS})
 
 set(SOURCES
@@ -29,7 +32,7 @@ set(SOURCES
 
 
 link_directories(.)
-set(SW_LIBRARIES SWMachineLearning SWLib)
+set(SW_LIBRARIES SWMachineLearning SWLib SWGraphics)
 
 add_executable (sw ${SOURCES})
 target_link_libraries(sw ${SW_LIBRARIES} ${PYTHON_LIBRARIES} pthread)

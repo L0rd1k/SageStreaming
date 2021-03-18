@@ -7,6 +7,11 @@
 #include <numeric>
 #include <math.h>
 
+#include <glm/glm.hpp>
+#include <GLFW/glfw3.h>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
 class LinearRegression {
 public:
     LinearRegression();
