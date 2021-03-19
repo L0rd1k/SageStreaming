@@ -16,14 +16,14 @@ if (UNIX)
     if(NOT ${OPENGL_FOUND})
         message("OPENGL not found")
     endif()
+    message( ${OPENGL_INCLUDE_DIRS})
+
     include_directories( ${OPENGL_INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS} )  
     list(APPEND LIBRARIES 
         ${OPENGL_LIBRARIES} 
         ${GLUT_LIBRARY}
         glfw)
 endif (UNIX)
-
-add_definitions(-DUNIX)
 
 add_library(SWGraphics SHARED ${SOURCES})
 target_link_libraries(SWGraphics ${LIBRARIES})

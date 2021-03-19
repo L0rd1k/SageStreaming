@@ -1,16 +1,42 @@
 cmake_minimum_required(VERSION 2.8)
 
 project(SWGeneral)
+
 cmake_policy(SET CMP0015 NEW) #supress link warning
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+endif()
+
+if(USE_LIB)
+    include_directories(../SWLib)
+    set(SW_LIBRARIES SWLib)
+endif()
+if(USE_ML)
+    include_directories(../SWMachineLearning)
+    set(SW_LIBRARIES SWMachineLearning)
+endif()
+
+if(USE_GRAPHICS)
+    include_directories(../SWGraphics)
+    set(SW_LIBRARIES SWGraphics)
+endif()
+
+if(UNIX)
+   set(THREAD_LIB pthread) 
+   find_package(PythonLibs REQUIRED)
+   include_directories(${PYTHON_INCLUDE_DIRS})
+endif(UNIX)
 
 find_package(PythonLibs REQUIRED)
-
-include_directories(../SWMachineLearning)
-include_directories(../SWLib)
-include_directories(../SWGraphics)
 include_directories(${PYTHON_INCLUDE_DIRS})
+
+if(PYTHONLIBS_FOUND)
+	message("	> Path to where Python.h is found: ${PYTHON_INCLUDE_DIR}")
+	message("	> Path to the python library: ${PYTHON_LIBRARIES}")
+	message("	> Version of the Python libs found: ${PYTHONLIBS_VERSION_STRING}")
+	message("	> Path to the debug library (deprecated): ${PYTHON_DEBUG_LIBRARIES}")     
+endif()
 
 set(SOURCES
     ./UltimateMod.cpp
@@ -30,11 +56,10 @@ set(SOURCES
     ./Tasks/MainGeek.cpp
 )
 
-
-link_directories(.)
-set(SW_LIBRARIES SWMachineLearning SWLib SWGraphics)
+#link_directories(.)
 
 add_executable (sw ${SOURCES})
-target_link_libraries(sw ${SW_LIBRARIES} ${PYTHON_LIBRARIES} pthread)
+
+target_link_libraries(sw ${SW_LIBRARIES} ${PYTHON_LIBRARIES} ${THREAD_LIB}) 
 
 

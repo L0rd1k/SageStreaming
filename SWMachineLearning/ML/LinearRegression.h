@@ -7,11 +7,6 @@
 #include <numeric>
 #include <math.h>
 
-#include <glm/glm.hpp>
-#include <GLFW/glfw3.h>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-
 class LinearRegression {
 public:
     LinearRegression();
@@ -25,7 +20,7 @@ private:
     double weight = 0.0;
     double learning_rate = 0.01;
 private:
-    void run_GradientDescent(int values_size, int epochs_num);
+    void run_GradientDescent(size_t values_size, int epochs_num);
     void run_testSample(double slope, double intercept);
 
     void run_linearRegression(std::vector<double> &train_X, std::vector<double> &train_Y, double slope = 1, double intercept = 0);

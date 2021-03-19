@@ -1,7 +1,5 @@
 #include "Log.h"
 
-Log::Log() {
-}
 
 inline constexpr std::uint32_t hashing_fnv1a(const char* str, std::uint32_t hash = 2166136261UL) {
     if(hashing_fnv1a(str + 1, (hash ^ *str) * 16777619ULL)) {

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <chrono>
+#include <ctime>
 
 enum class COLOR {
         RED      = 31,
@@ -31,6 +32,7 @@ public:
     template<class T>
     Log& operator<<(T value) {
         std::cout << "\033[" << (int)color_code << "m" << value;
+        std::cout << "\033[" << 39 << "m";
         return *this;
     }
 

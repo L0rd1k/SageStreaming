@@ -93,7 +93,7 @@ void LinearRegression::run_linearRegression(std::vector<double> &train_X, std::v
     }
 }
 
-void LinearRegression::run_GradientDescent(int values_size, int epochs_num) {
+void LinearRegression::run_GradientDescent(size_t values_size, int epochs_num) {
 #ifdef METHOD_1
     for (int i = 0; i < values_size * epochs_num; i++) {
         int cur_index = i % values_size;
