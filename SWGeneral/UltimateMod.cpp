@@ -2,8 +2,8 @@
 //
 #include "Patterns/Patterns.h"
 #include "Threads/Thread.h"
-#include "Tasks/MainGeek.h"
-#include "Tasks/AdventOfCode.h"
+#include "Tasks/GeekForGeeks/MainGeek.h"
+#include "Tasks/AdventOfCode/AdventOfCode.h"
 
 #include <chrono>
 

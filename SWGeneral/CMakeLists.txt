@@ -52,8 +52,10 @@ set(SOURCES
     ./Patterns/Creational/AbstractFactory/FrenchArmy.cpp
     ./Patterns/Creational/AbstractFactory/FrenchCannon.cpp
     ./Patterns/Creational/AbstractFactory/FrenchSwordsMan.cpp
-    ./Tasks/AdventOfCode.cpp
-    ./Tasks/MainGeek.cpp
+    ./Tasks/AdventOfCode/AdventOfCode.cpp
+    ./Tasks/AdventOfCode/D1ReportRepair.cpp
+    ./Tasks/GeekForGeeks/MainGeek.cpp
+
 )
 
 #link_directories(.)

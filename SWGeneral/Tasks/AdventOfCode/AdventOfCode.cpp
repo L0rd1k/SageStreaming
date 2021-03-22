@@ -72,7 +72,7 @@ void AdventOfCode::Day1_ReportRepair(std::string filePath) {
 	}
 
 #endif
-
+	file.close();
 }
 
 void AdventOfCode::Day2_Password_Philosophy(std::string filePath) {
