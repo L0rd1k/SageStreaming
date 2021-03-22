@@ -64,10 +64,10 @@ int main(int argc, char**argv) {
 	Log(COLOR::BLUE) << "Test string for logs\n";
 	Log::printTime();
 #endif
-
 	 Py_Initialize();
 	 auto start = std::chrono::high_resolution_clock::now();
-	 FILE* PScriptFile = fopen("D:\GitProjects\FreeTimeCraft\_WorkScripts\simplePlot.py", "r");
+	 const char* scriptPath = "D:\GitProjects\FreeTimeCraft\_WorkScripts\simplePlot.py";
+	 FILE* PScriptFile = fopen(scriptPath, "r");
 	 if(PScriptFile) {
 	 	PyRun_SimpleFile(PScriptFile, "simplePlot.py");	
 	 }

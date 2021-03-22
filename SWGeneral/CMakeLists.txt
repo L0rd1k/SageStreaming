@@ -54,6 +54,7 @@ set(SOURCES
     ./Patterns/Creational/AbstractFactory/FrenchSwordsMan.cpp
     ./Tasks/AdventOfCode/AdventOfCode.cpp
     ./Tasks/AdventOfCode/D1ReportRepair.cpp
+    ./Tasks/AdventOfCode/D2PasswordPhilosophy.cpp
     ./Tasks/GeekForGeeks/MainGeek.cpp
 
 )

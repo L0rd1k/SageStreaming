@@ -1,9 +1,10 @@
 #pragma once 
 
 #include "FileHandler.h"
+#include <string>
 
 class FileHandler {
 public:
     ~FileHandler() {};
-    virtual void parseDataFile() = 0;
+    virtual int parseDataFile(std::string filePath) = 0;
 };

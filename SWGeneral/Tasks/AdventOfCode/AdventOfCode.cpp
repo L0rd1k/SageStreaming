@@ -1,7 +1,6 @@
 #include "AdventOfCode.h"
 
 AdventOfCode::AdventOfCode() {
-	Day1_ReportRepair("../Data/stage_1.txt");
 	// Day2_Password_Philosophy("../Data/stage_2.txt");
 	// Day3_Toboggan_Trajectory("../Data/stage_3.txt");
 	// Day4_Passport_Processing("./Data/stage_4.txt");
@@ -11,68 +10,6 @@ AdventOfCode::AdventOfCode() {
 }
 
 AdventOfCode::~AdventOfCode() {
-}
-
-void AdventOfCode::Day1_ReportRepair(std::string filePath) {
-	std::vector<int> vec_input;
-	std::ifstream file;
-	file.open(filePath);
-	if (file.is_open()) {
-		int value;
-		while (!file.eof()) {
-			file >> value;
-			vec_input.push_back(value);
-		}
-	}
-
-#ifdef BRUTE_FORCE	// BruteForce Approach O(n^2)
-	for (int i = 0; i < vec_input.size() - 2; i++) {
-		for (int j = i + 1; j < vec_input.size() - 1 ; j++) {
-			for (int k = j + 1; k < vec_input.size(); k++) {
-				if (vec_input.at(i) + vec_input.at(j) + vec_input.at(k) == 2020) {
-					std::cout << vec_input.at(i) << " + " << vec_input.at(j) << " + " << vec_input.at(k) << std::endl;
-					std::cout << vec_input.at(i) * vec_input.at(j) * vec_input.at(k) << std::endl;
-				}
-			}
-		}
-	}
-#endif
-
-#ifdef TWO_POINTER	// Two Pointer Approach O(nlogn) 
-	std::sort(vec_input.begin(), vec_input.end());
-	int lastElem = vec_input.size() - 1;
-	for (int i = 0; i < vec_input.size(); ) {
-		if ((vec_input[i] + vec_input[lastElem]) > 2020) {
-			lastElem--;
-		}
-		else if ((vec_input[i] + vec_input[lastElem]) < 2020) {
-			i++;
-		}
-		else {
-			std::cout << vec_input[i] << " + " << vec_input[lastElem] << std::endl;
-			std::cout << vec_input[i] * vec_input[lastElem] << std::endl;
-			break;
-		}
-	}
-#endif
-
-#define HASH_SET
-#ifdef HASH_SET
-	std::unordered_set<int> complements;
-	for (auto& value : vec_input) {
-		int complement = 2020 - value;
-		if (complements.count(value) != 0) {
-			std::cout << value << " " << complement << std::endl;;
-			std::cout << value * complement << std::endl;;
-			break;
-		}
-		else {
-			complements.insert(complement);
-		}
-	}
-
-#endif
-	file.close();
 }
 
 void AdventOfCode::Day2_Password_Philosophy(std::string filePath) {
