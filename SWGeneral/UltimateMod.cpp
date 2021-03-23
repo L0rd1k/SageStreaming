@@ -31,21 +31,6 @@
 	#include "Plotting/DrawGraph.h"
 #endif
 
-
-
-//static PyObject *method_fputs(PyObject *self, PyObject *args) {
-//    char *str, *filename = NULL;
-//    int bytes_copied = -1;
-//    /* Parse arguments */
-//    if(!PyArg_ParseTuple(args, "ss", &str, &filename)) {
-//        return NULL;
-//    }
-//    FILE *fp = fopen(filename, "w");
-//    bytes_copied = fputs(str, fp);
-//    fclose(fp);
-//    return PyLong_FromLong(bytes_copied);
-//}
-
 int main(int argc, char**argv) {
 	// AdventOfCode _adventCode;
 	// MainGeek _mainGeek;
@@ -66,7 +51,7 @@ int main(int argc, char**argv) {
 #endif
 	 Py_Initialize();
 	 auto start = std::chrono::high_resolution_clock::now();
-	 const char* scriptPath = "D:\GitProjects\FreeTimeCraft\_WorkScripts\simplePlot.py";
+	 const char* scriptPath = "D:\\GitProjects\\FreeTimeCraft\\_WorkScripts\\simplePlot.py";
 	 FILE* PScriptFile = fopen(scriptPath, "r");
 	 if(PScriptFile) {
 	 	PyRun_SimpleFile(PScriptFile, "simplePlot.py");	

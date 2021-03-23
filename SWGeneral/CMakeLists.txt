@@ -38,6 +38,7 @@ if(PYTHONLIBS_FOUND)
 	message("	> Path to the debug library (deprecated): ${PYTHON_DEBUG_LIBRARIES}")     
 endif()
 
+
 set(SOURCES
     ./UltimateMod.cpp
     ./General/Features.cpp
@@ -55,6 +56,11 @@ set(SOURCES
     ./Tasks/AdventOfCode/AdventOfCode.cpp
     ./Tasks/AdventOfCode/D1ReportRepair.cpp
     ./Tasks/AdventOfCode/D2PasswordPhilosophy.cpp
+    ./Tasks/AdventOfCode/D3TobogganTrajectory.cpp
+    ./Tasks/AdventOfCode/D4PassportProcessing.cpp
+    ./Tasks/AdventOfCode/D5BinaryBoarding.cpp
+    ./Tasks/AdventOfCode/D6CustomCustoms.cpp
+    ./Tasks/AdventOfCode/D7HandyHaversacks.cpp
     ./Tasks/GeekForGeeks/MainGeek.cpp
 
 )

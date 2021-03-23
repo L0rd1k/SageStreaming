@@ -2,6 +2,7 @@
 
 #include "FileHandler.h"
 #include <string>
+#include <fstream>
 
 class FileHandler {
 public:
