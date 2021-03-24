@@ -1,11 +1,13 @@
 #include "D1ReportRepair.h"
 
 D1ReportRepair::D1ReportRepair() {
-    if(parseDataFile("../Data/stage_1.txt")) {
+    if(parseDataFile("/home/ilya/Projects/GitProjects/UltimadeMode/SWGeneral/Data/stage_1.txt")) {
 			bruteForceSolution();
-			pointerSolution();
+			// pointerSolution();
 			// hashSetSolution();
-    }
+    } else {
+		std::cout << "Can't parse data file!" << std::endl;
+	}
 }
 
 D1ReportRepair::~D1ReportRepair() {
@@ -13,7 +15,6 @@ D1ReportRepair::~D1ReportRepair() {
     complements.clear();
     vec_input.clear();
 }
-
 
 void D1ReportRepair::bruteForceSolution() {
     for (int i = 0; i < vec_input.size() - 2; i++) {
@@ -35,8 +36,7 @@ void D1ReportRepair::hashSetSolution() {
 			std::cout << value << " " << complement << std::endl;;
 			std::cout << value * complement << std::endl;;
 			break;
-		}
-		else {
+		} else {
 			complements.insert(complement);
 		}
 	}
@@ -64,8 +64,11 @@ int D1ReportRepair::parseDataFile(std::string filePath) {
     file.open(filePath);
     int tempValue;
     if(file.is_open()) {
-        file >> tempValue;
-        vec_input.push_back(tempValue);
+		while (!file.eof()) {
+        	file >> tempValue;
+        	vec_input.push_back(tempValue);
+		}
+		return 1;
     } else {
         return 0;
     }

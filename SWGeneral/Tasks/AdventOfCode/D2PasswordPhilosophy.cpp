@@ -1,7 +1,10 @@
 #include "D2PasswordPhilosophy.h"
 
 D2PasswordPhilosophy::D2PasswordPhilosophy() {
-
+	if(parseDataFile("/home/ilya/Projects/GitProjects/UltimadeMode/SWGeneral/Data/stage_2.txt")) {
+    } else {
+		std::cout << "Can't parse data file!" << std::endl;
+	}
 }
 
 D2PasswordPhilosophy::~D2PasswordPhilosophy() {
@@ -45,8 +48,9 @@ int D2PasswordPhilosophy::parseDataFile(std::string filePath) {
 			getTokens();
 			solutionPart1();
 		}
-	std::cout << "Valid passwords number: " << valid_password << "\n";
+		std::cout << "Valid passwords number: " << valid_password << "\n";
+		return 1;
 	} else {
-		return -1;
+		return 0;
 	}
 }

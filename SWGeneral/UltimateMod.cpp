@@ -31,23 +31,42 @@
 	#include "Plotting/DrawGraph.h"
 #endif
 
+std::vector<int> twoSum(std::vector<int>& nums, int target) {
+    std::vector<int> test_vec;
+    for(int i = 0; i < nums.size() - 2; i++) {
+		std::cout << i << std::endl;
+        for(int j = i+1; j < nums.size() - 1; j++) {
+            if(nums.at(i) + nums.at(j) == target) {
+                test_vec.push_back(i);
+                test_vec.push_back(j);
+				std::cout << i << " " << j << std::endl;
+                return test_vec;
+            }
+        }
+    }
+    return test_vec;
+}
+
 int main(int argc, char**argv) {
 	// AdventOfCode _adventCode;
 	// MainGeek _mainGeek;
 	// Thread _objThread;
 	// Patterns _pattern;
+	std::vector<int> vec{2,7,11,15};
+	twoSum(vec, 6);
+
 
 #ifdef USE_ML
-	LinearRegression lg;
+	// LinearRegression lg;
 #endif
 	 
 #ifdef USE_GRAPHICS
-	DrawGraph::createWindow(argc, argv);
+	// DrawGraph::createWindow(argc, argv);
 #endif
 
 #ifdef USE_LIB
-	Log(COLOR::BLUE) << "Test string for logs\n";
-	Log::printTime();
+	// Log(COLOR::BLUE) << "Test string for logs\n";
+	// Log::printTime();
 #endif
 	 Py_Initialize();
 	 auto start = std::chrono::high_resolution_clock::now();

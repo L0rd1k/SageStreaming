@@ -1,28 +1,17 @@
 #pragma once
-#include <iostream>
-#include <vector>
-#include <fstream>
-#include <algorithm>
-#include <unordered_set>
-#include <string>
-#include <array>
-#include <map>
-#include <regex>
-#include <bitset>
-#include <cassert>
-#include <iterator>
+
+#include "D1ReportRepair.h"
+#include "D2PasswordPhilosophy.h"
+#include "D3TobogganTrajectory.h"
+#include "D4PassportProcessing.h"
+#include "D5BinaryBoarding.h"
+#include "D6CustomCustoms.h"
+#include "D7HandyHaversacks.h"
 
 class AdventOfCode
 {
 public:
 	AdventOfCode();
 	virtual ~AdventOfCode();
-private:
-	void Day2_Password_Philosophy(std::string filePath);
-	void Day3_Toboggan_Trajectory(std::string filePath);
-	void Day4_Passport_Processing(std::string filePath);
-	void Day5_BinaryBoarding(std::string filePath);
-	void Day6_Custom_Customs(std::string filePath);
-	void Day7_Handy_Haversacks(std::string filePath);
 };
 

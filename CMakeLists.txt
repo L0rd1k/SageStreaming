@@ -14,7 +14,7 @@ endif(WIN32)
 
 option(USE_ML "Machine learning support" ON)
 option(USE_LIB "Additional Library support" ON)
-option(USE_GRAPHICS "Additional OPENGL support" OFF)
+option(USE_GRAPHICS "Additional OPENGL support" ON)
 
 # Create .lib files for MSVC compiler on Windows platform.
 if(MSVC)
