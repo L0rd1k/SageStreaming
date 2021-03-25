@@ -4,7 +4,7 @@
 #include "Threads/Thread.h"
 #include "Tasks/GeekForGeeks/MainGeek.h"
 #include "Tasks/AdventOfCode/AdventOfCode.h"
-
+#include "Tasks/LeetCode/LeetCode.h"
 #include <chrono>
 
 #ifdef __linux__
@@ -33,16 +33,18 @@
 
 std::vector<int> twoSum(std::vector<int>& nums, int target) {
     std::vector<int> test_vec;
-    for(int i = 0; i < nums.size() - 2; i++) {
-		std::cout << i << std::endl;
-        for(int j = i+1; j < nums.size() - 1; j++) {
+    for(int i = 0; i < nums.size() - 1; i++) {
+		std::cout << nums.at(i) << std::endl;
+        for(int j = i+1; j < nums.size(); j++) {
+			std::cout << nums.at(j) << " ";
             if(nums.at(i) + nums.at(j) == target) {
                 test_vec.push_back(i);
                 test_vec.push_back(j);
-				std::cout << i << " " << j << std::endl;
+				std::cout << "Result:" << i << " " << j << std::endl;
                 return test_vec;
             }
         }
+		std::cout << "\n";
     }
     return test_vec;
 }
@@ -52,9 +54,7 @@ int main(int argc, char**argv) {
 	// MainGeek _mainGeek;
 	// Thread _objThread;
 	// Patterns _pattern;
-	std::vector<int> vec{2,7,11,15};
-	twoSum(vec, 6);
-
+	LeetCode _lcode;
 
 #ifdef USE_ML
 	// LinearRegression lg;

@@ -62,7 +62,8 @@ set(SOURCES
     ./Tasks/AdventOfCode/D6CustomCustoms.cpp
     ./Tasks/AdventOfCode/D7HandyHaversacks.cpp
     ./Tasks/GeekForGeeks/MainGeek.cpp
-
+    ./Tasks/LeetCode/LeetCode.cpp
+    ./Tasks/LeetCode/TwoSum.cpp
 )
 
 #link_directories(.)

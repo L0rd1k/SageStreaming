@@ -17,6 +17,7 @@ endif()
 
 list(APPEND SOURCES
     ML/LinearRegression.cpp
+    YOLO/YoloTranslator.cpp
 )
 
 
