@@ -64,17 +64,21 @@ set(SOURCES
     ./Tasks/GeekForGeeks/MainGeek.cpp
     ./Tasks/LeetCode/LeetCode.cpp
     ./Tasks/LeetCode/TwoSum.cpp
+    ./Tasks/LeetCode/AddTwoNumbers.cpp
 )
 
-find_package( OpenCV REQUIRED )
-include_directories( ${OpenCV_INCLUDE_DIRS})
-link_directories( ${OpenCV_LIB_DIR} )
 
-message(STATUS "OpenCV library status:")
-message(STATUS "    > config: ${OpenCV_DIR}")
-message(STATUS "    > version: ${OpenCV_VERSION}")
-message(STATUS "    > libraries: ${OpenCV_LIBS}")
-message(STATUS "    > include path: ${OpenCV_INCLUDE_DIRS}")
+if(WIN32)
+    find_package( OpenCV REQUIRED )
+    include_directories( ${OpenCV_INCLUDE_DIRS})
+    link_directories( ${OpenCV_LIB_DIR} )
+
+    message(STATUS "OpenCV library status:")
+    message(STATUS "    > config: ${OpenCV_DIR}")
+    message(STATUS "    > version: ${OpenCV_VERSION}")
+    message(STATUS "    > libraries: ${OpenCV_LIBS}")
+    message(STATUS "    > include path: ${OpenCV_INCLUDE_DIRS}")
+endif(WIN32)
 
 #link_directories(.)
 
