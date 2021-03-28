@@ -11,7 +11,7 @@ public:
 private:
 	int parseDataFile(std::string filePath) override;
 	void solutionPart1();
-	int solutionPart2();
+	void solutionPart2();
 	void getTokens();
     std::string token_lowest, token_highest, token_letter;
     const char* char_value;

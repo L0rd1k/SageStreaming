@@ -5,7 +5,9 @@
 #include "Tasks/GeekForGeeks/MainGeek.h"
 #include "Tasks/AdventOfCode/AdventOfCode.h"
 #include "Tasks/LeetCode/LeetCode.h"
+
 #include <chrono>
+
 
 #ifdef __linux__
 	#include "python3.5/Python.h"
@@ -50,11 +52,11 @@ std::vector<int> twoSum(std::vector<int>& nums, int target) {
 }
 
 int main(int argc, char**argv) {
-	// AdventOfCode _adventCode;
+	AdventOfCode _adventCode;
 	// MainGeek _mainGeek;
 	// Thread _objThread;
 	// Patterns _pattern;
-	LeetCode _lcode;
+	// LeetCode _lcode;
 
 #ifdef USE_ML
 	// LinearRegression lg;
@@ -71,12 +73,17 @@ int main(int argc, char**argv) {
 	 Py_Initialize();
 	 auto start = std::chrono::high_resolution_clock::now();
 	 const char* scriptPath = "D:\\GitProjects\\FreeTimeCraft\\_WorkScripts\\simplePlot.py";
+#ifdef __linux__
 	 FILE* PScriptFile = fopen(scriptPath, "r");
+#elif _WIN32 
+	 PyObject* object = Py_BuildValue("s", scriptPath);
+	 FILE* PScriptFile = _Py_fopen_obj(object, "r+");
+#endif
 	 if(PScriptFile) {
-	 	PyRun_SimpleFile(PScriptFile, "simplePlot.py");	
+	 	// PyRun_SimpleFile(PScriptFile, "simplePlot.py");	
 	 }
 	 auto stop = std::chrono::high_resolution_clock::now(); 
 	 auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start); 
-	// std::cout << duration.count() << std::endl; 
-	return 0;
+	 // std::cout << duration.count() << std::endl; 
+	 return 0;
 }

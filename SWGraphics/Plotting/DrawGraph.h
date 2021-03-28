@@ -7,6 +7,7 @@
     #include <GLFW/glfw3.h>
 #elif _WIN32
     #include "windows.h"
+    #include <gl/GLU.h>
 #endif
 
 class DrawGraph {

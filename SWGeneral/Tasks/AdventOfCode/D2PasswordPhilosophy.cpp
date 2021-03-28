@@ -30,9 +30,11 @@ void D2PasswordPhilosophy::solutionPart1() {
 	}
 }
 
-int D2PasswordPhilosophy::solutionPart2() {
-	bool b_1 = (int(value_password[std::stoi(token_lowest) - 1]) == static_cast<int>(*char_value));
-	bool b_2 = (int(value_password[std::stoi(token_highest) - 1]) == static_cast<int>(*char_value));			
+void D2PasswordPhilosophy::solutionPart2() {
+	int t_l = std::stoi(token_lowest);
+	int t_h = std::stoi(token_highest);
+	bool b_1 = (uint64_t(value_password[t_l - 1]) == static_cast<uint64_t>(*char_value));
+	bool b_2 = (uint64_t(value_password[t_h - 1]) == static_cast<uint64_t>(*char_value));
 	if (b_1 && !b_2) {
 		valid_password++;
 	} else if (!b_1 && b_2) {
