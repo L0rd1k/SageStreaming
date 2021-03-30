@@ -52,11 +52,11 @@ std::vector<int> twoSum(std::vector<int>& nums, int target) {
 }
 
 int main(int argc, char**argv) {
-	AdventOfCode _adventCode;
+	// AdventOfCode _adventCode;
 	// MainGeek _mainGeek;
 	// Thread _objThread;
 	// Patterns _pattern;
-	// LeetCode _lcode;
+	LeetCode _lcode;
 
 #ifdef USE_ML
 	// LinearRegression lg;

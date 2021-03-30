@@ -3,7 +3,9 @@
 
 LeetCode::LeetCode() {
     // TwoSum ts;
-    AddTwoNumbers atn;
+    // AddTwoNumbers atn;
+    // RemoveDuplicates rd;
+    RemoveElement re;
 }
 
 LeetCode::~LeetCode() {

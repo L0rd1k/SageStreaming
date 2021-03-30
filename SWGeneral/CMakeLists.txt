@@ -31,13 +31,15 @@ endif(UNIX)
 find_package(PythonLibs REQUIRED)
 include_directories(${PYTHON_INCLUDE_DIRS})
 
+#set(PYTHON_LIBRARIES "//usr//lib//python3.7")
+#set(PYTHON_INCLUDE_DIR "//usr//include//python3.7")
+
 if(PYTHONLIBS_FOUND)
-	message("	> Path to where Python.h is found: ${PYTHON_INCLUDE_DIR}")
+	message("	> Path to where Python.h is found: ${OpenCV_INCLUDE_DIRS}")
 	message("	> Path to the python library: ${PYTHON_LIBRARIES}")
 	message("	> Version of the Python libs found: ${PYTHONLIBS_VERSION_STRING}")
 	message("	> Path to the debug library (deprecated): ${PYTHON_DEBUG_LIBRARIES}")     
 endif()
-
 
 set(SOURCES
     ./UltimateMod.cpp
@@ -65,6 +67,8 @@ set(SOURCES
     ./Tasks/LeetCode/LeetCode.cpp
     ./Tasks/LeetCode/TwoSum.cpp
     ./Tasks/LeetCode/AddTwoNumbers.cpp
+    ./Tasks/LeetCode/RemoveDuplicates.cpp
+    ./Tasks/LeetCode/RemoveElement.cpp
 )
 
 
