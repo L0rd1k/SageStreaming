@@ -15,6 +15,8 @@ endif(WIN32)
 option(USE_ML "Machine learning support" ON)
 option(USE_LIB "Additional Library support" ON)
 option(USE_GRAPHICS "Additional OPENGL support" ON)
+option(USE_VIDEO "Additional FFMPEG support" ON)
+
 
 # Create .lib files for MSVC compiler on Windows platform.
 if(MSVC)
@@ -40,9 +42,15 @@ if(USE_GRAPHICS)
     add_subdirectory(SWGraphics)
 endif()
 
+if(USE_VIDEO)
+    add_definitions(-DUSE_VIDEO)
+    add_subdirectory(SWVideo)
+endif()
+
 message(STATUS " --- USE_ML: ${USE_ML}")
 message(STATUS " --- USE_LIB: ${USE_LIB}")
 message(STATUS " --- USE_GRAPHICS: ${USE_GRAPHICS}")
+message(STATUS " --- USE_VIDEO: ${USE_VIDEO}")
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")

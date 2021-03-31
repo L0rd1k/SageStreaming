@@ -5,7 +5,6 @@
 #include "Tasks/GeekForGeeks/MainGeek.h"
 #include "Tasks/AdventOfCode/AdventOfCode.h"
 #include "Tasks/LeetCode/LeetCode.h"
-
 #include <chrono>
 
 
@@ -33,6 +32,10 @@
 	#include "Plotting/DrawGraph.h"
 #endif
 
+#ifdef USE_VIDEO
+	#include "VideoProcessing.h"
+#endif
+
 std::vector<int> twoSum(std::vector<int>& nums, int target) {
     std::vector<int> test_vec;
     for(int i = 0; i < nums.size() - 1; i++) {
@@ -56,7 +59,11 @@ int main(int argc, char**argv) {
 	// MainGeek _mainGeek;
 	// Thread _objThread;
 	// Patterns _pattern;
-	LeetCode _lcode;
+	// LeetCode _lcode;
+
+#ifdef USE_VIDEO
+	VideoProcessing vidProc;
+#endif
 
 #ifdef USE_ML
 	// LinearRegression lg;

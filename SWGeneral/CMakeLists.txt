@@ -22,6 +22,11 @@ if(USE_GRAPHICS)
     set(SW_LIBRARIES SWGraphics)
 endif()
 
+if(USE_VIDEO)
+    include_directories(../SWVideo)
+    set(SW_LIBRARIES SWVideo)
+endif()
+
 if(UNIX)
    set(THREAD_LIB pthread) 
    find_package(PythonLibs REQUIRED)

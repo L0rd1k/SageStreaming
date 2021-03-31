@@ -15,7 +15,6 @@ void RemoveDuplicates::solution(std::vector<int> &nums) {
             }
         } 
         std::cout << "Counter: " << counter++ << std::endl; 
-        
         for(auto itr = 0; itr < counter; itr++) {
             std::cout << nums.at(itr) << " "; 
         }
