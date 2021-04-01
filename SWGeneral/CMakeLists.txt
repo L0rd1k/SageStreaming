@@ -40,10 +40,10 @@ include_directories(${PYTHON_INCLUDE_DIRS})
 #set(PYTHON_INCLUDE_DIR "//usr//include//python3.7")
 
 if(PYTHONLIBS_FOUND)
-	message("	> Path to where Python.h is found: ${OpenCV_INCLUDE_DIRS}")
-	message("	> Path to the python library: ${PYTHON_LIBRARIES}")
-	message("	> Version of the Python libs found: ${PYTHONLIBS_VERSION_STRING}")
-	message("	> Path to the debug library (deprecated): ${PYTHON_DEBUG_LIBRARIES}")     
+        message("   > Path to where Python.h is found: ${OpenCV_INCLUDE_DIRS}")
+        message("   > Path to the python library: ${PYTHON_LIBRARIES}")
+        message("   > Version of the Python libs found: ${PYTHONLIBS_VERSION_STRING}")
+        message("   > Path to the debug library (deprecated): ${PYTHON_DEBUG_LIBRARIES}")
 endif()
 
 set(SOURCES

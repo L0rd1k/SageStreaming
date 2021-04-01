@@ -16,6 +16,7 @@ option(USE_ML "Machine learning support" ON)
 option(USE_LIB "Additional Library support" ON)
 option(USE_GRAPHICS "Additional OPENGL support" ON)
 option(USE_VIDEO "Additional FFMPEG support" ON)
+option(USE_GUI "Additional QT support" ON)
 
 
 # Create .lib files for MSVC compiler on Windows platform.
@@ -47,10 +48,16 @@ if(USE_VIDEO)
     add_subdirectory(SWVideo)
 endif()
 
-message(STATUS " --- USE_ML: ${USE_ML}")
-message(STATUS " --- USE_LIB: ${USE_LIB}")
-message(STATUS " --- USE_GRAPHICS: ${USE_GRAPHICS}")
-message(STATUS " --- USE_VIDEO: ${USE_VIDEO}")
+if(USE_GUI)
+    add_definitions(-DUSE_GUI)
+    add_subdirectory(SWGUI)
+endif()
+
+message(STATUS "    > USE_ML: ${USE_ML}")
+message(STATUS "    > USE_LIB: ${USE_LIB}")
+message(STATUS "    > USE_GRAPHICS: ${USE_GRAPHICS}")
+message(STATUS "    > USE_VIDEO: ${USE_VIDEO}")
+message(STATUS "    > USE GUI: ${USE_GUI}")
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")

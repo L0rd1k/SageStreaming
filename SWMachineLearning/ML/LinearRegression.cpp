@@ -61,7 +61,6 @@ double slope, double intercept, double &deriv_slope, double &deriv_intercept) {
                 (std::pow(slope,2) * sxx) + 
                 (2 * slope * intercept * sum_X) + 
                 (n * std::pow(intercept,2));
-                
     cost /= n;
 
     deriv_slope = 2 * (-sxy + slope*sxx + intercept*sum_X) / n;

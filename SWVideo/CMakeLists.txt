@@ -12,6 +12,7 @@ list(APPEND SOURCES
 )
 
 if (UNIX)
+    message("Looking for FFmpeg...")
     set(FFMPEG_PATH /usr/local/ffmpeg_2.8.1)
     set(FFMPEG_LIB_PATH ${FFMPEG_PATH}/lib)
     find_library(AVCODEC_LIB avcodec PATHS ${FFMPEG_LIB_PATH} NO_DEFAULT_PATH)

@@ -1,6 +1,4 @@
-﻿// UltimateMod.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
-#include "Patterns/Patterns.h"
+﻿#include "Patterns/Patterns.h"
 #include "Threads/Thread.h"
 #include "Tasks/GeekForGeeks/MainGeek.h"
 #include "Tasks/AdventOfCode/AdventOfCode.h"

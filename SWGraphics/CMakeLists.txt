@@ -9,6 +9,7 @@ list(APPEND SOURCES
     ./Plotting/DrawGraph.cpp
 )
 
+message("Looking for OpenGL...")
 if (UNIX)
     find_package(OpenGL REQUIRED) # OPENGL
     find_package(GLUT REQUIRED)   # GLUT
