@@ -60,7 +60,7 @@ int main(int argc, char**argv) {
 	// LeetCode _lcode;
 
 #ifdef USE_VIDEO
-	VideoProcessing vidProc;
+	// VideoProcessing vidProc;
 #endif
 
 #ifdef USE_ML
@@ -68,7 +68,7 @@ int main(int argc, char**argv) {
 #endif
 	 
 #ifdef USE_GRAPHICS
-	// DrawGraph::createWindow(argc, argv);
+	DrawGraph::createWindow(argc, argv);
 #endif
 
 #ifdef USE_LIB
