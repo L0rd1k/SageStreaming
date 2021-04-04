@@ -32,21 +32,24 @@ class TCPServer:
                 self.__clients.remove(client)
                 client.close()
                 nickname = self.__nicknames[index]
-                self.broadcast(f'{nickname} left the chat!'.encode('ascii'))
+                self.broadcast('{} left!'.format(nickname).encode('ascii'))
                 self.__nicknames.remove(nickname)
                 break
 
     def receive(self):
         while True:
             client, address = self.__server.accept()
-            print(f"Connected with {str(address)}")
-            client.send('NICK'.encode('ascii'))
+            print("Connected with {}".format(str(address)))
+
+            client.send('NICKNAME'.encode('ascii'))
             nickname = client.recv(1024).decode('ascii')
             self.__nicknames.append(nickname)
             self.__clients.append(client)
-            print(f'Nickname of the client is {nickname}!')
-            self.broadcast(f'{nickname} joined the chat'.encode('ascii'))
+
+            print("Nickname of the client is {}".format(nickname))
+            self.broadcast("{} joined!".format(nickname).encode('ascii'))
             client.send('Connected to the server!'.encode('ascii'))
+            
             thread = threading.Thread(target=self.handle, args=(client,))
             thread.start()
 

@@ -21,7 +21,7 @@ class TCPClient:
         while True:
             try:
                 message = self.__client.recv(1024).decode('ascii')
-                if message == 'NICK':
+                if message == 'NICKNAME':
                     self.__client.send(self.__nickname.encode('ascii'))
                 else:
                     print(message)
@@ -32,14 +32,14 @@ class TCPClient:
 
     def write(self):
         while True:
-            message = f'{self.__nickname}:{input("")}'
+            message = '{}: {}'.format(self.__nickname, input(''))
             self.__client.send(message.encode('ascii'))
 
 
 tcpClient = TCPClient('127.0.0.1', 55555)
 
-receive_thread = threading.Thread(target=tcpClient.receive())
+receive_thread = threading.Thread(target = tcpClient.receive)
 receive_thread.start()
 
-write_thread = threading.Thread(target=tcpClient.write())
+write_thread = threading.Thread(target = tcpClient.write)
 write_thread.start()
