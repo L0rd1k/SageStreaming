@@ -22,7 +22,6 @@ set (UIS
 )
 
 set (RESOURCES
-
 )
 
 if(UNIX)

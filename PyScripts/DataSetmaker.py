@@ -23,14 +23,55 @@ class YOLODetector:
         self.__inpWidth, self.__inpHeight  = 416, 416     #Width of network's input image
         self.__classesNameFile = "/opt/data/Ilya/YOLO/FarmBuilding/objects.txt"
         self.__modelConfiguration = "/opt/data/Ilya/YOLO/FarmBuilding/navigation.cfg"
-        self.__modelWeights = "/opt/data/Ilya/YOLO/FarmBuilding/weights2/navigation_8000.weights"           
+        self.__modelWeights = "/opt/data/Ilya/YOLO/FarmBuilding/weights3/navigation_40000.weights"           
         self.__net = None
         self.__classes = None
         self.__colors = None
         self.__videoOut = None
         self.__testImage = cv.imread('/opt/data/Ilya/testImg.jpg',cv.IMREAD_GRAYSCALE)
-        # self.generateDataSetFromImage("/opt/data/Проекты/ОЭС-ОН/maps/protasovo/map17.jpg", "/opt/data/Ilya/Script/Images/", 1000)
-        self.__passYOLOConfig()                    
+        
+
+        # self.__randomMapSlicer("/opt/data/Проекты/ОЭС-ОН/maps/voskresensk/voskr_16.jpg", "/opt/data/Ilya/Script/Images6/")
+        self.__randomMapSlicer("/opt/data/Проекты/ОЭС-ОН/maps/protasovo/map17.jpg", "/opt/data/Ilya/Script/Images6/")
+        
+        # self.__cutImages()
+        
+        # self.generateDataSetFromImage("/opt/data/Проекты/ОЭС-ОН/maps/protasovo/map17.jpg", "/opt/data/Ilya/NaviagtionSeg/Images6/", 1000)
+        # self.generateDataSetFromImage("/opt/data/Проекты/ОЭС-ОН/maps/voskresensk/voskr_16.jpg", "/opt/data/Ilya/NaviagtionSeg/Images5/", 1000)
+        # self.__passYOLOConfig()                    
+
+    def __cutImages(self):
+        folder = "/home/ilya/COMB/"
+        for filename in os.listdir(folder):
+            print(filename)
+            image = cv.imread(folder + filename, cv.IMREAD_COLOR)
+            image = image[0 : image.shape[1], 0 : image.shape[1]]
+            cv.imshow("Image", image)
+            image = cv.resize(image, (512,512))
+            cv.imwrite('{0}{1}'.format('/opt/data/Ilya/NaviagtionSeg/Images7/', filename), image)
+            cv.waitKey(0)
+    
+    def __randomMapSlicer(self, mapPath, outPath):
+        originalMap = cv.imread(mapPath, cv.IMREAD_COLOR) 
+        hMap, wMap, cMap = originalMap.shape      
+        print("Height: {0}, Width: {1}, Channel: {2}".format(hMap, wMap, cMap))
+        
+        pos_H, pos_W = 200, 200
+        imageName = 0
+        while (pos_H < hMap - 200) and (pos_W < wMap - 200):
+            imageName+=1
+            img_size = random.randint(500, 800)
+            rand_step = random.randint(300, 400)
+            croppedImg = originalMap[pos_H : pos_H + img_size, pos_W : pos_W + img_size]
+            croppedImg = cv.resize(croppedImg, (512,512))
+            cv.imwrite('{0}{1}{2}'.format('/opt/data/Ilya/NaviagtionSeg/Images6/', imageName, '.jpg'), croppedImg)
+            pos_W = pos_W + rand_step
+            if pos_W > wMap - 200:
+                pos_W = 200
+                if pos_H < hMap - 200:
+                    pos_H = pos_H + rand_step
+                else:
+                    break
 
     #--------------------------------------
     # Generate random sized images from map
@@ -42,11 +83,13 @@ class YOLODetector:
         print("Height: {0}, Width: {1}, Channel: {2}".format(hMap, wMap, cMap))
         for elem in range(imagesNumber):
             rndX, rndY = random.randint(0, wMap - 1000), random.randint(0, hMap - 1000)
-            rndW, rndH = random.randint(500, 1000), random.randint(500, 1000)
+            rndW, rndH = random.randint(400, 700), random.randint(500, 700)
             print("rndX: {0}, rndY: {1}, rndW: {2}, rndH: {3}".format(rndX, rndY, rndW, rndH))
-            croppedImg = originalMap[rndY : rndY + rndH, rndX : rndX + rndW]
-            cv.imwrite('{0}{1}{2}'.format('/opt/data/Ilya/Script/Images/', elem, '.jpg'), croppedImg)
-    
+            croppedImg = originalMap[rndY : rndY + rndH, rndX : rndX + rndH]
+            croppedImg = cv.resize(croppedImg, (512,512))
+            cv.imwrite('{0}{1}{2}'.format('/opt/data/Ilya/NaviagtionSeg/Images6/', elem, '.jpg'), croppedImg)
+
+
     #--------------------------------------
     # Get classe's names from objects.txt file 
     #--------------------------------------
@@ -54,6 +97,7 @@ class YOLODetector:
         with open(self.__classesNameFile, 'rt') as f:
             self.__classes = f.read().rstrip('\n').split('\n')
         print(self.__classes)
+
 
     #--------------------------------------
     # Randomly generate color for bounding box of every given class
@@ -118,12 +162,11 @@ class YOLODetector:
                     testFrame = frame[y : y + h,x :x + w]
                 text = "{}: {:.4f}".format(self.__classes[classIDs[i]], confidences[i])
                 cv.putText(frame, text, (x, y - 5), cv.FONT_HERSHEY_SIMPLEX,0.5, color, 2)
+
+            cv.imshow("DETECTED: ", frame)    
             cv.imwrite('{0}{1}{2}'.format('./WrongDetect/', filename, ".jpg"), frame)
             if testFrame is not None:
-
                 self.__compare_image(testFrame, frame)
-
-
                 grayFrame = cv.cvtColor(testFrame, cv.COLOR_RGB2GRAY)
                 sift = cv.SIFT_create()
                 kp1, des1 = sift.detectAndCompute(self.__testImage,None)
@@ -135,34 +178,35 @@ class YOLODetector:
                     if m.distance < 0.75 * n.distance:
                         good.append([m])
                 img3 = cv.drawMatchesKnn(self.__testImage, kp1, grayFrame, kp2, good[:10], None, flags = cv.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
-                cv.imshow("SIFT", img3)
-                cv.waitKey(0)
             testFrame = None
+            
+        print(self.__currentRegime)
         if self.__currentRegime is False:
             self.__videoOut.write(frame)
-        cv.imshow("Image", frame)
-        cv.waitKey(0)
 
     #--------------------------------------
     # Detection by video input
     #--------------------------------------
     def __videoDetection(self):
-        cap = cv.VideoCapture("/opt/data/Ilya/run_earthMap2.mp4")
-        #cap = cv.VideoCapture("/opt/data/Ilya/YOLO/FarmBuilding/out/video_2_2021-03-25 20:56:36.avi")
-
+        # cap = cv.VideoCapture("/opt/data/Ilya/run_earthMap2.mp4")
+        # cap = cv.VideoCapture("/opt/data/Ilya/YOLO/FarmBuilding/out/video_2_2021-03-25 20:56:36.avi")
+        cap = cv.VideoCapture("/opt/data/Ilya/YOLO/FarmBuilding/out/testFly.mp4")
+    
         frameCounter = 0
         cap_width = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
         cap_height = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
-        cap_fps = int(cap.get(cv.CAP_PROP_FPS))
+        cap_fps = cap.get(cv.CAP_PROP_FPS)
         fourcc = cv.VideoWriter_fourcc(*'XVID')
-        self.__videoOut = cv.VideoWriter('/opt/data/Ilya/Script/navigation.avi', fourcc, cap_fps, (cap_width, cap_height))
+        self.__videoOut = cv.VideoWriter('navigation.avi', fourcc , cap_fps, (cap_width, cap_height))
 
         while cap.isOpened():
             ret, frame = cap.read()
-            (H, W) = frame.shape[:2]
-            frameCounter+=1
-            self.__runDetector(frame, W, H, frameCounter)
-            if cv.waitKey(1) & 0xFF == ord('q'):
+            if ret == True:
+                (H, W) = frame.shape[:2]
+                frameCounter+=1
+                self.__runDetector(frame, W, H, frameCounter)
+                cv.waitKey(1)
+            else:
                 break
         cap.release()
         self.__videoOut.release()
@@ -171,12 +215,13 @@ class YOLODetector:
     # Detection of image's dataset
     #--------------------------------------
     def __imageDetection(self):
-        folder = "/opt/data/Ilya/Script/Images"
+        folder = "/opt/data/Ilya/Script/Images3"
         for filename in os.listdir(folder):
             print(folder + "/" + filename)
             frame = cv.imread(folder + "/" + filename, cv.IMREAD_COLOR)
             (H, W) = frame.shape[:2]
             self.__runDetector(frame, W, H, filename)
+            cv.waitKey(0)
 
     #--------------------------------------
     # Main detector loop
@@ -207,10 +252,11 @@ class YOLODetector:
         return error
 
     def __compare_image(self, img1, img2):
-        img2 = cv.resize(img2, (img1.shape[1],img1.shape[0]))
-        m = self.__mse(img1, img2)
-        s = measure.compare_ssim(img1, img2)
-        print("MSE : {0}, SSIM: {1}".format(m, s))
+        # img2 = cv.resize(img2, (img1.shape[1],img1.shape[0]))
+        # m = self.__mse(img1, img2)
+        # s = measure.compare_ssim(img1, img2)
+        # print("MSE : {0}, SSIM: {1}".format(m, s))
+        pass
 
 
 if __name__ == "__main__":
