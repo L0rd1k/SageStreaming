@@ -75,10 +75,6 @@ func main() {
 	// Struct
 	cam := initCamera(8, "IRZ")
 	fmt.Println(cam.focalLength, " ", cam.name)
-
-	// Methods
-	o_cam := Camera{name: "EVS", focalLength: 8}
-	fmt.Println("Double focal: ", o_cam.doubleFocal())
 }
 
 func mapTester(testMap map[string]int) int {
@@ -104,8 +100,4 @@ func intSequence() func() int {
 
 func testPointer(i *int) {
 	*i++
-}
-
-func (t_cam *Camera) doubleFocal() int {
-	return 2 * t_cam.focalLength
 }
