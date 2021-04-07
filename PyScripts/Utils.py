@@ -12,6 +12,7 @@ def copyImages():
 
     for filename in os.listdir(folder):
         copyfile(src_directory + "/" + filename[0:-3] + "jpg", dst_directory + "/{0}.jpg".format(itr))
+       
         copyfile(folder + "/" + filename, "/home/ilya/baisNet/FoldersForTrain/val_labels" + "/{0}.png".format(itr))
         print(filename)
         itr+=1

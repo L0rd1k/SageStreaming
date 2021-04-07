@@ -55,7 +55,7 @@ func main() {
 
 	// // 3 Channels - Buffering
 
-	// test_chnl := make(chan string)
+	// test_chnl := make(chan string, 2)
 	// go channelsBuffering(&test_chnl)
 	// fmt.Println(<-test_chnl, <-test_chnl)
 	// ========================================================
@@ -98,37 +98,68 @@ func main() {
 	// }
 	// ========================================================
 
-	// 7 None-Blocking channel operations
-	messages := make(chan string)
-	signals := make(chan bool)
+	// // 7 None-Blocking channel operations
+	// messages := make(chan string)
+	// signals := make(chan bool)
+
+	// go func() {
+	// 	messages <- "Hello"
+	// }()
+
+	// time.Sleep(time.Second)
+
+	// select {
+	// case msg := <-messages:
+	// 	fmt.Println("received message", msg)
+	// default:
+	// 	fmt.Println("no message received")
+	// }
+
+	// msg := "hi"
+	// select {
+	// case messages <- msg:
+	// 	fmt.Println("sent message", msg)
+	// default:
+	// 	fmt.Println("no message sent")
+	// }
+
+	// select {
+	// case msg := <-messages:
+	// 	fmt.Println("received message", msg)
+	// case sig := <-signals:
+	// 	fmt.Println("received signal", sig)
+	// default:
+	// 	fmt.Println("no activity")
+	// }
+	// ========================================================
+
+	// 8 Close Channels
+
+	channel_1 := make(chan int, 5)
+	channel_2 := make(chan bool)
 
 	go func() {
-		messages <- "Hello"
+		for {
+			j, more := <-channel_1
+			if more {
+				fmt.Println("Received channel_1", j)
+			} else {
+				fmt.Println("Received all channel_1")
+				channel_2 <- true
+				return
+			}
+		}
 	}()
 
-	select {
-	case msg := <-messages:
-		fmt.Println("received message", msg)
-	default:
-		fmt.Println("no message received")
+	for j := 1; j <= 3; j++ {
+		channel_1 <- j
+		fmt.Println("sent channel_1", j)
 	}
 
-	msg := "hi"
-	select {
-	case messages <- msg:
-		fmt.Println("sent message", msg)
-	default:
-		fmt.Println("no message sent")
-	}
+	close(channel_1)
+	fmt.Println("sent all channel_1")
+	<-channel_2
+	// close(channel_1)
 
-	select {
-	case msg := <-messages:
-		fmt.Println("received message", msg)
-	case sig := <-signals:
-		fmt.Println("received signal", sig)
-	default:
-		fmt.Println("no activity")
-	}
-
-	//time.Sleep(time.Second)
+	// time.Sleep(time.Second)
 }
