@@ -9,7 +9,7 @@ import sys
 import argparse
 import numpy as np
 from skimage import measure
-
+from TimeProfiler import timeProfile
 
 class YOLODetector:
     #--------------------------------------
@@ -32,25 +32,30 @@ class YOLODetector:
         
 
         # self.__randomMapSlicer("/opt/data/Проекты/ОЭС-ОН/maps/voskresensk/voskr_16.jpg", "/opt/data/Ilya/Script/Images6/")
-        self.__randomMapSlicer("/opt/data/Проекты/ОЭС-ОН/maps/protasovo/map17.jpg", "/opt/data/Ilya/Script/Images6/")
+        #for elem in range(20):
+        #    self.__randomMapSlicer("/opt/data/Проекты/ОЭС-ОН/maps/protasovo/map17.jpg", "/opt/data/Ilya/Script/Images6/")
         
-        # self.__cutImages()
+        for elem in range(50):
+            self.__cutImages()
         
         # self.generateDataSetFromImage("/opt/data/Проекты/ОЭС-ОН/maps/protasovo/map17.jpg", "/opt/data/Ilya/NaviagtionSeg/Images6/", 1000)
         # self.generateDataSetFromImage("/opt/data/Проекты/ОЭС-ОН/maps/voskresensk/voskr_16.jpg", "/opt/data/Ilya/NaviagtionSeg/Images5/", 1000)
-        # self.__passYOLOConfig()                    
-
+        # self.__passYOLOConfig()   
+        #                  
+    @timeProfile('__cutImages time: %d ms')
     def __cutImages(self):
-        folder = "/home/ilya/COMB/"
+        folder = "/media/ilya/SSDDisk/Datasets/FarmBuilding/NEG/"
         for filename in os.listdir(folder):
-            print(filename)
+            # print(filename)
             image = cv.imread(folder + filename, cv.IMREAD_COLOR)
             image = image[0 : image.shape[1], 0 : image.shape[1]]
-            cv.imshow("Image", image)
+            # cv.imshow("Image", image)
             image = cv.resize(image, (512,512))
-            cv.imwrite('{0}{1}'.format('/opt/data/Ilya/NaviagtionSeg/Images7/', filename), image)
-            cv.waitKey(0)
+            cv.imwrite('{0}{1}'.format('/opt/data/Ilya/Images/', filename), image)
+            # cv.waitKey(0)
     
+
+    @timeProfile('__randomMapSlicer time: %d ms')
     def __randomMapSlicer(self, mapPath, outPath):
         originalMap = cv.imread(mapPath, cv.IMREAD_COLOR) 
         hMap, wMap, cMap = originalMap.shape      
