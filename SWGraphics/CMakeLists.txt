@@ -22,15 +22,15 @@ if (UNIX)
 endif (UNIX)
 
 if (WIN32) 
-    find_package(OpenGL REQUIRED) # OPENGL
-    find_package(glfw3 REQUIRED)    
-    set(GLFWInclude "C:\\Program Files (x86)\\GLFW\\include\\GLFW\\")
-    find_library(GLFW glfw3 PATHS "C:\\Program Files (x86)\\GLFW\\lib")
-    if(NOT ${OPENGL_FOUND})
-        message("OPENGL not found")
-    endif()
-    include_directories(${OPENGL_INCLUDE_DIRS} ${GLFWInclude})
-    list(APPEND LIBRARIES ${OPENGL_LIBRARIES} ${GLFW})
+    #find_package(OpenGL REQUIRED) # OPENGL
+    #find_package(glfw3 REQUIRED)    
+    #set(GLFWInclude "C:\\Program Files (x86)\\GLFW\\include\\GLFW\\")
+    #find_library(GLFW glfw3 PATHS "C:\\Program Files (x86)\\GLFW\\lib")
+    #if(NOT ${OPENGL_FOUND})
+    #    message("OPENGL not found")
+    #endif()
+    #include_directories(${OPENGL_INCLUDE_DIRS} ${GLFWInclude})
+    #list(APPEND LIBRARIES ${OPENGL_LIBRARIES} ${GLFW})
 endif (WIN32)
 
 
