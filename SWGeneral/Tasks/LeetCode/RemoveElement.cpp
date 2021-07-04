@@ -10,6 +10,7 @@ RemoveElement::~RemoveElement() {
 }
 
 int RemoveElement::solution(std::vector<int>& nums, int val) {
+
     int counter = 0;
     int pastePos = 0;
     for(int i = 0; i < nums.size(); i++) {
