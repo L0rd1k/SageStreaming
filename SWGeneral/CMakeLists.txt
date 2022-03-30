@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.10.0)
 
 project(SWGeneral)
 
@@ -60,20 +60,6 @@ set(SOURCES
     ./Patterns/Creational/AbstractFactory/FrenchArmy.cpp
     ./Patterns/Creational/AbstractFactory/FrenchCannon.cpp
     ./Patterns/Creational/AbstractFactory/FrenchSwordsMan.cpp
-    ./Tasks/AdventOfCode/AdventOfCode.cpp
-    ./Tasks/AdventOfCode/D1ReportRepair.cpp
-    ./Tasks/AdventOfCode/D2PasswordPhilosophy.cpp
-    ./Tasks/AdventOfCode/D3TobogganTrajectory.cpp
-    ./Tasks/AdventOfCode/D4PassportProcessing.cpp
-    ./Tasks/AdventOfCode/D5BinaryBoarding.cpp
-    ./Tasks/AdventOfCode/D6CustomCustoms.cpp
-    ./Tasks/AdventOfCode/D7HandyHaversacks.cpp
-    ./Tasks/GeekForGeeks/MainGeek.cpp
-    ./Tasks/LeetCode/LeetCode.cpp
-    ./Tasks/LeetCode/TwoSum.cpp
-    ./Tasks/LeetCode/AddTwoNumbers.cpp
-    ./Tasks/LeetCode/RemoveDuplicates.cpp
-    ./Tasks/LeetCode/RemoveElement.cpp
 )
 
 
@@ -89,7 +75,6 @@ if(WIN32)
     message(STATUS "    > include path: ${OpenCV_INCLUDE_DIRS}")
 endif(WIN32)
 
-#link_directories(.)
 
 add_executable (sw ${SOURCES})
 

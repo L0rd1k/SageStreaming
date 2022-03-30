@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.10.0)
 
 project(SW)
 
@@ -16,7 +16,7 @@ option(USE_ML "Machine learning support" ON)
 option(USE_LIB "Additional Library support" ON)
 option(USE_GRAPHICS "Additional OPENGL support" ON)
 option(USE_VIDEO "Additional FFMPEG support" ON)
-option(USE_GUI "Additional QT support" OFF)
+option(USE_GUI "Additional QT support" ON)
 
 
 # Create .lib files for MSVC compiler on Windows platform.
