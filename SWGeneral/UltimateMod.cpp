@@ -19,16 +19,13 @@
 #endif
 
 #ifdef USE_LIB
-	#include "Utils/Log.h"
+	#include "utils/Log.h"
 #endif
 
 #ifdef USE_GRAPHICS
 	#include "Plotting/DrawGraph.h"
 #endif
 
-#ifdef USE_VIDEO
-	#include "VideoProcessing.h"
-#endif
 
 int main(int argc, char**argv) {
 

@@ -8,8 +8,14 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 endif()
 
 list(APPEND SOURCES
-    VideoProcessing.cpp
+    ./ffmpeg/CameraFFmpeg.cpp
+    ./ffmpeg/FFmpegUtils.cpp
 )
+
+if(USE_LIB)
+    include_directories(../SWLib)
+    set(LIBRARIES SWLib)
+endif()
 
 if (UNIX)
     message("Looking for FFmpeg...")
@@ -31,6 +37,7 @@ if (UNIX)
     link_directories(${FFMPEG_LIB_PATH})
     list(APPEND LIBRARIES ${AVCODEC_LIB} ${AVFORMAT_LIB} ${AVUTIL_LIB} ${SWSCALE_LIB})
 endif(UNIX)
+
 
 add_library(SWVideo SHARED ${SOURCES})
 target_link_libraries(SWVideo ${LIBRARIES})
