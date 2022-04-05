@@ -16,9 +16,13 @@ struct DataHeader {
 template <typename T>
 struct DataCore {
 public:
-    DataCore(std::vector<unsigned char> data) {
-        _data = std::make_shared<std::vector<unsigned char>>(data);
+    DataCore() {
     }
+
+    DataCore(std::vector<unsigned char> data) {
+        _data = std::make_shared<std::vector<unsigned char> >(data);
+    }
+
     unsigned char* dataRaw() const {
         return _data->data();
     }
@@ -52,6 +56,7 @@ public:
         return _headSize;
     }
 
+
     void memAllocate(int size) {
         int requiredSize = size + _headSize;
         if(requiredSize > (int)_data->size()) {
@@ -65,9 +70,13 @@ public:
         header().size = requiredSize;
     }
 
+    void setBytes(unsigned char* bytes, uint32_t size) {
+        memAllocate(size);
+        memcpy(data(), bytes, size);
+    }
 
 private:
-    const uint32_t _headSize;
+    const uint32_t _headSize = sizeof(T);
     std::shared_ptr<std::vector<unsigned char> > _data = 
         std::make_shared<std::vector<unsigned char> >();
 };

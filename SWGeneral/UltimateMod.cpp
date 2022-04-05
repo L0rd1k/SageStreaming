@@ -2,32 +2,16 @@
 #include "Threads/Thread.h"
 #include <chrono>
 
-#ifdef __linux__
-	#include <python3.7m/Python.h>
-#elif _WIN32
-	#ifdef _DEBUG
-		#undef _DEBUG
-		#include <Python.h>
-	#define _DEBUG
-	#else
-		#include <Python.h>
-	#endif
-#endif
+#include "callbacks/Signal.h"
 
-#ifdef USE_ML
-	#include "ML/LinearRegression.h"
-#endif
-
-#ifdef USE_LIB
-	#include "utils/Log.h"
-#endif
-
-#ifdef USE_GRAPHICS
-	#include "Plotting/DrawGraph.h"
-#endif
-
+void testFunction(int val) {
+	std::cout << val << std::endl;
+}
 
 int main(int argc, char**argv) {
+	Signal<int> _eventMy;
+	_eventMy.add(&testFunction);
+	_eventMy.emit(5);
 
-	 return 0;
+	return 0;
 }

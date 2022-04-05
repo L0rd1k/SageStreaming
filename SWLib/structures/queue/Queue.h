@@ -2,58 +2,35 @@
 
 #include <atomic>
 #include <mutex>
+#include <iostream>
 
 template <typename T, int SIZE>
 class Queue {
-    Queue() {
-        _data = new T[SIZE];
-        _capacity = SIZE;
-        _count = 0;
-        _front = 0;
-        _back = -1
+public:
+    Queue() : 
+    _peak(-1), 
+    _front(0) {
+    };
+
+    T& peak() {
+        return _data[_peak];
     }
 
-    virtual ~Queue() {
-    } 
-
-    T* front(T item) {
+    const T& peak() const {
+        return _data[_peak];
     }
 
-    T* back();
-
-    bool empty() {
-        return size() == 0;
+    T& front() {
+        return _data[_front];
     }
 
-    size_t size() {
-        return _count;
+    const T& front() const {
+        return _data[_front];
     }
 
-    bool full() {
-        return size() == _capacity;
-    }
-
-    bool push(T item) {
-        if(!full()) {
-           _back = (_back + 1) % _capacity;
-           _data[_back] = item;
-           _count++;
-            return true;
-        }
-        return false;
-    }
-
-    bool pop() {
-        if(!empty()) {
-            
-        }
-    }
-    bool swap();
 protected:
-    T *_data;
-private:
-    size_t _capacity;
-    size_t _count;
-    size_t _front;
-    size_t _back;
+    T _data[SIZE]; 
+    std::mutex _locker;
+    std::atomic<size_t> _peak;
+    std::atomic<size_t> _front;
 };

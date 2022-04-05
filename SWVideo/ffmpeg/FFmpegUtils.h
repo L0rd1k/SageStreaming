@@ -38,6 +38,11 @@ enum class RtspCameraState {
     Stopped = 15
 };
 
+struct TrimmedAVPacket {
+    uint8_t* data;
+    int size;
+};
+
 const int timeoutConnection = 15000;
 const int timeoutStream = 5000;
 const int timeoutTeardown = 1000;

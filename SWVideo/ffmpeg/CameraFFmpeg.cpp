@@ -4,7 +4,9 @@ CameraFFmpeg::CameraFFmpeg(std::string url) :
 _url(url),
 _isStreaming(false), 
 _rtspTransportType(RtspTransportType::Udp),
-_blockTimerExp(false) {
+_blockTimerExp(false), 
+_previousPacket(0),
+_buffer(1000) {
     initializeFFmpeg();
 }
 
@@ -32,9 +34,13 @@ bool CameraFFmpeg::isPlaying() {
 void CameraFFmpeg::mainLoop() {
     if(prepareContext() && openContext()) {
         while(_isStreaming && receiveContext()) {
-            
+            _blockTimer.restart();
         }
     }
+    if(!isPlaying()) {
+        _rtspState = RtspCameraState::Stopped;
+    }
+    closeContext();
 }
 
 bool CameraFFmpeg::receiveContext() {
@@ -52,15 +58,16 @@ bool CameraFFmpeg::receiveContext() {
 
     av_free_packet(&packet);
     av_init_packet(&packet);
+    return true;
 }
 
 bool CameraFFmpeg::handleVideoFrame(AVStream* stream, AVPacket* packet) {
     std::lock_guard<std::mutex> locker(_mutex);
-    ImageFomat imgFormat = ImageFomat::Undefined;
+    img::ImageFormat imgFormat = img::ImageFormat::Undefined;
     if(stream->codec->codec_id == AV_CODEC_ID_MJPEG) {
-        imgFormat = ImageFomat::JPEG;        
+        imgFormat = img::ImageFormat::JPEG;        
     } else if (stream->codec->codec_id == AV_CODEC_ID_H264) {
-        imgFormat = ImageFomat::H264;
+        imgFormat = img::ImageFormat::H264;
     } else {
         Log() << "[FFMPEG] Unsupported image format" + std::to_string(stream->codec->codec_id);
         return false;
@@ -69,8 +76,43 @@ bool CameraFFmpeg::handleVideoFrame(AVStream* stream, AVPacket* packet) {
     if(!packet->data || !packet->size) {
         return false;
     }
+    _previousPacket = packet->pts;
+    
+    img::swImage& image = _buffer.next();
 
+    if(imgFormat == img::ImageFormat::JPEG) {
+        TrimmedAVPacket trimmed = trimAVPacket(packet);
+        image.setBytes(trimmed.data, trimmed.size);
+    } else {
+        image.setBytes(packet->data, packet->size);
+    }
 
+    image->imgFormat = imgFormat;
+    image->imgSourceType = img::ImageSource::RTSP;
+    image->imgSize = um::Size<int>(stream->codec->width,
+                                   stream->codec->height);
+
+    return true;
+}
+
+TrimmedAVPacket CameraFFmpeg::trimAVPacket(AVPacket* packet) {
+    int startOffset = 0;
+    int endOffset = 0;
+    for(int i = 0; i < packet->size - 1; i++) {
+        uint8_t curr = packet->data[i];
+        uint8_t next = packet->data[i + 1];
+        if(curr == 0xFF && next == 0xD8) {
+            startOffset = i;
+        } 
+        if(curr == 0xFF && next == 0xD9) { // jpeg end sequence
+            endOffset = i;
+            break;
+        }
+        TrimmedAVPacket trimmed;
+        trimmed.data = packet->data + startOffset;
+        trimmed.size = endOffset - startOffset + 2;
+        return trimmed;
+    }
 }
 
 
@@ -130,6 +172,15 @@ bool CameraFFmpeg::openContext() {
     return true;
 }
 
+bool CameraFFmpeg::closeContext() {
+    _blockTimerTimeout = cam::ffmpeg::timeoutTeardown;
+    _blockTimer.restart();
+    avformat_close_input(&_context);
+    avformat_free_context(_context);
+    _context = NULL;
+    _previousPacket = 0;
+}
+
 void CameraFFmpeg::handleError(int resCode) {
     std::string error;
     if(_blockTimerExp) {
@@ -151,4 +202,5 @@ std::string CameraFFmpeg::getUrl() {
 }
 
 CameraFFmpeg::~CameraFFmpeg() {
+    stop();
 }
