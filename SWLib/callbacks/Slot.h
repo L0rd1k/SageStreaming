@@ -1,38 +1,28 @@
-#pragma once
+#pragma once 
 
-#include <iostream>
-
-template<class C, class R, class ...Args>
-using ClassMethod = R (C::*)(Args...);
+#include <functional>
 
 template<typename RET, typename ...Args>
-class Slot : public SlotBase {
-public:    
-    Slot(std::function<RET(Args...)> func) :
-        _func(func) {
+class Slot {
+public:
+    Slot(std::function<RET(Args...)> callback) {
+        _callback = callback;
     };
 
-    template<typename CLS1, typename CLS2>
-    Slot(CLS1 *instance,
-            ClassMethod<CLS2, RET, Args...> method) :
-        _func([this, instance, method](Args&&... args){
-            return (instance->*method)(std::forward<Args>(args)...);
+    template<typename Class1, typename Class2>
+    Slot(Class1 *inst, 
+        RET(Class2::*callback)(Args...)) :
+        _callback([this, inst, callback](Args&&... args) {
+            return (inst->*callback)(std::forward<Args>(args)...);
         }) {
     };
 
-    virtual ~Slot() override {};
-    
-    virtual void operator()(Args&&... args){
-        try {
-            _func(std::forward<Args>(args)...);
-        } catch (std::exception &e){
-            std::cerr << "Error: " << e.what() << std::endl;
-            throw e;
-        }
+    virtual ~Slot() {};
+
+    void operator()(Args&&... args) {
+        _callback(std::forward<Args>(args)...);
     };
 
-
 protected:
-    std::function<void(Args...)> _func;
+    std::function<RET(Args...)> _callback;
 };
-

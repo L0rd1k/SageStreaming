@@ -1,21 +1,20 @@
 #pragma once
 
-#include "SlotList.h"
-#include "SlotOwned.h"
+#include "CallbackList.h"
 
-
-template<typename ...Args>
-class Signal : public SlotList<void, Args...> {
+template <class ...Args>
+class Signal : public CallbackList<void, Args...> {
 public:
-    Signal() : SlotList<void, Args...>(){};
-    virtual ~Signal() {};
+    Signal() : CallbackList<void, Args...>() {};
+
+    virtual ~Signal()  {};
+
     void emit(Args&&... args) {
-        std::lock_guard<std::mutex>(Signal::_locker);
-        const std::vector<SlotOwned<void, Args...>*> &list = Signal::getSlots();
-        
-        for(size_t i = 0; i < list.size(); i++) {
-            SlotOwned<void, Args...>* action = list[i];
+        std::lock_guard<std::mutex>(Signal::locker);
+        const auto& list = Signal::getActiveSlotsList();
+        for(const auto& action : list) {
             (*action)(std::forward<Args>(args)...);
         }
     }
+
 };
