@@ -1,10 +1,8 @@
 #pragma once
 
-#include "image/Image.h"
-
 enum class DataType {
     Image = 0,
-    Undefined = 255
+    Undefined = 255,
 };
 
 
@@ -28,4 +26,11 @@ namespace ffmpeg {
     const int timeoutStream = 5000;
     const int timeoutTeardown = 1000;
 };
+
+enum class CamTypes {
+    FFMPEG = 0,
+    OPENCV = 1,
+    Undefined = 255
+};
+
 };

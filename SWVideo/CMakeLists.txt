@@ -3,6 +3,11 @@ cmake_minimum_required(VERSION 3.10)
 project(SWVideo)
 include_directories(.)
 
+if(USE_LIB)
+    include_directories(../SWLib)
+    set(LIBRARIES SWLib)
+endif()
+
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 endif()
@@ -10,12 +15,8 @@ endif()
 list(APPEND SOURCES
     ./ffmpeg/CameraFFmpeg.cpp
     ./ffmpeg/FFmpegUtils.cpp
+    ./cameras/CamerasHandler.cpp
 )
-
-if(USE_LIB)
-    include_directories(../SWLib)
-    set(LIBRARIES SWLib)
-endif()
 
 if (UNIX)
     message("Looking for FFmpeg...")
@@ -37,7 +38,6 @@ if (UNIX)
     link_directories(${FFMPEG_LIB_PATH})
     list(APPEND LIBRARIES ${AVCODEC_LIB} ${AVFORMAT_LIB} ${AVUTIL_LIB} ${SWSCALE_LIB})
 endif(UNIX)
-
 
 add_library(SWVideo SHARED ${SOURCES})
 target_link_libraries(SWVideo ${LIBRARIES})

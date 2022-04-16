@@ -8,7 +8,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 endif()
 
 list(APPEND SOURCES
-    ./utils/Log.cpp
+    ./test/Test.cpp
 )
 
 add_library(SWLib SHARED ${SOURCES})

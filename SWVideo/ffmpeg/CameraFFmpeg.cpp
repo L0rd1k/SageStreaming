@@ -1,8 +1,8 @@
 #include "CameraFFmpeg.h"
 
 CameraFFmpeg::CameraFFmpeg(std::string url) :
+CamerasHandler(),
 _url(url),
-_isStreaming(false), 
 _rtspTransportType(RtspTransportType::Udp),
 _blockTimerExp(false), 
 _previousPacket(0),
@@ -22,6 +22,9 @@ bool CameraFFmpeg::start() {
 
 bool CameraFFmpeg::stop() {
     if(_camThread.joinable()) {
+        if(_context){
+            avformat_preclose_input(&_context);
+        }
         _isStreaming = false;
         _camThread.join();
     }
@@ -92,6 +95,7 @@ bool CameraFFmpeg::handleVideoFrame(AVStream* stream, AVPacket* packet) {
     image->imgSize = um::Size<int>(stream->codec->width,
                                    stream->codec->height);
 
+    triggerImage(image);
     return true;
 }
 
