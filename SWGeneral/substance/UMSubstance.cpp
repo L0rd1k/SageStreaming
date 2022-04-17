@@ -26,8 +26,10 @@ bool UMSubstance::enableSubstance() {
     if(!isEnabled()) {
         _inProcess = true;
         if(!_camera->isStreaming()) {
-            _camera->start();
-            return true;
+            Log() << "Start: " << _id;
+            if(_camera->start()) {
+                return true;
+            }
         }
     }
     return false;

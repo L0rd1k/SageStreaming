@@ -38,7 +38,8 @@ bool CameraFFmpeg::isPlaying() {
 void CameraFFmpeg::mainLoop() {
     if(prepareContext() && openContext()) {
         Log() << "[FFMPEG] Prepared main loop";
-        while(_isStreaming && receiveContext()) {
+        Log() << std::this_thread::get_id();
+        while(isStreaming() && receiveContext()) {
             _blockTimer.restart();
         }
     }
@@ -69,10 +70,10 @@ bool CameraFFmpeg::receiveContext() {
 void CameraFFmpeg::performFpsDelay(AVStream* stream, AVPacket* packet) {
     int delay = 0;
     if(packet->pts == AV_NOPTS_VALUE) {
-        Log() << stream->time_base.num  << " / " << stream->time_base.den;
+        // Log() << stream->time_base.num  << " / " << stream->time_base.den;
         delay = 1000000 *  stream->time_base.num / stream->time_base.den;
     } else if(_previousPacket > 0) {
-        Log() << "(" << packet->pts << "-" << _previousPacket << ")" <<  " * " << 1000000 << " * " << stream->time_base.num << " / " << stream->time_base.den;
+        // Log() << "(" << packet->pts << "-" << _previousPacket << ")" <<  " * " << 1000000 << " * " << stream->time_base.num << " / " << stream->time_base.den;
         delay = (packet->pts - _previousPacket) * 1000000 *  stream->time_base.num / stream->time_base.den;
     }
     if(delay > 0) {
@@ -213,7 +214,6 @@ bool CameraFFmpeg::openContext() {
         }
     }
 
-    Log() << _videoStream->nb_frames;
     _blockTimerTimeout = cam::ffmpeg::timeoutStream;
     return true;
 }

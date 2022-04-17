@@ -3,8 +3,11 @@
 #include <atomic>
 
 #include "definitions/LocalDefinitions.h"
+
 #include "utils/Log.h"
+
 #include "image/Image.h"
+#include "image/ImageQueue.h"
 
 class CamerasHandler {
 public:
@@ -16,4 +19,5 @@ public:
 protected:
     void triggerImage(img::swImage &image); 
     std::atomic<bool> _isStreaming;
+    ImageQueue _queue;
 };
