@@ -11,12 +11,15 @@ extern "C" {
     #include <libavformat/avformat.h>
     #include <libavformat/avio.h>
     #include <libavutil/opt.h>
+    #include <libavdevice/avdevice.h>
 };
 
 enum class RtspTransportType {
     Tcp = 0,
     Udp = 1,
-    Inderfined = 255
+    V4l = 2,
+    Vid = 3,
+    Indefined = 255
 };
 
 enum class RtspCameraState {

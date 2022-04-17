@@ -11,6 +11,7 @@ namespace img {
     enum class ImageFormat {
         JPEG = 0,
         H264 = 1,
+        RAW = 2,
         Undefined = 255 
     };
     enum class ImageSource {
@@ -18,19 +19,23 @@ namespace img {
         DISK = 1,
         Undefined = 255
     };
+
 };
 
 namespace cam {
-namespace ffmpeg {
-    const int timeoutConnect = 15000;
-    const int timeoutStream = 5000;
-    const int timeoutTeardown = 1000;
+    namespace ffmpeg {
+        const int timeoutConnect = 15000;
+        const int timeoutStream = 5000;
+        const int timeoutTeardown = 1000;
+    };
+
+    enum class CamTypes {
+        FFMPEG = 0,
+        OPENCV = 1,
+        Undefined = 255
+    };
+
 };
 
-enum class CamTypes {
-    FFMPEG = 0,
-    OPENCV = 1,
-    Undefined = 255
-};
-
-};
+const char* toString(img::ImageFormat format);
+const char* toString(img::ImageSource source);

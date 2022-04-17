@@ -9,6 +9,7 @@ endif()
 
 list(APPEND SOURCES
     ./test/Test.cpp
+    ./definitions/LocalDefinitions.cpp
 )
 
 add_library(SWLib SHARED ${SOURCES})

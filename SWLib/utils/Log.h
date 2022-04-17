@@ -7,21 +7,12 @@
 #include <ctime>
 
 
-enum class Status {
-    DEFAULT = 0,
-    WARNING = 1,
-    ERROR = 2,
-    SUCCES = 3,
-};
-
-
 class Log {
 public:
     Log() = default;
-    Log(std::string color) {
-    }
 
     virtual ~Log() {
+        std::cout << std::endl;
     }
 
 public:
@@ -33,9 +24,7 @@ public:
     }
     template<class T>
     Log& operator<<(T value) {
-        // std::cout << "\033[" << (int)color_code << "m" << value;
-        // std::cout << "\033[" << 39 << "m";
-        std::cout << value << std::endl;
+        std::cout << value;
         return *this;
     }
 
@@ -50,18 +39,3 @@ public:
 };
 
 #endif  /* LOG_H */
-
-inline constexpr std::uint32_t hashing_fnv1a(const char* str, std::uint32_t hash = 2166136261UL) {
-    if(hashing_fnv1a(str + 1, (hash ^ *str) * 16777619ULL)) {
-        return *str;  
-    } 
-    return hash;
-}
-
-uint64_t constexpr mix(char m, uint64_t s) {
-  return ((s << 7) + ~(s >> 3)) + ~m;
-}
- 
-uint64_t constexpr hash(const char * m) {
-  return (*m) ? mix(*m, hash(m+1)) : 0;
-}

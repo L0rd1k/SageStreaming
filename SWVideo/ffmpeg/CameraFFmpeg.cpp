@@ -1,9 +1,9 @@
 #include "CameraFFmpeg.h"
 
-CameraFFmpeg::CameraFFmpeg(std::string url) :
+CameraFFmpeg::CameraFFmpeg(std::string url, RtspTransportType type) :
 CamerasHandler(),
 _url(url),
-_rtspTransportType(RtspTransportType::Udp),
+_rtspTransportType(type),
 _blockTimerExp(false), 
 _previousPacket(0),
 _buffer(1000) {
@@ -36,6 +36,7 @@ bool CameraFFmpeg::isPlaying() {
 
 void CameraFFmpeg::mainLoop() {
     if(prepareContext() && openContext()) {
+        Log() << "[FFMPEG] Prepared main loop";
         while(_isStreaming && receiveContext()) {
             _blockTimer.restart();
         }
@@ -64,6 +65,21 @@ bool CameraFFmpeg::receiveContext() {
     return true;
 }
 
+void CameraFFmpeg::performFpsDelay(AVStream* stream, AVPacket* packet) {
+    int delay = 0;
+    if(packet->pts == AV_NOPTS_VALUE) {
+        Log() << stream->time_base.num  << " / " << stream->time_base.den;
+        delay = 1000000 *  stream->time_base.num / stream->time_base.den;
+    } else if(_previousPacket > 0) {
+        Log() << "(" << packet->pts << "-" << _previousPacket << ")" <<  " * " << 1000000 << " * " << stream->time_base.num << " / " << stream->time_base.den;
+        delay = (packet->pts - _previousPacket) * 1000000 *  stream->time_base.num / stream->time_base.den;
+    }
+    if(delay > 0) {
+        usleep(delay);
+    }   
+    _previousPacket = packet->pts;
+}
+
 bool CameraFFmpeg::handleVideoFrame(AVStream* stream, AVPacket* packet) {
     std::lock_guard<std::mutex> locker(_mutex);
     img::ImageFormat imgFormat = img::ImageFormat::Undefined;
@@ -71,6 +87,8 @@ bool CameraFFmpeg::handleVideoFrame(AVStream* stream, AVPacket* packet) {
         imgFormat = img::ImageFormat::JPEG;        
     } else if (stream->codec->codec_id == AV_CODEC_ID_H264) {
         imgFormat = img::ImageFormat::H264;
+    } else if (stream->codec->codec_id == AV_CODEC_ID_RAWVIDEO) {
+        imgFormat = img::ImageFormat::RAW;
     } else {
         Log() << "[FFMPEG] Unsupported image format" + std::to_string(stream->codec->codec_id);
         return false;
@@ -79,8 +97,10 @@ bool CameraFFmpeg::handleVideoFrame(AVStream* stream, AVPacket* packet) {
     if(!packet->data || !packet->size) {
         return false;
     }
-    _previousPacket = packet->pts;
-    
+
+
+    performFpsDelay(stream, packet);
+
     img::swImage& image = _buffer.next();
 
     if(imgFormat == img::ImageFormat::JPEG) {
@@ -126,11 +146,12 @@ int blockingOperationCallback(void *sender) {
 }
 
 bool CameraFFmpeg::blockingTimerExpired() {
-    _blockTimerExp = _blockTimer.expired(_blockTimerExp);
+    _blockTimerExp = _blockTimer.expired(_blockTimerTimeout);
     return !_isStreaming || _blockTimerExp;
 }
 
 bool CameraFFmpeg::prepareContext() {
+    Log() << "[FFMPEG] prepare context";
     _isStreaming = true;
     _rtspState = RtspCameraState::Undefined;
 
@@ -143,9 +164,14 @@ bool CameraFFmpeg::prepareContext() {
 
     AVDictionary *dict = nullptr;
     if(_rtspTransportType == RtspTransportType::Tcp) {
+        Log() << "[FFMPEG] TCP";
         av_dict_set(&dict, "rtps_transport", "tcp", 0);    
     } else if (_rtspTransportType == RtspTransportType::Udp) {
+        Log() << "[FFMPEG] UDP";
         av_dict_set(&dict, "rtps_transport", "udp", 0);   
+    } else if (_rtspTransportType == RtspTransportType::V4l) {
+        Log() << "[FFMPEG] V4L";
+        av_dict_set(&dict, "framerate", "25", 0);
     } else {
         Log() << "[FFMpeg] Unknown transport type";
         return false;
@@ -153,6 +179,7 @@ bool CameraFFmpeg::prepareContext() {
 
     int resCode = avformat_open_input(&_context, _url.c_str(), NULL, &dict);
     if (resCode != 0 || _blockTimerExp) {
+        Log() << "[FFMPEG] Find video input";
         handleError(resCode);
         return false;
     }
@@ -162,16 +189,24 @@ bool CameraFFmpeg::prepareContext() {
 bool CameraFFmpeg::openContext() {
     int code = avformat_find_stream_info(_context, NULL);
     if(code != 0 || _blockTimerExp) {
+        Log() << "[FFMPEG] OpenContext Error";
         handleError(code);
         return false;
     }
+    
     for(uint i = 0; i < _context->nb_streams; i++) {
         if(_context->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO) {
+            Log() << "[FFMPEG] AVMEDIA_TYPE_VIDEO";
             _videoStream = _context->streams[i];
         } else if (_context->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
+            Log() << "[FFMPEG] AVMEDIA_TYPE_AUDIO";
             _audioStream = _context->streams[i];
+        } else if (_context->streams[i]->codec->codec_type == AVMEDIA_TYPE_DATA) {
+            Log() << "[FFMPEG] AVMEDIA_TYPE_DATA";
         }
     }
+
+    Log() << _videoStream->nb_frames;
     _blockTimerTimeout = cam::ffmpeg::timeoutStream;
     return true;
 }

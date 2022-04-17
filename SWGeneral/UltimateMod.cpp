@@ -1,9 +1,8 @@
 ﻿#include <chrono>
+#include <iostream>
 
-#include "Patterns/Patterns.h"
-#include "Threads/Thread.h"
 #include "callbacks/Signal.h"
-#include "ffmpeg/CameraFFmpeg.h"
+#include"cameras/CamerasCreator.h"
 
 void testFunction(int val) {
 	std::cout << val << std::endl;
@@ -13,7 +12,25 @@ void writeText(std::string text, int val) {
 	std::cout << text << " " << val << std::endl;
 }
 
+void cameraStream() {
+	CamerasCreator creator;
+	CamerasHandler* camFFmpeg = creator.createCamera(cam::CamTypes::FFMPEG);
+	if(camFFmpeg) {
+		Log() << "True";
+		camFFmpeg->start();
+	} else {
+		Log() << "False";
+	}
+
+	while(true) {
+	}
+	delete camFFmpeg;
+}
+
 int main(int argc, char**argv) {
+	cameraStream();
+
+
 	Signal<int> _myEvent;
 	_myEvent.connect(&testFunction);
 	for(int i = 0; i < 100000; i++) {

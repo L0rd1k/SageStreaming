@@ -3,6 +3,7 @@
 #include <atomic>
 
 #include "definitions/LocalDefinitions.h"
+#include "utils/Log.h"
 #include "image/Image.h"
 
 class CamerasHandler {

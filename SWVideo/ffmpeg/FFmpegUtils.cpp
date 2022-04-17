@@ -6,6 +6,8 @@ bool initializeFFmpeg(int logLevel) {
     std::lock_guard<std::mutex> lock(mtx);
     if(!inited) {
         av_register_all();
+        avdevice_register_all();
+        avcodec_register_all();
         avformat_network_init();
         av_log_set_level(logLevel);
         inited = true;

@@ -2,6 +2,7 @@
 
 #include <string>
 #include <atomic>
+#include <unistd.h>
 
 #include "FFmpegUtils.h"
 #include "utils/ElapsedTimer.h"
@@ -14,7 +15,7 @@
 
 class CameraFFmpeg : public CamerasHandler {
 public:
-    CameraFFmpeg(std::string url);
+    CameraFFmpeg(std::string url, RtspTransportType type = RtspTransportType::Indefined);
     virtual ~CameraFFmpeg();
     virtual bool start() override;
     virtual bool stop() override;
@@ -33,6 +34,8 @@ public:
 protected:
     ImageQueue _buffer;
 private:
+    void performFpsDelay(AVStream* stream, AVPacket* packet);
+
     std::string _url;
     std::thread _camThread;
     std::mutex _mutex;
