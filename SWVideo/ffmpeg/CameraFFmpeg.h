@@ -35,7 +35,6 @@ protected:
     ImageQueue _buffer;
 private:
     void performFpsDelay(AVStream* stream, AVPacket* packet);
-
     std::string _url;
     std::thread _camThread;
     std::mutex _mutex;

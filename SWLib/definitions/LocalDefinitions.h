@@ -12,6 +12,7 @@ namespace img {
         JPEG = 0,
         H264 = 1,
         RAW = 2,
+        MPEG4 = 3,
         Undefined = 255 
     };
     enum class ImageSource {

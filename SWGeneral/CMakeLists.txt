@@ -36,9 +36,6 @@ endif(UNIX)
 find_package(PythonLibs REQUIRED)
 include_directories(${PYTHON_INCLUDE_DIRS})
 
-#set(PYTHON_LIBRARIES "//usr//lib//python3.7")
-#set(PYTHON_INCLUDE_DIR "//usr//include//python3.7")
-
 if(PYTHONLIBS_FOUND)
         message("   > Path to where Python.h is found: ${OpenCV_INCLUDE_DIRS}")
         message("   > Path to the python library: ${PYTHON_LIBRARIES}")
@@ -48,18 +45,7 @@ endif()
 
 set(SOURCES
     ./UltimateMod.cpp
-    ./General/Features.cpp
-    ./Patterns/Patterns.cpp
-    ./Patterns/Creational/Singleton/HeroCamp.cpp
-    ./Patterns/Creational/Singleton/HeroCampMultithread.cpp
-    ./Patterns/Creational/AbstractFactory/BritishArcher.cpp
-    ./Patterns/Creational/AbstractFactory/BritishArmy.cpp
-    ./Patterns/Creational/AbstractFactory/BritishCannon.cpp
-    ./Patterns/Creational/AbstractFactory/BritishSwordsMan.cpp
-    ./Patterns/Creational/AbstractFactory/FrenchArcher.cpp
-    ./Patterns/Creational/AbstractFactory/FrenchArmy.cpp
-    ./Patterns/Creational/AbstractFactory/FrenchCannon.cpp
-    ./Patterns/Creational/AbstractFactory/FrenchSwordsMan.cpp
+    ./substance/UMSubstance.cpp
 )
 
 

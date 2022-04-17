@@ -6,10 +6,11 @@ include_directories(.)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
 list(APPEND SOURCES
-    ./Plotting/DrawGraph.cpp
+    ./plotting/DrawGraph.cpp
 )
 
 message("Looking for OpenGL...")
+
 if (UNIX)
     find_package(OpenGL REQUIRED) # OPENGL
     find_package(GLUT REQUIRED)   # GLUT

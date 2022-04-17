@@ -17,7 +17,7 @@ option(USE_LIB "Additional Library support" ON)
 option(USE_GRAPHICS "Additional OPENGL support" ON)
 option(USE_VIDEO "Additional FFMPEG support" ON)
 option(USE_GUI "Additional QT support" ON)
-
+option(USE_TEST "Test area" ON)
 
 # Create .lib files for MSVC compiler on Windows platform.
 if(MSVC)
@@ -55,11 +55,18 @@ if(USE_GUI)
     add_subdirectory(SWGUI)
 endif()
 
+if(USE_TEST)
+    set(USE_TEST ON)
+    add_definitions(-DUSE_TEST)
+    add_subdirectory(SWTest)
+endif()
+
 message(STATUS "    > USE_ML: ${USE_ML}")
 message(STATUS "    > USE_LIB: ${USE_LIB}")
 message(STATUS "    > USE_GRAPHICS: ${USE_GRAPHICS}")
 message(STATUS "    > USE_VIDEO: ${USE_VIDEO}")
 message(STATUS "    > USE GUI: ${USE_GUI}")
+message(STATUS "    > USE TEST: ${USE_TEST}")
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")

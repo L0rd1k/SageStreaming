@@ -1,16 +1,18 @@
 #include "CamerasCreator.h"
 
-CamerasCreator::CamerasCreator() {
+
+CamerasCreator& CamerasCreator::inst() {
+    static CamerasCreator instance;
+    return instance;
 }
 
-CamerasCreator::~CamerasCreator() {
-}
-
-CamerasHandler* CamerasCreator::createCamera(cam::CamTypes camType) {
+CamerasHandler* CamerasCreator::createCamera(short id, cam::CamTypes camType) {
     CamerasHandler *camHandler = nullptr;
     switch(camType) {
         case cam::CamTypes::FFMPEG: {
-            camHandler = new CameraFFmpeg("/home/ilya/Видео/VasyaHome/ch0_2019.05.22_21.28.14.avi", RtspTransportType::Udp);
+            // camHandler = new CameraFFmpeg("/dev/video0", RtspTransportType::V4l);
+            // camHandler = new CameraFFmpeg("/home/ilya/Видео/VasyaHome/ch0_2019.05.23_10.06.33.avi", RtspTransportType::Vid);
+            camHandler = new CameraFFmpeg("/home/ilya/Видео/SlovakiaRobot/Sample.avi", RtspTransportType::Vid);
         }
         case cam::CamTypes::OPENCV: {
 

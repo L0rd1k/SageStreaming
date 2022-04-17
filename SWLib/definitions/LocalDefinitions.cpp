@@ -8,6 +8,8 @@ const char* toString(img::ImageFormat format) {
         return "JPEG";
     case img::ImageFormat::RAW:
         return "RAW";
+    case img::ImageFormat::MPEG4:
+        return "MPEG4";
     default:
         return "Undefined";
     }        

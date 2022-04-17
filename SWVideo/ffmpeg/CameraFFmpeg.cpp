@@ -23,6 +23,7 @@ bool CameraFFmpeg::start() {
 bool CameraFFmpeg::stop() {
     if(_camThread.joinable()) {
         if(_context){
+            /** @warning Custom method from prebuild FFMPEG 2.8 **/
             avformat_preclose_input(&_context);
         }
         _isStreaming = false;
@@ -89,8 +90,10 @@ bool CameraFFmpeg::handleVideoFrame(AVStream* stream, AVPacket* packet) {
         imgFormat = img::ImageFormat::H264;
     } else if (stream->codec->codec_id == AV_CODEC_ID_RAWVIDEO) {
         imgFormat = img::ImageFormat::RAW;
+    } else if (stream->codec->codec_id == AV_CODEC_ID_MPEG4) {
+        imgFormat = img::ImageFormat::MPEG4;
     } else {
-        Log() << "[FFMPEG] Unsupported image format" + std::to_string(stream->codec->codec_id);
+        Log() << "[FFMPEG] Unsupported image format: " + std::to_string(stream->codec->codec_id);
         return false;
     }
 
@@ -98,8 +101,9 @@ bool CameraFFmpeg::handleVideoFrame(AVStream* stream, AVPacket* packet) {
         return false;
     }
 
-
-    performFpsDelay(stream, packet);
+    if(_rtspTransportType == RtspTransportType::Vid) {
+        performFpsDelay(stream, packet);
+    }
 
     img::swImage& image = _buffer.next();
 
@@ -171,6 +175,9 @@ bool CameraFFmpeg::prepareContext() {
         av_dict_set(&dict, "rtps_transport", "udp", 0);   
     } else if (_rtspTransportType == RtspTransportType::V4l) {
         Log() << "[FFMPEG] V4L";
+        av_dict_set(&dict, "framerate", "25", 0);
+    } else if (_rtspTransportType == RtspTransportType::Vid) {
+        Log() << "[FFMPEG] VID";
         av_dict_set(&dict, "framerate", "25", 0);
     } else {
         Log() << "[FFMpeg] Unknown transport type";
