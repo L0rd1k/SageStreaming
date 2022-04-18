@@ -2,15 +2,19 @@ cmake_minimum_required(VERSION 3.10.0)
 
 project(SWGraphics)
 include_directories(.)
+include_directories(../SWLib)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
+set(LIBRARIES SWLib)
+
 list(APPEND SOURCES
     ./plotting/DrawGraph.cpp
+    ./window/WindowPainterBase.cpp
+    ./window/WindowPainterGlut.cpp
 )
 
 message("Looking for OpenGL...")
-
 if (UNIX)
     find_package(OpenGL REQUIRED) # OPENGL
     find_package(GLUT REQUIRED)   # GLUT

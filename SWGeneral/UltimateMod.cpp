@@ -3,9 +3,7 @@
 #include <vector>
 
 #include "substance/UMSubstance.h"
-#include "window/WindowPainterBase.h"
 #include "window/WindowPainterGlut.h"
-// #include "callbacks/Signal.h"
 
 std::vector<std::shared_ptr<UMSubstance> > substancesList;
 
@@ -19,10 +17,11 @@ int main(int argc, char**argv) {
 		Log() << std::this_thread::get_id();
 	}
 
+	std::unique_ptr<WindowPainterBase> window = std::make_unique<WindowPainterGlut>();
+	window->createWindow(argc, argv);
+	while(true) {
 
-	// WindowPainterGlut window;
-
-
+	}
 	// Signal<int> _myEvent;
 	// _myEvent.connect(&testFunction);
 	// for(int i = 0; i < 100000; i++) {
