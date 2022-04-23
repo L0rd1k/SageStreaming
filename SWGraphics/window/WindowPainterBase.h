@@ -5,11 +5,18 @@
     #include <GL/glut.h>
 #endif
 
+#include <unistd.h>
+#include <sys/time.h>
+
 #include "utils/Log.h"
 
 class WindowPainterBase {
 public:
     WindowPainterBase();
     virtual ~WindowPainterBase();
-    virtual bool createWindow(int argc, char** argv) = 0;
+
+    static WindowPainterBase& inst();
+
+    virtual bool createWindow(int argc, char** argv);
+    virtual void run();
 };

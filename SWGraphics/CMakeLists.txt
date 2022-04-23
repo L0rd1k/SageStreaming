@@ -12,6 +12,8 @@ list(APPEND SOURCES
     ./plotting/DrawGraph.cpp
     ./window/WindowPainterBase.cpp
     ./window/WindowPainterGlut.cpp
+    ./image/PicturePainter.cpp
+    ./texture/Texture.cpp
 )
 
 message("Looking for OpenGL...")

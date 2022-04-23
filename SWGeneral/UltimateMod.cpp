@@ -4,8 +4,15 @@
 
 #include "substance/UMSubstance.h"
 #include "window/WindowPainterGlut.h"
+#include "callbacks/Signal.h"
+
+
 
 std::vector<std::shared_ptr<UMSubstance> > substancesList;
+
+int testFunction(int a) {
+	return a;
+}
 
 int main(int argc, char**argv) {
 	for(int id = 0; id < 2; id++) {
@@ -14,14 +21,19 @@ int main(int argc, char**argv) {
 		if(substancesList.back()->enableSubstance()) {
 			Log() << "Enable";
 		}
-		Log() << std::this_thread::get_id();
 	}
 
 	std::unique_ptr<WindowPainterBase> window = std::make_unique<WindowPainterGlut>();
 	window->createWindow(argc, argv);
-	while(true) {
+	window->run();
 
-	}
+
+
+	
+	// while(true) {
+
+	// }
+
 	// Signal<int> _myEvent;
 	// _myEvent.connect(&testFunction);
 	// for(int i = 0; i < 100000; i++) {

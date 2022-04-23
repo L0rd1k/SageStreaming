@@ -1,5 +1,7 @@
 #pragma once
 
+#include <inttypes.h>
+
 enum class DataType {
     Image = 0,
     Undefined = 255,
@@ -37,6 +39,11 @@ namespace cam {
     };
 
 };
+
+namespace gl {
+    const uint8_t txtCount = 2;
+}
+
 
 const char* toString(img::ImageFormat format);
 const char* toString(img::ImageSource source);
