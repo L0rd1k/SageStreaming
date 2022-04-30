@@ -4,11 +4,11 @@ std::chrono::system_clock::time_point WindowPainterGlut::prevTime;
 
 WindowPainterGlut::WindowPainterGlut() :
 WindowPainterBase() {
-    _painter = std::make_unique<PicturePainter>(gl::txtCount);
 }
 
 WindowPainterGlut::~WindowPainterGlut() {
 }
+
 
 bool WindowPainterGlut::createWindow(int argc, char** argv) {
     glutInit(&argc, argv);
@@ -30,12 +30,12 @@ void WindowPainterGlut::run() {
 }
 
 void WindowPainterGlut::displayEvent() {
-    if(inst()._painter) {
-        if(!inst()._painter->_isInited) {
-            inst()._painter->initTextures();
-            inst()._painter->_isInited = true;
+    if(_painter) {
+        if(!_painter->_isInited) {
+            _painter->initTextures();
+            _painter->_isInited = true;
         }
-        inst()._painter->show();
+        _painter->show();
     }
 }
 

@@ -38,6 +38,10 @@ public:
     const T& height() const {
         return _height;
     }
+
+    bool isValid() {
+        return (_height > 0) || (_width > 0);    
+    }
 private:
     T _width;
     T _height;

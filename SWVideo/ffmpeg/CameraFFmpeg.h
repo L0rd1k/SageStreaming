@@ -13,6 +13,9 @@
 #include "definitions/LocalDefinitions.h"
 #include "cameras/CamerasHandler.h"
 
+#include <opencv2/opencv.hpp>
+#include <opencv2/highgui.hpp>
+
 class CameraFFmpeg : public CamerasHandler {
 public:
     CameraFFmpeg(std::string url, RtspTransportType type = RtspTransportType::Indefined);
@@ -31,10 +34,10 @@ public:
     void mainLoop();
     void setUrl(std::string url);
     std::string getUrl();  
-protected:
-    ImageQueue _buffer;
+    img::ImageFormat getImageFormat();
 private:
     void performFpsDelay(AVStream* stream, AVPacket* packet);
+    img::ImageFormat imgFormat;
     std::string _url;
     std::thread _camThread;
     std::mutex _mutex;

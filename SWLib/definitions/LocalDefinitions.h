@@ -23,6 +23,14 @@ namespace img {
         Undefined = 255
     };
 
+    enum class ColorType {
+        GRAY = 0,
+        RGB = 1,
+        BGR = 2,
+        RGBA = 3,
+        Undefined = 255
+    };
+
 };
 
 namespace cam {

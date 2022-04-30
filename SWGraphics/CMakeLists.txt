@@ -3,10 +3,11 @@ cmake_minimum_required(VERSION 3.10.0)
 project(SWGraphics)
 include_directories(.)
 include_directories(../SWLib)
+include_directories(../SWVideo)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
-set(LIBRARIES SWLib)
+set(LIBRARIES SWLib SWVideo)
 
 list(APPEND SOURCES
     ./plotting/DrawGraph.cpp
@@ -15,6 +16,13 @@ list(APPEND SOURCES
     ./image/PicturePainter.cpp
     ./texture/Texture.cpp
 )
+
+find_package( OpenCV REQUIRED )
+include_directories( ${OpenCV_INCLUDE_DIRS})
+link_directories( ${OpenCV_LIB_DIR} )
+
+message(STATUS "OpenCV library status:")
+
 
 message("Looking for OpenGL...")
 if (UNIX)
@@ -29,4 +37,4 @@ if (UNIX)
 endif (UNIX)
 
 add_library(SWGraphics SHARED ${SOURCES})
-target_link_libraries(SWGraphics ${LIBRARIES})
+target_link_libraries(SWGraphics ${LIBRARIES}  ${OpenCV_LIBS})

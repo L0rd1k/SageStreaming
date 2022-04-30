@@ -5,8 +5,7 @@ CamerasHandler(),
 _url(url),
 _rtspTransportType(type),
 _blockTimerExp(false), 
-_previousPacket(0),
-_buffer(1000) {
+_previousPacket(0) {
     initializeFFmpeg();
 }
 
@@ -15,6 +14,7 @@ bool CameraFFmpeg::start() {
         Log() << "Can't start camera, already playing"; 
         return false;
     }
+    Log() << "Start";
     _isStreaming = true;
     _camThread = std::thread(&CameraFFmpeg::mainLoop, this);
     return true;
@@ -84,7 +84,7 @@ void CameraFFmpeg::performFpsDelay(AVStream* stream, AVPacket* packet) {
 
 bool CameraFFmpeg::handleVideoFrame(AVStream* stream, AVPacket* packet) {
     std::lock_guard<std::mutex> locker(_mutex);
-    img::ImageFormat imgFormat = img::ImageFormat::Undefined;
+    imgFormat = img::ImageFormat::Undefined;
     if(stream->codec->codec_id == AV_CODEC_ID_MJPEG) {
         imgFormat = img::ImageFormat::JPEG;        
     } else if (stream->codec->codec_id == AV_CODEC_ID_H264) {
@@ -106,7 +106,8 @@ bool CameraFFmpeg::handleVideoFrame(AVStream* stream, AVPacket* packet) {
         performFpsDelay(stream, packet);
     }
 
-    img::swImage& image = _buffer.next();
+
+    img::swImage& image = _queue.next();
 
     if(imgFormat == img::ImageFormat::JPEG) {
         TrimmedAVPacket trimmed = trimAVPacket(packet);
@@ -119,6 +120,12 @@ bool CameraFFmpeg::handleVideoFrame(AVStream* stream, AVPacket* packet) {
     image->imgSourceType = img::ImageSource::RTSP;
     image->imgSize = um::Size<int>(stream->codec->width,
                                    stream->codec->height);
+    
+    Log() << image.dataSize() << " " << image.dataRawSize();
+    Log() << image->imgSize.height() << "x" << image->imgSize.width();    
+    // cv::Mat my_mat(image->imgSize.height(),image->imgSize.width(), CV_8UC1, image.data());
+    // cv::imwrite("/home/ilya/Test.png", my_mat);
+    
 
     triggerImage(image);
     return true;
@@ -201,7 +208,6 @@ bool CameraFFmpeg::openContext() {
         handleError(code);
         return false;
     }
-    
     for(uint i = 0; i < _context->nb_streams; i++) {
         if(_context->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO) {
             Log() << "[FFMPEG] AVMEDIA_TYPE_VIDEO";
@@ -239,6 +245,11 @@ void CameraFFmpeg::handleError(int resCode) {
     Log() << error;
 }
 
+img::ImageFormat CameraFFmpeg::getImageFormat() {
+    std::lock_guard<std::mutex> lck(_mutex);
+    return imgFormat;
+}
+
 void CameraFFmpeg::setUrl(std::string url) {
     _url = url;
 }
@@ -250,3 +261,4 @@ std::string CameraFFmpeg::getUrl() {
 CameraFFmpeg::~CameraFFmpeg() {
     stop();
 }
+

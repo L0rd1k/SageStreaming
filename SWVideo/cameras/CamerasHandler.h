@@ -3,11 +3,12 @@
 #include <atomic>
 
 #include "definitions/LocalDefinitions.h"
-
 #include "utils/Log.h"
-
 #include "image/Image.h"
 #include "image/ImageQueue.h"
+
+#include <opencv2/opencv.hpp>
+#include <opencv2/highgui.hpp>
 
 class CamerasHandler {
 public:
@@ -16,6 +17,8 @@ public:
     virtual bool start() = 0;
     virtual bool stop() = 0;
     bool isStreaming();
+    const ImageQueue* getQueue(); 
+    virtual img::ImageFormat getImageFormat();
 protected:
     void triggerImage(img::swImage &image); 
     std::atomic<bool> _isStreaming;

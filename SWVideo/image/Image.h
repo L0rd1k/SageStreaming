@@ -17,7 +17,7 @@ struct Image : public DataHeader {
     ImageFormat imgFormat;
     um::Size<int> imgSize;
     ImageSource imgSourceType;
-
+    ColorType imgColorType;
 };
 #pragma pack(pop)
 

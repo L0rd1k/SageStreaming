@@ -42,5 +42,15 @@ if (UNIX)
     list(APPEND LIBRARIES ${AVCODEC_LIB} ${AVFORMAT_LIB} ${AVUTIL_LIB} ${SWSCALE_LIB} ${AVDEVICE_LIB})
 endif(UNIX)
 
+find_package( OpenCV REQUIRED )
+include_directories( ${OpenCV_INCLUDE_DIRS})
+link_directories( ${OpenCV_LIB_DIR} )
+
+message(STATUS "OpenCV library status:")
+message(STATUS "    > config: ${OpenCV_DIR}")
+message(STATUS "    > version: ${OpenCV_VERSION}")
+message(STATUS "    > libraries: ${OpenCV_LIBS}")
+message(STATUS "    > include path: ${OpenCV_INCLUDE_DIRS}")
+
 add_library(SWVideo SHARED ${SOURCES})
-target_link_libraries(SWVideo ${LIBRARIES})
+target_link_libraries(SWVideo ${LIBRARIES} ${OpenCV_LIBS})

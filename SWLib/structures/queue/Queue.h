@@ -31,6 +31,6 @@ public:
 protected:
     T _data[SIZE]; 
     std::mutex _locker;
-    std::atomic<size_t> _peak;
-    std::atomic<size_t> _front;
+    std::atomic<uint> _peak;
+    std::atomic<uint> _front;
 };
