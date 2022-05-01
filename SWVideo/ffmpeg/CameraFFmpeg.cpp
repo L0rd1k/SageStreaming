@@ -14,7 +14,6 @@ bool CameraFFmpeg::start() {
         Log() << "Can't start camera, already playing"; 
         return false;
     }
-    Log() << "Start";
     _isStreaming = true;
     _camThread = std::thread(&CameraFFmpeg::mainLoop, this);
     return true;
@@ -38,8 +37,8 @@ bool CameraFFmpeg::isPlaying() {
 void CameraFFmpeg::mainLoop() {
     if(prepareContext() && openContext()) {
         Log() << "[FFMPEG] Prepared main loop";
-        Log() << std::this_thread::get_id();
         while(isStreaming() && receiveContext()) {
+            Log() << "FFmpeg loop: " << std::this_thread::get_id();
             _blockTimer.restart();
         }
     }
@@ -120,11 +119,6 @@ bool CameraFFmpeg::handleVideoFrame(AVStream* stream, AVPacket* packet) {
     image->imgSourceType = img::ImageSource::RTSP;
     image->imgSize = um::Size<int>(stream->codec->width,
                                    stream->codec->height);
-    
-    Log() << image.dataSize() << " " << image.dataRawSize();
-    Log() << image->imgSize.height() << "x" << image->imgSize.width();    
-    // cv::Mat my_mat(image->imgSize.height(),image->imgSize.width(), CV_8UC1, image.data());
-    // cv::imwrite("/home/ilya/Test.png", my_mat);
     
 
     triggerImage(image);

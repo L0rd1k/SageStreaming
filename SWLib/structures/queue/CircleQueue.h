@@ -30,9 +30,18 @@ public:
 
     virtual ~CircleQueue() {
     }
+
+    const int getPos() const {
+        return currentPos;
+    }
+
 protected:
     size_t nextPos() {
         size_t newPos = Queue<T,SIZE>::_peak + 1;
-        return (newPos >= SIZE - 1) ? 0 : newPos;
+        return (newPos >= SIZE) ? currentPos = 0 : currentPos = newPos;
     }
+
+private:
+    const int _size = SIZE;
+    size_t currentPos = -1;
 };

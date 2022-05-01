@@ -5,6 +5,7 @@ _id(id),
 _camera(nullptr),
 _inProcess(false) {
     initSubstance();
+    connectCallbacks();
 }
 
 UMSubstance::~UMSubstance() {
@@ -29,6 +30,11 @@ CamerasHandler* UMSubstance::getCamera() {
     return _camera;
 } 
 
+void UMSubstance::connectCallbacks() {
+    if(_camera) {
+        callbacks.push_back(std::make_unique<void*>(_camera->sig_imageRecieved.connect(this, &UMSubstance::onImageReceived)));
+    }
+}
 
 bool UMSubstance::enableSubstance() {
     if(!isEnabled()) {
@@ -49,13 +55,18 @@ bool UMSubstance::disableSubstance() {
     return false;
 }
 
-void UMSubstance::mainSubstanceLoop() {
+void UMSubstance::startCameraStreaming() {
     if(!_camera->isStreaming()) {
         _camera->start();
-    }   
+    }    
+}
 
-    while(_isLoopOn) {
-        
+void UMSubstance::mainSubstanceLoop() {
+    startCameraStreaming();
+
+    while(_inProcess) {
+        Log() << "Main loop: " << _id << " " << std::this_thread::get_id();
+        usleep(5000);
     }
 }
 
@@ -64,4 +75,8 @@ const ImageQueue* UMSubstance::getImageQueue() {
     if(imageFormat == img::ImageFormat::RAW) {
         return _camera->getQueue();
     }
+}
+
+void UMSubstance::onImageReceived(const img::swImage& img) {
+    Log() << img->imgSize.height() << "x" << img->imgSize.width();
 }

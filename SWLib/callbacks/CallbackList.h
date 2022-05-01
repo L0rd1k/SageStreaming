@@ -9,8 +9,7 @@
 template <typename RET, typename ...Args>
 class CallbackList {
 public:
-    CallbackList() {
-    };
+    CallbackList() {};
 
     virtual ~CallbackList() {
         std::lock_guard<std::mutex> lg(lockerActive);
@@ -21,20 +20,20 @@ public:
         }
     };
 
-    std::shared_ptr<CallbackOwner<RET, Args...>> connect(std::function<RET(Args...)> callback) {
-        return std::make_shared<CallbackOwner<RET, Args... >>(this, callback);
+    CallbackOwner<RET, Args...>* connect(std::function<RET(Args...)> callback) {
+        return new CallbackOwner<RET, Args... >(this, callback);
     };
 
     template<typename Class1, typename Class2>
-    std::shared_ptr<CallbackOwner<RET, Args...>> connect(Class1 *inst,
+    CallbackOwner<RET, Args...>* connect(Class1 *inst,
         RET(Class2::*callback)(Args...)) {
-        return std::make_shared<CallbackOwner<RET, Args...>>(this, inst, callback);
+        return new CallbackOwner<RET, Args...>(this, inst, callback);
     };
 
     const std::vector<CallbackOwner<RET, Args...>*>& getActiveSlotsList(){
         updateActiveSlots();
         return _active;
-    }
+    };
 
     void addSlot(CallbackOwner<RET, Args...> *callback) {
         if(callback) {
@@ -78,9 +77,14 @@ private:
     };
 
     void updateActiveSlots() {
+        Log() << "Update active slots";
         std::lock_guard<std::mutex> lg(lockerActive);
-        reduceActiveSlots();
-        appendNewSlots();
+        {
+            reduceActiveSlots();
+        }
+        {
+            appendNewSlots();
+        }
     };
 
 private:

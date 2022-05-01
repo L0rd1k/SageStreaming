@@ -6,9 +6,7 @@
 #include "utils/Log.h"
 #include "image/Image.h"
 #include "image/ImageQueue.h"
-
-#include <opencv2/opencv.hpp>
-#include <opencv2/highgui.hpp>
+#include "callbacks/Signal.h"
 
 class CamerasHandler {
 public:
@@ -19,6 +17,8 @@ public:
     bool isStreaming();
     const ImageQueue* getQueue(); 
     virtual img::ImageFormat getImageFormat();
+
+    Signal<const img::swImage&> sig_imageRecieved;
 protected:
     void triggerImage(img::swImage &image); 
     std::atomic<bool> _isStreaming;

@@ -5,8 +5,8 @@
 template<typename RET, typename ...Args>
 class Slot {
 public:
-    Slot(std::function<RET(Args...)> callback) {
-        _callback = callback;
+    Slot(std::function<RET(Args...)> callback) :
+    _callback(callback) {
     };
 
     template<typename Class1, typename Class2>
@@ -19,10 +19,15 @@ public:
 
     virtual ~Slot() {};
 
-    void operator()(Args&&... args) {
-        _callback(std::forward<Args>(args)...);
+    virtual void operator()(Args&&... args) {
+        try {
+            _callback(std::forward<Args>(args)...);
+        } catch (std::exception &e){
+            Log() << "Error: " << e.what() << "\n";
+            throw e;
+        }
     };
 
 protected:
-    std::function<RET(Args...)> _callback;
+    std::function<void(Args...)> _callback;
 };

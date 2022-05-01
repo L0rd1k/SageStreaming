@@ -3,7 +3,6 @@
 #include "CallbackList.h"
 #include "Slot.h"
 
-
 template<typename RET, typename ...Args>
 class CallbackList;
 
@@ -16,6 +15,14 @@ public:
         _list(list) {
             _list->addSlot(this);
     };
+
+    template<typename C1, typename C2>
+    CallbackOwner(CallbackList<RET, Args...>* list,
+        C1 *inst, RET(C2::*callback)(Args...)) :
+        Slot<RET, Args...>(inst, callback),
+        _list(list) {
+            _list->addSlot(this);
+    }
 
     virtual ~CallbackOwner() {
         if(_list){

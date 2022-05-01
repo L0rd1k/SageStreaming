@@ -11,8 +11,9 @@ public:
 
     void emit(Args&&... args) {
         std::lock_guard<std::mutex>(Signal::locker);
-        const auto& list = Signal::getActiveSlotsList();
-        for(const auto& action : list) {
+        auto& list = Signal::getActiveSlotsList();
+        for (uint i = 0; i < list.size(); ++i){
+            auto action = list[i];
             (*action)(std::forward<Args>(args)...);
         }
     }

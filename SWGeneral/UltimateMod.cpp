@@ -9,29 +9,30 @@
 
 std::vector<std::shared_ptr<UMSubstance> > substancesList;
 
-int testFunction(int a) {
-	return a;
+void testFunction(int a) {
+	Log() << a;
 }
 
 int main(int argc, char**argv) {
-	for(int id = 0; id < 2; id++) {
+	for(int id = 0; id < 1; id++) {
 		substancesList.push_back(std::make_shared<UMSubstance>(id));
 		substancesList.back()->enableSubstance();
 	}
 
-	std::unique_ptr<WindowPainterBase> window = std::make_unique<WindowPainterGlut>();
-	auto pic = std::make_shared<PicturePainter>(2);
-	window->setPicturePainter(pic);
+	// std::unique_ptr<WindowPainterBase> window = std::make_unique<WindowPainterGlut>();
+	// auto pic = std::make_shared<PicturePainter>(1);
+	// window->setPicturePainter(pic);
 
-	for(int id = 0; id < 2; id++) {
-		if(substancesList[id]->getCamera()) {
-			// const auto &imgQueue = substancesList[id]->getCamera()->getQueue();
-			pic->setDataBuffer(id, substancesList[id]->getImageQueue());
-		}
-	}
+	// for(int id = 0; id < 1; id++) {
+	// 	if(substancesList[id]->getCamera()) {
+	// 		// const auto &imgQueue = substancesList[id]->getCamera()->getQueue();
+	// 		pic->setDataBuffer(id, substancesList[id]->getImageQueue());
+	// 	}
+	// }
 
-	window->createWindow(argc, argv);
-	window->run();
+	// window->createWindow(argc, argv);
+	// window->run();
+
 	// Signal<int> _myEvent;
 	// _myEvent.connect(&testFunction);
 	// for(int i = 0; i < 100000; i++) {
