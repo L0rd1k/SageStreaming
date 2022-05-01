@@ -18,7 +18,7 @@ public:
     void onImageReceived(const img::swImage& img);
 
     void startCameraStreaming();
-
+    
     std::vector<std::unique_ptr<void*> > callbacks;
 private:
     std::thread _mainThread;

@@ -18,6 +18,8 @@ struct Image : public DataHeader {
     um::Size<int> imgSize;
     ImageSource imgSourceType;
     ColorType imgColorType;
+    uint8_t channels;
+
 };
 #pragma pack(pop)
 

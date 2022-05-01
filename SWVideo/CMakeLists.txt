@@ -15,8 +15,12 @@ endif()
 list(APPEND SOURCES
     ./ffmpeg/CameraFFmpeg.cpp
     ./ffmpeg/FFmpegUtils.cpp
+    ./decoder/ffmpeg/FFmpegDecoder.cpp
+    ./decoder/Decoder.cpp
+    ./encoder/Encoder.cpp
     ./cameras/CamerasHandler.cpp
     ./cameras/CamerasCreator.cpp
+
 )
 
 if (UNIX)
