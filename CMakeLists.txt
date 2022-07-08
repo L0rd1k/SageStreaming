@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.10.0)
 
-project(SW)
+project(SageStream)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -fPIC")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 
 if(WIN32) 
     # Add .exe and .dll in the same folder
@@ -12,12 +18,18 @@ if(WIN32)
     endif(MSVC)
 endif(WIN32)
 
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+endif()
+
 option(USE_ML "Machine learning support" ON)
 option(USE_LIB "Additional Library support" ON)
 option(USE_GRAPHICS "Additional OPENGL support" ON)
 option(USE_VIDEO "Additional FFMPEG support" ON)
 option(USE_GUI "Additional QT support" ON)
 option(USE_TEST "Test area" ON)
+
+add_subdirectory(3rdParty/glfw)
 
 # Create .lib files for MSVC compiler on Windows platform.
 if(MSVC)
@@ -28,38 +40,39 @@ endif()
 if(USE_LIB)
     set(USE_LIB ON)
     add_definitions(-DUSE_LIB)    
-    add_subdirectory(SWLib)  
+    add_subdirectory(SageLib)  
 endif()
 
 if(USE_ML)
     set(USE_ML ON)
     add_definitions(-DUSE_ML)
-    add_subdirectory(SWMachineLearning)
+    add_subdirectory(SageML)
 endif()
 
 if(USE_GRAPHICS)
     set(USE_GRAPHICS ON)
     add_definitions(-DUSE_GRAPHICS)
-    add_subdirectory(SWGraphics)
+    add_subdirectory(SageGraphics)
 endif()
 
 if(USE_VIDEO)
     set(USE_VIDEO ON)
     add_definitions(-DUSE_VIDEO)
-    add_subdirectory(SWVideo)
+    add_subdirectory(SageVideo)
 endif()
 
 if(USE_GUI)
     set(USE_GUI ON)
     add_definitions(-DUSE_GUI)
-    add_subdirectory(SWGUI)
+    add_subdirectory(SageGUI)
 endif()
 
 if(USE_TEST)
     set(USE_TEST ON)
     add_definitions(-DUSE_TEST)
-    add_subdirectory(SWTest)
+    add_subdirectory(SageTest)
 endif()
+
 
 message(STATUS "    > USE_ML: ${USE_ML}")
 message(STATUS "    > USE_LIB: ${USE_LIB}")
@@ -68,8 +81,5 @@ message(STATUS "    > USE_VIDEO: ${USE_VIDEO}")
 message(STATUS "    > USE GUI: ${USE_GUI}")
 message(STATUS "    > USE TEST: ${USE_TEST}")
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
-endif()
 
-add_subdirectory(SWGeneral)
+add_subdirectory(SageCore)
