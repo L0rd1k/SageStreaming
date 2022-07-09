@@ -13,9 +13,9 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 endif()
 
 list(APPEND SOURCES
-    ./ffmpeg/CameraFFmpeg.cpp
+    ./ffmpeg/camera_ffmpeg.cpp
     ./ffmpeg/FFmpegUtils.cpp
-    ./decoder/ffmpeg/FFmpegDecoder.cpp
+    ./decoder/ffmpeg/ffmpeg_decoder.cpp
     ./decoder/decoder.cpp
     ./encoder/Encoder.cpp
     ./cameras/cameras_handler.cpp

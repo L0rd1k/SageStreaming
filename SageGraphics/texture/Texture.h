@@ -1,12 +1,13 @@
 #pragma once
 
-#ifdef __linux__ 
-    #include <GL/gl.h>
-    #include <GL/glut.h>
+#ifdef __linux__
+#include <GL/gl.h>
+#include <GL/glut.h>
 #endif
 
-#include "image/ImageQueue.h"
 #include "image/Image.h"
+#include "image/ImageQueue.h"
+#include "utils/GLDefinitions.h"
 #include "utils/Log.h"
 #include "utils/Size.h"
 
@@ -18,7 +19,12 @@ public:
     void draw(int x, int y, um::Size<int> sz);
     void initBuffer(const ImageQueue* data);
     bool getLastDataFromQueue();
+
 private:
     GLuint _id;
-    const ImageQueue *_queueData;
+    const ImageQueue* _queueData;
+
+    int64_t _lastTime;
+    um::Size<int> _lastSize;
+    GLenum _lastFormat;
 };

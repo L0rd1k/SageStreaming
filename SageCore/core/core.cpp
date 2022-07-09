@@ -20,9 +20,10 @@ void sage::Core::enableWindow() {
 
 void sage::Core::connectCamBufToWindow() {
     for (int id = 0; id < _substns.size(); id++) {
-        if (_substns[id]->getCamera()) {
+        if (_substns[id]->_decoder) {
+            Log::warning("Decoder set");
             // const auto &imgQueue = substancesList[id]->getCamera()->getQueue();
-            _pic->setDataBuffer(id, _substns[id]->getImageQueue());
+            _pic->setDataBuffer(id, _substns[id]->_decoder->getQueue());
         }
     }
 }

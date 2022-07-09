@@ -27,12 +27,14 @@ public:
     void startCameraStreaming();
 
     std::vector<sage::Scope<void*> > callbacks;
+    Decoder* _decoder = nullptr;
 
 private:
+    Signal<const img::swImage&> sig_imageDecoded;
+
     std::thread _mainThread;
     
     CamerasHandler* _camera = nullptr;
-    Decoder* _decoder = nullptr;
 
     bool _inProcess;  //> is substance enabled;
     bool _isLoopOn;   //> is main loop running

@@ -1,4 +1,4 @@
-#include "CameraFFmpeg.h"
+#include "camera_ffmpeg.h"
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
@@ -42,7 +42,6 @@ void CameraFFmpeg::mainLoop() {
     if (prepareContext() && openContext()) {
         Log() << "[FFMPEG] Prepared main loop";
         while (isStreaming() && receiveContext()) {
-            // Log() << "FFmpeg loop: " << std::this_thread::get_id();
             _blockTimer.restart();
         }
     }
@@ -85,19 +84,19 @@ void CameraFFmpeg::performFpsDelay(AVStream* stream, AVPacket* packet) {
     _previousPacket = packet->pts;
 }
 
-cv::Mat cv_toMat(img::swImage& img) {
-    int type = 0;    
-    if(img->channels == 1) {
-        type = CV_8UC1;
-    } else if(img->channels == 3) {
-        type = CV_8UC3;
-    } else if(img->channels == 4) {
-        type = CV_8UC4;
-    }
+// cv::Mat cv_toMat(img::swImage& img) {
+//     int type = 0;    
+//     if(img->channels == 1) {
+//         type = CV_8UC1;
+//     } else if(img->channels == 3) {
+//         type = CV_8UC3;
+//     } else if(img->channels == 4) {
+//         type = CV_8UC4;
+//     }
 
-    cv::Mat mat(img->imgSize.height(), img->imgSize.width(), type, img.data());
-    return mat;    
-}
+//     cv::Mat mat(img->imgSize.height(), img->imgSize.width(), type, img.data());
+//     return mat;    
+// }
 
 
 
@@ -105,12 +104,16 @@ bool CameraFFmpeg::handleVideoFrame(AVStream* stream, AVPacket* packet) {
     std::lock_guard<std::mutex> locker(_mutex);
     imgFormat = img::ImageFormat::Undefined;
     if (stream->codec->codec_id == AV_CODEC_ID_MJPEG) {
+        // Log::trace("AV_CODEC_ID_MJPEG");
         imgFormat = img::ImageFormat::JPEG;
     } else if (stream->codec->codec_id == AV_CODEC_ID_H264) {
+        // Log::trace("AV_CODEC_ID_H264");
         imgFormat = img::ImageFormat::H264;
     } else if (stream->codec->codec_id == AV_CODEC_ID_RAWVIDEO) {
+        // Log::trace("AV_CODEC_ID_RAWVIDEO");
         imgFormat = img::ImageFormat::RAW;
     } else if (stream->codec->codec_id == AV_CODEC_ID_MPEG4) {
+        // Log::trace("AV_CODEC_ID_MPEG4");
         imgFormat = img::ImageFormat::MPEG4;
     } else {
         Log() << "[FFMPEG] Unsupported image format: " + std::to_string(stream->codec->codec_id);

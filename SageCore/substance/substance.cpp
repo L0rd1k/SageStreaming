@@ -17,9 +17,11 @@ sage::Substance::~Substance() {
 
 bool sage::Substance::initSubstance() {
     _camera = CamerasCreator::inst().createCamera(_id, cam::CamTypes::FFMPEG);
-    if (_camera)
+    if (!_camera)
         return false;
-    // _decoder = 
+    _decoder = CamerasCreator::inst().createDecoder(sage::DecTypes::FFMPEG);
+    if (!_decoder)
+        return false;
 
     return true;
 }
@@ -37,6 +39,12 @@ void sage::Substance::connectCallbacks() {
         callbacks.push_back(
             std::make_unique<void*>(_camera->sig_imageRecieved.connect(this, &sage::Substance::onImageReceived)));
     }
+    // if (_decoder) {
+    //     callbacks.push_back(
+    //         std::make_shared<void*>(sig_imageDecoded.connect(this, &sage::Substance));
+    //     )
+    // }
+
 }
 
 bool sage::Substance::enableSubstance() {
@@ -81,5 +89,10 @@ const ImageQueue* sage::Substance::getImageQueue() {
 }
 
 void sage::Substance::onImageReceived(const img::swImage& img) {
-    Log() << img->imgSize.height() << "x" << img->imgSize.width();
+    // Log::debug(img->imgSize.height(), "x", img->imgSize.width());
+    img::swImage& decImg = _decoder->getQueue()->next();
+    _decoder->decode(img, decImg);
+    _decoder->getQueue()->moveNext();
+    // cv::imwrite("/home/ilya/img_ffmpeg.png", cv_toMat(decImg));
+
 }

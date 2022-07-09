@@ -5,22 +5,30 @@
 #include "utils/Log.h"
 
 extern "C" {
-    #include "libavcodec/avcodec.h"
-    #include "libswscale/swscale.h"
-    #include "libavutil/pixdesc.h"
+#include "libavcodec/avcodec.h"
+#include "libavutil/pixdesc.h"
+#include "libswscale/swscale.h"
 }
+
+#include <opencv2/core.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/highgui.hpp>
+
+namespace sage {
 
 class FFmpegDecoder : public sage::Decoder {
 public:
     FFmpegDecoder();
     virtual ~FFmpegDecoder();
     virtual bool decode(const img::swImage& in, img::swImage& out) override;
+
 private:
     int selectDecoderType(const img::swImage& img);
-    void preprocessDecoder(int width, int height, int codec);
+    void preprocessDecoder(int codec, int width, int height);
     void resetDecoderInfo();
-    void initSwsContext(int width, int height, int format);
+    void initSwsContext(int format, int width, int height);
     void resetSwsContext();
+
 private:
     AVCodecContext* _codecCtx = nullptr;
     AVCodec* _codec = nullptr;
@@ -31,5 +39,6 @@ private:
     int _swsFormat = 0;
     int _swsWidth = 0;
     int _swsHeight = 0;
-
 };
+
+}  // namespace sage
