@@ -22,6 +22,8 @@ public:
 
     const ImageQueue* getImageQueue();
     CamerasHandler* getCamera();
+    Decoder* getDecoder();
+
 
     void onImageReceived(const img::swImage& img);
     void startCameraStreaming();

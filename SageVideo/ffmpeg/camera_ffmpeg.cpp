@@ -84,22 +84,6 @@ void CameraFFmpeg::performFpsDelay(AVStream* stream, AVPacket* packet) {
     _previousPacket = packet->pts;
 }
 
-// cv::Mat cv_toMat(img::swImage& img) {
-//     int type = 0;    
-//     if(img->channels == 1) {
-//         type = CV_8UC1;
-//     } else if(img->channels == 3) {
-//         type = CV_8UC3;
-//     } else if(img->channels == 4) {
-//         type = CV_8UC4;
-//     }
-
-//     cv::Mat mat(img->imgSize.height(), img->imgSize.width(), type, img.data());
-//     return mat;    
-// }
-
-
-
 bool CameraFFmpeg::handleVideoFrame(AVStream* stream, AVPacket* packet) {
     std::lock_guard<std::mutex> locker(_mutex);
     imgFormat = img::ImageFormat::Undefined;
@@ -132,6 +116,7 @@ bool CameraFFmpeg::handleVideoFrame(AVStream* stream, AVPacket* packet) {
 
     if (imgFormat == img::ImageFormat::JPEG) {
         TrimmedAVPacket trimmed = trimAVPacket(packet);
+        Log::trace(trimmed.size);
         image.setBytes(trimmed.data, trimmed.size);
     } else {
         image.setBytes(packet->data, packet->size);
@@ -141,11 +126,6 @@ bool CameraFFmpeg::handleVideoFrame(AVStream* stream, AVPacket* packet) {
     image->imgSourceType = img::ImageSource::RTSP;
     image->imgSize = um::Size<int>(stream->codec->width,
                                    stream->codec->height);
-
-    // Log::warning("Test", (int)image->channels);
-    // cv::imwrite("/home/ilya/img_ffmpeg.png", cv_toMat(image));
-    // Log::warning("Test2");
-
 
     triggerImage(image);
     return true;
@@ -160,15 +140,16 @@ TrimmedAVPacket CameraFFmpeg::trimAVPacket(AVPacket* packet) {
         if (curr == 0xFF && next == 0xD8) {
             startOffset = i;
         }
-        if (curr == 0xFF && next == 0xD9) {  // jpeg end sequence
+        if (curr == 0xFF && next == 0xD9) {
             endOffset = i;
             break;
         }
-        TrimmedAVPacket trimmed;
-        trimmed.data = packet->data + startOffset;
-        trimmed.size = endOffset - startOffset + 2;
-        return trimmed;
     }
+        
+    TrimmedAVPacket trimmed;
+    trimmed.data = packet->data + startOffset;
+    trimmed.size = endOffset - startOffset + 2;
+    return trimmed;
 }
 
 int blockingOperationCallback(void* sender) {
@@ -195,28 +176,28 @@ bool CameraFFmpeg::prepareContext() {
 
     AVDictionary* dict = nullptr;
     if (_rtspTransportType == RtspTransportType::Tcp) {
-        Log() << "[FFMPEG] TCP";
+        // Log() << "[FFMPEG] TCP";
         av_dict_set(&dict, "rtps_transport", "tcp", 0);
     } else if (_rtspTransportType == RtspTransportType::Udp) {
-        Log() << "[FFMPEG] UDP";
+        // Log() << "[FFMPEG] UDP";
         av_dict_set(&dict, "rtps_transport", "udp", 0);
     } else if (_rtspTransportType == RtspTransportType::V4l) {
-        Log() << "[FFMPEG] V4L";
+        // Log() << "[FFMPEG] V4L";
         av_dict_set(&dict, "framerate", "25", 0);
     } else if (_rtspTransportType == RtspTransportType::Vid) {
-        Log() << "[FFMPEG] VID";
+        // Log() << "[FFMPEG] VID";
         av_dict_set(&dict, "framerate", "25", 0);
     } else {
-        Log() << "[FFMpeg] Unknown transport type";
+        Log::error("[FFMpeg] Unknown transport type");
         return false;
     }
 
     int resCode = avformat_open_input(&_context, _url.c_str(), NULL, &dict);
     if (resCode != 0 || _blockTimerExp) {
-        Log() << "[FFMPEG] Find video input";
+        Log::error("[FFMPEG] Video input error found:", _url.c_str());
         handleError(resCode);
         return false;
-    }
+    } 
     return true;
 }
 
@@ -227,7 +208,6 @@ void CameraFFmpeg::logStreamInfo() {
               "Duratrion:", _context->duration, "\n",
               "Codec id:", _context->streams[0]->codec->codec_id, "\n",
               "Channels:", _context->streams[0]->codec->channels);
-
 }
 
 bool CameraFFmpeg::openContext() {
@@ -236,23 +216,22 @@ bool CameraFFmpeg::openContext() {
     logStreamInfo();
 
     if (code != 0 || _blockTimerExp) {
-        Log() << "[FFMPEG] OpenContext Error";
+        Log::error("[FFMPEG] OpenContext Error");
         handleError(code);
         return false;
     }
 
     for (uint i = 0; i < _context->nb_streams; i++) {
         if (_context->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO) {
-            Log() << "[FFMPEG] AVMEDIA_TYPE_VIDEO";
+            // Log::trace("[FFMPEG] AVMEDIA_TYPE_VIDEO:", i);
             _videoStream = _context->streams[i];
         } else if (_context->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
-            Log() << "[FFMPEG] AVMEDIA_TYPE_AUDIO";
+            // Log() << "[FFMPEG] AVMEDIA_TYPE_AUDIO";
             _audioStream = _context->streams[i];
         } else if (_context->streams[i]->codec->codec_type == AVMEDIA_TYPE_DATA) {
-            Log() << "[FFMPEG] AVMEDIA_TYPE_DATA";
+            // Log() << "[FFMPEG] AVMEDIA_TYPE_DATA";
         }
     }
-
     _blockTimerTimeout = cam::ffmpeg::timeoutStream;
     return true;
 }
@@ -275,7 +254,7 @@ void CameraFFmpeg::handleError(int resCode) {
         _rtspState = errortoCameraState(resCode, _blockTimerExp);
     }
     /** @TODO: add callback **/
-    Log() << error;
+    Log::error(error.c_str());
 }
 
 img::ImageFormat CameraFFmpeg::getImageFormat() {

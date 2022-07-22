@@ -21,8 +21,10 @@ public:
     void setPicturePainter(std::shared_ptr<PicturePainter> ptr);
     std::shared_ptr<PicturePainter> getPicturePainter();
 
-    virtual bool createWindow(int argc, char** argv);
+    virtual bool createWindow(int argc, char** argv, um::Size<int> _size);
     virtual void run();
+
+    
 protected:
     static std::shared_ptr<PicturePainter> _painter;
 };

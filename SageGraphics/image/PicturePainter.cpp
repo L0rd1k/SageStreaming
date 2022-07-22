@@ -1,9 +1,8 @@
 #include "PicturePainter.h"
 
-
-PicturePainter::PicturePainter(uint8_t textCount) :
-_isInited(false), 
-_textures(textCount, nullptr) {
+PicturePainter::PicturePainter(uint8_t textCount) 
+    : _isInited(false),
+    _textures(textCount, nullptr) {
     allocateTextures();
 }
 
@@ -11,19 +10,25 @@ PicturePainter::~PicturePainter() {
 }
 
 void PicturePainter::allocateTextures() {
-    for(auto itr = 0; itr < _textures.size(); itr++) {
+    for (auto itr = 0; itr < _textures.size(); itr++) {
         _textures[itr] = std::make_shared<Texture>(-1);
     }
 }
 
 void PicturePainter::show() {
-    unsigned char pix[4] = {0,0,0,255};
+    unsigned char pix[4] = {0, 0, 0, 255};
 
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
-    
-    if(_textures[0]->getLastDataFromQueue()) {
-        _textures[0]->draw(0, 0, um::Size<int>(800, 600));
+
+    int x[4] = { 0, 1024/2, 0, 1024/2 };
+    int y[4] = { 768/2, 768/2, 0, 0 };
+
+    Log::critical(_textures.size());
+    for(auto i = 0; i < _textures.size(); i++) {
+        if (_textures[i]->getLastDataFromQueue()) {
+            _textures[i]->draw(x[i], y[i], um::Size<int>(1024/2, 768/2));
+        }       
     }
 
     glRasterPos3f(0, 1, 0);
@@ -36,7 +41,7 @@ void PicturePainter::initTextures() {
     glEnable(GL_TEXTURE_2D);
     glGenTextures(_textures.size(), textures);
 
-    for(int itr = 0; itr < _textures.size(); itr++) {
+    for (int itr = 0; itr < _textures.size(); itr++) {
         int textId = textures[itr];
         glBindTexture(GL_TEXTURE_2D, textId);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -47,7 +52,7 @@ void PicturePainter::initTextures() {
 }
 
 void PicturePainter::setDataBuffer(uint8_t textId, const ImageQueue *buffer) {
-    if(textId < (int)_textures.size() && textId >= 0) {
+    if (textId < (int)_textures.size() && textId >= 0) {
         _textures[textId]->initBuffer(buffer);
     }
 }

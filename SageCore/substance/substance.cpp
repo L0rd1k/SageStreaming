@@ -34,6 +34,10 @@ sage::CamerasHandler* sage::Substance::getCamera() {
     return _camera;
 }
 
+sage::Decoder* sage::Substance::getDecoder() {
+    return _decoder;
+}
+
 void sage::Substance::connectCallbacks() {
     if (_camera) {
         callbacks.push_back(
@@ -74,7 +78,6 @@ void sage::Substance::startCameraStreaming() {
 
 void sage::Substance::mainSubstanceLoop() {
     startCameraStreaming();
-
     while (_inProcess) {
         // Log() << "Main loop: " << _id << " " << std::this_thread::get_id();
         // usleep(5000);
@@ -89,10 +92,8 @@ const ImageQueue* sage::Substance::getImageQueue() {
 }
 
 void sage::Substance::onImageReceived(const img::swImage& img) {
-    // Log::debug(img->imgSize.height(), "x", img->imgSize.width());
     img::swImage& decImg = _decoder->getQueue()->next();
     _decoder->decode(img, decImg);
     _decoder->getQueue()->moveNext();
-    // cv::imwrite("/home/ilya/img_ffmpeg.png", cv_toMat(decImg));
 
 }

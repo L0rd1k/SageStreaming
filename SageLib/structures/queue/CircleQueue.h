@@ -1,6 +1,7 @@
 #pragma once 
 
 #include "Queue.h"
+#include "utils/Log.h"
 
 template <typename T, int SIZE = 3>
 class CircleQueue : public Queue<T, SIZE> {

@@ -127,7 +127,6 @@ bool sage::FFmpegDecoder::decode(const img::swImage& in, img::swImage& out) {
         if (avcodec_decode_video2(_codecCtx, _frame, &frameReceived, _packet) >= 0) {
             if (frameReceived) {
                 // Log::trace("Image decoded:", _codecCtx->width, _codecCtx->height, _codecCtx->pix_fmt);
-
                 int width = _codecCtx->width;
                 int height = _codecCtx->height;
                 int format = _codecCtx->pix_fmt;
@@ -142,7 +141,7 @@ bool sage::FFmpegDecoder::decode(const img::swImage& in, img::swImage& out) {
                 out->imgSize = um::Size<int>(width, height);
                 out->channels = 3;
                 out->imgColorType = img::ColorType::BGR;
-                cv::imwrite("/home/ilya/img_ffmpeg.png", cv_toMat(out));
+                // cv::imwrite("/home/ilya/img_ffmpeg.png", cv_toMat(out));
                 return true;
             }
         }

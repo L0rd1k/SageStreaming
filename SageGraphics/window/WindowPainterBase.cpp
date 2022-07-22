@@ -9,7 +9,7 @@ WindowPainterBase::WindowPainterBase() {
 WindowPainterBase::~WindowPainterBase() {
 }
 
-bool WindowPainterBase::createWindow(int argc, char** argv) {
+bool WindowPainterBase::createWindow(int argc, char** argv, um::Size<int> _size) {
 }
 
 void WindowPainterBase::setPicturePainter(std::shared_ptr<PicturePainter> ptr) {

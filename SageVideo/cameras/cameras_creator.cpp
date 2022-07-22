@@ -10,7 +10,9 @@ sage::CamerasHandler* sage::CamerasCreator::createCamera(short id, cam::CamTypes
     switch (camType) {
         case cam::CamTypes::FFMPEG: {
             // camHandler = new CameraFFmpeg("/home/ilya/Видео/ik.avi", RtspTransportType::Vid);
-            camHandler = new CameraFFmpeg("/home/ilya/Видео/SlovakiaRobot/Sample.avi", RtspTransportType::Vid);
+            // camHandler = new CameraFFmpeg("/home/ilya/Видео/SlovakiaRobot/Sample.avi", RtspTransportType::Vid);
+            // camHandler = new CameraFFmpeg("/home/ilya/Видео/Полеты/Протасово/3.avi", RtspTransportType::Vid);
+            camHandler = new CameraFFmpeg("/home/ilya/Видео/Полеты/Voskresensk/TV/ch0_t.avi", RtspTransportType::Vid);
             break;
             // camHandler = new CameraFFmpeg("/dev/video1", RtspTransportType::V4l);
         }
