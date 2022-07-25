@@ -24,7 +24,6 @@ void PicturePainter::show() {
     int x[4] = { 0, 1024/2, 0, 1024/2 };
     int y[4] = { 768/2, 768/2, 0, 0 };
 
-    Log::critical(_textures.size());
     for(auto i = 0; i < _textures.size(); i++) {
         if (_textures[i]->getLastDataFromQueue()) {
             _textures[i]->draw(x[i], y[i], um::Size<int>(1024/2, 768/2));

@@ -21,7 +21,7 @@ bool CameraFFmpeg::start() {
     _isStreaming = true;
     _camThread = std::thread(&CameraFFmpeg::mainLoop, this);
     return true;
-}
+} 
 
 bool CameraFFmpeg::stop() {
     if (_camThread.joinable()) {

@@ -5,6 +5,8 @@
 #include <GL/glut.h>
 #endif
 
+#include <thread>
+
 #include "image/Image.h"
 #include "image/ImageQueue.h"
 #include "utils/GLDefinitions.h"

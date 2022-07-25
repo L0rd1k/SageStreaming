@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <chrono>
+#include <mutex>
 
 #include "WindowPainterBase.h"
 #include "image/PicturePainter.h"
@@ -18,4 +19,5 @@ public:
     static um::Size<int> _winSize;
 private:
     static std::chrono::system_clock::time_point prevTime;
+    std::mutex _mtx;
 }; 

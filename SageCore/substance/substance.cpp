@@ -6,6 +6,7 @@ sage::Substance::Substance(short id)
       _inProcess(false) {
     initSubstance();
     connectCallbacks();
+    timer.start();
 }
 
 sage::Substance::~Substance() {
@@ -80,7 +81,6 @@ void sage::Substance::mainSubstanceLoop() {
     startCameraStreaming();
     while (_inProcess) {
         // Log() << "Main loop: " << _id << " " << std::this_thread::get_id();
-        // usleep(5000);
     }
 }
 
@@ -93,7 +93,16 @@ const ImageQueue* sage::Substance::getImageQueue() {
 
 void sage::Substance::onImageReceived(const img::swImage& img) {
     img::swImage& decImg = _decoder->getQueue()->next();
+
+    // Test received fps from camera
+    if(timer.elapsedMs() > 1000) {
+        Log::trace("Fps:", fps, " --> ", std::this_thread::get_id());
+        fps = 0;
+        timer.restart();
+    } else {
+        fps++;
+    }
+
     _decoder->decode(img, decImg);
     _decoder->getQueue()->moveNext();
-
 }

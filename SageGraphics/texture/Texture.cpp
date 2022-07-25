@@ -22,23 +22,13 @@ void Texture::initBuffer(const ImageQueue* data) {
 bool Texture::getLastDataFromQueue() {
     if (_queueData != nullptr) {
         auto& data = _queueData->peak();
-
-        // Log() << "Size: " << data->imgSize.height() << " x " << data->imgSize.width();
-        // Log() << "Source type: " << toString(data->imgSourceType);
-        // Log() << "Format: " << toString(data->imgFormat);
-
         if (data->imgSize.isValid()) {
-        
-            cv::Mat greyImg = cv::Mat(data->imgSize.height(), data->imgSize.width(), CV_8UC3, data.data());
-            cv::imwrite("/home/ilya/Test.png", greyImg);
-
             GLenum format = gl_GetColorType(data->imgColorType);
             GLenum internalFormat = gl_GetInternalFormat(data->imgColorType);
             if (format == GL_NONE || internalFormat == GL_NONE) {
                 Log() << "Unknown/Unsupported openGL pixel format" << toString(data->imgFormat);
                 return false;
             }
-
             glBindTexture(GL_TEXTURE_2D, _id);
             if (_lastSize.height() == data->imgSize.height() && _lastSize.width() == data->imgSize.width() && _lastFormat == format) {
                 glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, data->imgSize.width(), data->imgSize.height(),
@@ -47,7 +37,6 @@ bool Texture::getLastDataFromQueue() {
                 glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, data->imgSize.width(), data->imgSize.height(), 0,
                              format, GL_UNSIGNED_BYTE, data.data());
             }
-
             _lastSize = data->imgSize;
             _lastFormat = format;
             return true;

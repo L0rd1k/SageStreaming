@@ -4,6 +4,8 @@
 #include <mutex>
 #include <iostream>
 
+#include "utils/Log.h"
+
 template <typename T, int SIZE>
 class Queue {
 public:
@@ -31,6 +33,6 @@ public:
 protected:
     T _data[SIZE]; 
     std::mutex _locker;
-    std::atomic<uint> _peak;
-    std::atomic<uint> _front;
+    std::atomic<int> _peak;
+    std::atomic<int> _front;
 };

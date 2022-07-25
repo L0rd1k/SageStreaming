@@ -52,6 +52,7 @@ void WindowPainterGlut::reshapeEvent(int width, int height) {
 }
 
 void WindowPainterGlut::idleEvent() {
+    // std::lock_guard<std::mutex> _lock(inst()._mtx);
     prevTime = {};
     static std::chrono::system_clock::time_point currTime = std::chrono::high_resolution_clock::now(); 
     double elapsed = std::chrono::duration<double, std::milli>(currTime - prevTime).count();

@@ -4,6 +4,7 @@
 
 #include "cameras/cameras_creator.h"
 #include "decoder/decoder.h"
+#include "utils/ElapsedTimer.h"
 
 namespace sage {
 
@@ -33,10 +34,12 @@ public:
 
 private:
     Signal<const img::swImage&> sig_imageDecoded;
-
     std::thread _mainThread;
-    
     CamerasHandler* _camera = nullptr;
+
+    ElapsedTimer timer;
+    uint fps;
+
 
     bool _inProcess;  //> is substance enabled;
     bool _isLoopOn;   //> is main loop running

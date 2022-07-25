@@ -2,29 +2,18 @@
 
 std::shared_ptr<PicturePainter> WindowPainterBase::_painter;
 
-
 WindowPainterBase::WindowPainterBase() {
 }
 
 WindowPainterBase::~WindowPainterBase() {
 }
 
-bool WindowPainterBase::createWindow(int argc, char** argv, um::Size<int> _size) {
-}
-
 void WindowPainterBase::setPicturePainter(std::shared_ptr<PicturePainter> ptr) {
+    std::lock_guard<std::mutex> _lock(_mutex);
     _painter = ptr;
 }
 
 std::shared_ptr<PicturePainter> WindowPainterBase::getPicturePainter() {
+    std::lock_guard<std::mutex> _lock(_mutex);
     return _painter;    
 }
-
-void WindowPainterBase::run() {
-}
-
-WindowPainterBase& WindowPainterBase::inst() {
-    static WindowPainterBase inst;
-    return inst;
-}
-
