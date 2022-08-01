@@ -1,3 +1,6 @@
 [submodule "3rdParty/glfw"]
 	path = 3rdParty/glfw
 	url = https://github.com/glfw/glfw.git
+[submodule "3rdParty/FFmpeg"]
+	path = 3rdParty/FFmpeg
+	url = https://github.com/L0rd1k/FFmpeg.git

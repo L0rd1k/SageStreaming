@@ -42,6 +42,10 @@ public:
     bool isValid() {
         return (_height > 0) || (_width > 0);    
     }
+
+    std::string toStr() {
+        return std::to_string(_width) + "x" + std::to_string(_height);
+    }
 private:
     T _width;
     T _height;

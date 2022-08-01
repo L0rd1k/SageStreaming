@@ -9,12 +9,17 @@ sage::CamerasHandler* sage::CamerasCreator::createCamera(short id, cam::CamTypes
     CamerasHandler* camHandler = nullptr;
     switch (camType) {
         case cam::CamTypes::FFMPEG: {
-            // camHandler = new CameraFFmpeg("/home/ilya/Видео/ik.avi", RtspTransportType::Vid);
-            // camHandler = new CameraFFmpeg("/home/ilya/Видео/SlovakiaRobot/Sample.avi", RtspTransportType::Vid);
-            // camHandler = new CameraFFmpeg("/home/ilya/Видео/Полеты/Протасово/3.avi", RtspTransportType::Vid);
-            camHandler = new CameraFFmpeg("/home/ilya/Видео/Полеты/Voskresensk/TV/ch0_t.avi", RtspTransportType::Vid);
+            /** @todo Remove hardcode. Add xml parser. **/
+            if(id == 3) {
+                camHandler = new CameraFFmpeg("/home/ilya/Видео/SlovakiaRobot/Sample.avi", RtspTransportType::Vid);
+            } else if (id == 0) {
+                camHandler = new CameraFFmpeg("/home/ilya/Видео/Полеты/Voskresensk/TV/ch0_t.avi", RtspTransportType::Vid);
+            } else if (id == 1) {
+                camHandler = new CameraFFmpeg("/home/ilya/Видео/Полеты/Протасово/4.avi", RtspTransportType::Vid);
+            } else if (id == 2) {
+                camHandler = new CameraFFmpeg("/home/ilya/Видео/Полеты/Протасово/3.avi", RtspTransportType::Vid);
+            }
             break;
-            // camHandler = new CameraFFmpeg("/dev/video1", RtspTransportType::V4l);
         }
         case cam::CamTypes::OPENCV: {
         }

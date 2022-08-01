@@ -1,0 +1,16 @@
+#!/bin/bash
+
+./configure			\ 
+	--enable-debug  	\
+	--enable-gpl 		\
+	--enable-shared 	\
+	--enable-libx264 	\
+	--
+	--disable-static 	\
+	--disable-doc 		\
+	--disable-optimization	\
+	--disable-mnx		\
+	--disable-stripping	\
+	--enable-rpath 		\
+	
+
