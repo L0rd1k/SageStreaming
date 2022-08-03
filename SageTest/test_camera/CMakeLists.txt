@@ -5,7 +5,7 @@ set(THIS test_camera)
 add_executable(${THIS})
 
 target_sources(${THIS} PRIVATE
-    FFmpegTest.cpp
+    ffmpeg_test.cpp
 )
 
 target_link_libraries(${THIS} PRIVATE gtest_main)

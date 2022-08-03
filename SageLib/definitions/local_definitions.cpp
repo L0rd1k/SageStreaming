@@ -1,25 +1,25 @@
 #include "local_definitions.h"
 
-const char* toString(img::ImageFormat format) {
+const char* toString(sage::ImageFormat format) {
     switch (format) {
-    case img::ImageFormat::H264:
+    case sage::ImageFormat::H264:
         return "H264";
-    case img::ImageFormat::JPEG:
+    case sage::ImageFormat::JPEG:
         return "JPEG";
-    case img::ImageFormat::RAW:
+    case sage::ImageFormat::RAW:
         return "RAW";
-    case img::ImageFormat::MPEG4:
+    case sage::ImageFormat::MPEG4:
         return "MPEG4";
     default:
         return "Undefined";
     }        
 }
 
-const char* toString(img::ImageSource source) {
+const char* toString(sage::ImageSource source) {
     switch (source) {
-    case img::ImageSource::RTSP:
+    case sage::ImageSource::RTSP:
         return "RTSP";
-    case img::ImageSource::DISK:
+    case sage::ImageSource::DISK:
         return "DISK";
     default:
         return "Undefined";

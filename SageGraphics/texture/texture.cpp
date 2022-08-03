@@ -1,4 +1,4 @@
-#include "Texture.h"
+#include "texture.h"
 
 #include "opencv2/imgproc.hpp"
 #include "opencv2/opencv.hpp"
@@ -26,7 +26,7 @@ bool Texture::getLastDataFromQueue() {
             GLenum format = gl_GetColorType(data->imgColorType);
             GLenum internalFormat = gl_GetInternalFormat(data->imgColorType);
             if (format == GL_NONE || internalFormat == GL_NONE) {
-                Log() << "Unknown/Unsupported openGL pixel format" << toString(data->imgFormat);
+                // Log() << "Unknown/Unsupported openGL pixel format" << toString(data->imgFormat);
                 return false;
             }
             glBindTexture(GL_TEXTURE_2D, _id);
@@ -45,7 +45,7 @@ bool Texture::getLastDataFromQueue() {
     return false;
 }
 
-void Texture::draw(int x, int y, um::Size<int> sz) {
+void Texture::draw(int x, int y, sage::Size<int> sz) {
     glBindTexture(GL_TEXTURE_2D, _id);
     glBegin(GL_QUADS);
 

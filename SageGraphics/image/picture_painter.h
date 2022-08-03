@@ -10,14 +10,14 @@
 #endif
 
 
-#include "texture/Texture.h"
+#include "texture/texture.h"
 #include "definitions/local_definitions.h"
-#include "image/ImageQueue.h"
-#include "utils/Size.h"
+#include "image/image_queue.h"
+#include "utils/size.h"
 
 class PicturePainter {
 public:
-    PicturePainter(uint8_t textCount = gl::txtCount);
+    PicturePainter(uint8_t textCount = sage::txtCount);
     virtual ~PicturePainter();
     void initTextures();
     void allocateTextures();

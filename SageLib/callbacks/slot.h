@@ -1,7 +1,7 @@
 #pragma once 
 
 #include <functional>
-#include "utils/Log.h"
+#include "utils/log.h"
 
 template<typename RET, typename ...Args>
 class Slot {

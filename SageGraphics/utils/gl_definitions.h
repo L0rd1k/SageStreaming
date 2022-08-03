@@ -6,37 +6,37 @@
 #endif
 
 #include "definitions/local_definitions.h"
-#include "utils/Log.h"
+#include "utils/log.h"
 
-static GLenum gl_GetColorType(img::ColorType colorType) {
+static GLenum gl_GetColorType(sage::ColorType colorType) {
     switch (colorType) {
-        case img::ColorType::GRAY: {
+        case sage::ColorType::GRAY: {
             return GL_LUMINANCE;
         }
-        case img::ColorType::BGR: {
+        case sage::ColorType::BGR: {
             return GL_BGR;
         }
-        case img::ColorType::RGBA: {
+        case sage::ColorType::RGBA: {
             return GL_RGBA;
         }
-        case img::ColorType::RGB: {
+        case sage::ColorType::RGB: {
             return GL_RGB;
         }
     }
 }
 
-static GLenum gl_GetInternalFormat(img::ColorType format) {
+static GLenum gl_GetInternalFormat(sage::ColorType format) {
     switch (format) {
-        case img::ColorType::GRAY: {
+        case sage::ColorType::GRAY: {
             return GL_LUMINANCE;
         }
-        case img::ColorType::RGB: {
+        case sage::ColorType::RGB: {
             return GL_RGB;
         }
-        case img::ColorType::BGR: {
+        case sage::ColorType::BGR: {
             return GL_RGB;
         }
-        case img::ColorType::RGBA: {
+        case sage::ColorType::RGBA: {
             return GL_RGBA;
         }
         default: {

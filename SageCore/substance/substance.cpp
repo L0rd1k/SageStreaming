@@ -17,7 +17,7 @@ sage::Substance::~Substance() {
 }
 
 bool sage::Substance::initSubstance() {
-    _camera = CamerasCreator::inst().createCamera(_id, cam::CamTypes::FFMPEG);
+    _camera = CamerasCreator::inst().createCamera(_id, sage::CamTypes::FFMPEG);
     if (!_camera)
         return false;
     _decoder = CamerasCreator::inst().createDecoder(sage::DecTypes::FFMPEG);
@@ -86,15 +86,15 @@ void sage::Substance::mainSubstanceLoop() {
 
 const ImageQueue* sage::Substance::getImageQueue() {
     auto imageFormat = _camera->getImageFormat();
-    if (imageFormat == img::ImageFormat::RAW) {
+    if (imageFormat == sage::ImageFormat::RAW) {
         return _camera->getQueue();
     }
 }
 
-void sage::Substance::onImageReceived(const img::swImage& img) {
-    img::swImage& decImg = _decoder->getQueue()->next();
+void sage::Substance::onImageReceived(const sage::swImage& img) {
+    sage::swImage& decImg = _decoder->getQueue()->next();
 
-    // Test received fps from camera
+    /** Test received fps from camera. **/
     if(timer.elapsedMs() > 1000) {
         Log::trace("Fps:", fps, " --> ", std::this_thread::get_id());
         fps = 0;
@@ -103,6 +103,12 @@ void sage::Substance::onImageReceived(const img::swImage& img) {
         fps++;
     }
 
-    _decoder->decode(img, decImg);
+    if(img->imgFormat == sage::ImageFormat::RAW) {
+        decImg = img;
+    } else {
+        _decoder->decode(img, decImg);
+    }
+
+
     _decoder->getQueue()->moveNext();
 }

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "decoder/decoder.h"
-#include "ffmpeg/FFmpegUtils.h"
-#include "utils/Log.h"
+#include "ffmpeg/ffmpeg_utils.h"
+#include "utils/log.h"
 
 extern "C" {
 #include "libavcodec/avcodec.h"
@@ -21,9 +21,9 @@ class FFmpegDecoder : public sage::Decoder {
 public:
     FFmpegDecoder();
     virtual ~FFmpegDecoder();
-    virtual bool decode(const img::swImage& in, img::swImage& out) override;
+    virtual bool decode(const sage::swImage& in, sage::swImage& out) override;
 private:
-    int selectDecoderType(const img::swImage& img);
+    int selectDecoderType(const sage::swImage& img);
     void preprocessDecoder(int codec, int width, int height);
     void resetDecoderInfo();
     void initSwsContext(int format, int width, int height);

@@ -8,7 +8,7 @@ enum class DataType {
 };
 
 
-namespace img {
+namespace sage {
     const int queueSize = 3;
     enum class ImageFormat {
         JPEG = 0,
@@ -31,9 +31,6 @@ namespace img {
         Undefined = 255
     };
 
-};
-
-namespace cam {
     namespace ffmpeg {
         const int timeoutConnect = 15000;
         const int timeoutStream = 5000;
@@ -46,12 +43,10 @@ namespace cam {
         Undefined = 255
     };
 
-};
-
-namespace gl {
+    // GL definitions
     const uint8_t txtCount = 2;
 }
 
 
-const char* toString(img::ImageFormat format);
-const char* toString(img::ImageSource source);
+const char* toString(sage::ImageFormat format);
+const char* toString(sage::ImageSource source);

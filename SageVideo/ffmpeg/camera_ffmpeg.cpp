@@ -14,7 +14,7 @@ CameraFFmpeg::CameraFFmpeg(std::string url, RtspTransportType type)
 }
 
 bool CameraFFmpeg::start() {
-    if (isPlaying()) {
+    if (isStreaming()) {
         Log::critical("Can't start camera, already playing");
         return false;
     }
@@ -27,7 +27,7 @@ bool CameraFFmpeg::stop() {
     if (_camThread.joinable()) {
         if (_context) {
             /** @warning Custom method from prebuild FFMPEG 2.8 **/
-            // avformat_preclose_input(&_context);
+
             avformat_close_input(&_context);
         }
         _isStreaming = false;
@@ -35,36 +35,18 @@ bool CameraFFmpeg::stop() {
     }
 }
 
-bool CameraFFmpeg::isPlaying() {
-    return _isStreaming;
-}
 
 void CameraFFmpeg::mainLoop() {
     if (prepareContext() && openContext()) {
         while (isStreaming() && receiveContext())
             _blockTimer.restart();
     }
-    if (!isPlaying())
+    if (!isStreaming())
         _rtspState = RtspCameraState::Stopped;
     closeContext();
 }
 
 bool CameraFFmpeg::receiveContext() {
-    // AVPacket packet;
-    // av_init_packet(&packet);
-
-    // int code = av_read_frame(_context, &packet);
-    // if (code != 0) {
-    //     handleError(code);
-    //     return false;
-    // }
-    // if (_videoStream && packet.stream_index == _videoStream->index) {
-    //     handleVideoFrame(_videoStream, &packet);
-    // }
-    // av_free_packet(&packet);
-    // av_init_packet(&packet);
-    // return true;
-
     AVPacket* packet = av_packet_alloc(); //> make 
     int code = av_read_frame(_context, packet);
     if (code != 0) {
@@ -76,7 +58,7 @@ bool CameraFFmpeg::receiveContext() {
     }
     av_packet_unref(packet);
     av_packet_free(&packet);
-    Log::trace("-----------------------");
+
     return true;
 }
 
@@ -96,63 +78,20 @@ void CameraFFmpeg::performFpsDelay(AVStream* stream, AVPacket* packet) {
 }
 
 bool CameraFFmpeg::handleVideoFrame(AVStream* stream, AVPacket* packet) {
-    // std::lock_guard<std::mutex> locker(_mutex);
-    // imgFormat = img::ImageFormat::Undefined;
-    // if (stream->codec->codec_id == AV_CODEC_ID_MJPEG) {
-    //     // Log::trace("AV_CODEC_ID_MJPEG");
-    //     imgFormat = img::ImageFormat::JPEG;
-    // } else if (stream->codec->codec_id == AV_CODEC_ID_H264) {
-    //     // Log::trace("AV_CODEC_ID_H264");
-    //     imgFormat = img::ImageFormat::H264;
-    // } else if (stream->codec->codec_id == AV_CODEC_ID_RAWVIDEO) {
-    //     // Log::trace("AV_CODEC_ID_RAWVIDEO");
-    //     imgFormat = img::ImageFormat::RAW;
-    // } else if (stream->codec->codec_id == AV_CODEC_ID_MPEG4) {
-    //     // Log::trace("AV_CODEC_ID_MPEG4");
-    //     imgFormat = img::ImageFormat::MPEG4;
-    // } else {
-    //     Log() << "[FFMPEG] Unsupported image format: " + std::to_string(stream->codec->codec_id);
-    //     return false;
-    // }
-
-    // if (!packet->data || !packet->size) {
-    //     return false;
-    // }
-
-    // if (_rtspTransportType == RtspTransportType::Vid) {
-    //     performFpsDelay(stream, packet);
-    // }
-
-    // img::swImage& image = _queue.next();
-
-    // if (imgFormat == img::ImageFormat::JPEG) {
-    //     TrimmedAVPacket trimmed = trimAVPacket(packet);
-    //     image.setBytes(trimmed.data, trimmed.size);
-    // } else {
-    //     image.setBytes(packet->data, packet->size);
-    // }
-
-    // image->imgFormat = imgFormat;
-    // image->imgSourceType = img::ImageSource::RTSP;
-    // image->imgSize = um::Size<int>(stream->codec->width,
-    //                                stream->codec->height);
-
-    // triggerImage(image);
-
     std::lock_guard<std::mutex> locker(_mutex);
-    imgFormat = img::ImageFormat::Undefined;
+    imgFormat = sage::ImageFormat::Undefined;
     if (stream->codecpar->codec_id == AV_CODEC_ID_MJPEG) {
-        // Log::info("[FFmpeg][Reader] MJPEG");
-        imgFormat = img::ImageFormat::JPEG;
+        Log::info("[FFmpeg][Reader] MJPEG");
+        imgFormat = sage::ImageFormat::JPEG;
     } else if (stream->codecpar->codec_id == AV_CODEC_ID_H264) {
-        // Log::info("[FFmpeg][Reader] H264");
-        imgFormat = img::ImageFormat::H264;
+        Log::info("[FFmpeg][Reader] H264");
+        imgFormat = sage::ImageFormat::H264;
     } else if (stream->codecpar->codec_id == AV_CODEC_ID_RAWVIDEO) {
-        // Log::info("[FFmpeg][Reader] RAWVIDEO");
-        imgFormat = img::ImageFormat::RAW;
+        Log::info("[FFmpeg][Reader] RAWVIDEO");
+        imgFormat = sage::ImageFormat::RAW;
     } else if (stream->codecpar->codec_id == AV_CODEC_ID_MPEG4) {
-        // Log::info("[FFmpeg][Reader] MPEG4");
-        imgFormat = img::ImageFormat::MPEG4;
+        Log::info("[FFmpeg][Reader] MPEG4");
+        imgFormat = sage::ImageFormat::MPEG4;
     } else {
         Log::error("[FFmpeg][Reader] Unsupported image format:", std::to_string(stream->codecpar->codec_id));
         return false;
@@ -165,18 +104,18 @@ bool CameraFFmpeg::handleVideoFrame(AVStream* stream, AVPacket* packet) {
         performFpsDelay(stream, packet);
     }
 
-    img::swImage& image = _queue.next();
-    if (imgFormat == img::ImageFormat::JPEG) {
+    sage::swImage& image = _queue.next();
+    if (imgFormat == sage::ImageFormat::JPEG) {
         TrimmedAVPacket trimmed = trimAVPacket(packet);
         image.setBytes(trimmed.data, trimmed.size);
     } else {
         image.setBytes(packet->data, packet->size);
     }
-    Log::info("[FFmpeg][Reader] Img format:", toString(imgFormat));
+
     image->imgFormat = imgFormat;
-    image->imgSourceType = img::ImageSource::RTSP;
-    image->imgSize = um::Size<int>(stream->codecpar->width, stream->codecpar->height);
-    Log::trace("[FFmpeg][Reader] Size:", image->imgSize.toStr());
+    image->imgSourceType = sage::ImageSource::RTSP;
+    image->imgSize = sage::Size<int>(stream->codecpar->width, stream->codecpar->height);
+
     triggerImage(image);
     return true;
 }
@@ -223,15 +162,18 @@ bool CameraFFmpeg::prepareContext() {
     _context->interrupt_callback.opaque = this;
 
     _blockTimer.restart();
-    _blockTimerTimeout = cam::ffmpeg::timeoutConnect;
+    _blockTimerTimeout = sage::ffmpeg::timeoutConnect;
     _blockTimerExp = false;
 
     AVDictionary* dict = nullptr;
+    const AVInputFormat* inputFormat = NULL;
     if (_rtspTransportType == RtspTransportType::Tcp) {
         av_dict_set(&dict, "rtps_transport", "tcp", 0);
     } else if (_rtspTransportType == RtspTransportType::Udp) {
         av_dict_set(&dict, "rtps_transport", "udp", 0);
     } else if (_rtspTransportType == RtspTransportType::V4l) {
+        inputFormat = av_find_input_format("v4l2");
+        Log::trace(inputFormat->long_name);
         av_dict_set(&dict, "framerate", "25", 0);
     } else if (_rtspTransportType == RtspTransportType::Vid) {
         av_dict_set(&dict, "framerate", "25", 0);
@@ -239,7 +181,10 @@ bool CameraFFmpeg::prepareContext() {
         Log::error("[FFmpeg][Reader] Unknown transport type");
         return false;
     }
+
+    
     int resCode = avformat_open_input(&_context, _url.c_str(), NULL, &dict);
+    
     if (resCode != 0 || _blockTimerExp) {
         Log::error("[FFmpeg][Reader] Video input error found:", _url.c_str());
         handleError(resCode);
@@ -249,16 +194,7 @@ bool CameraFFmpeg::prepareContext() {
 }
 
 void CameraFFmpeg::logStreamInfo() {
-    // Log::info("\n",
-    //           "Extension:", _context->iformat->extensions, "\n",
-    //           "Format name:", _context->iformat->name, "\n",
-    //           "Bitrate:", _context->bit_rate, "\n",
-    //           "Duratrion:", _context->duration, "\n",
-    //           "Codec id:", _context->streams[0]->codec->codec_id, "\n",
-    //           "Channels:", _context->streams[0]->codec->channels);
-
     Log::info("\n",
-              " > Extension:", _context->iformat->extensions, "\n",
               " > Format name:", _context->iformat->name, "\n",
               " > Bitrate:", _context->bit_rate, "\n",
               " > Duratrion:", _context->duration, "\n",
@@ -275,18 +211,6 @@ bool CameraFFmpeg::openContext() {
         return false;
     }
 
-    // for (uint i = 0; i < _context->nb_streams; i++) {
-    //     if (_context->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO) {
-    //         // Log::trace("[FFMPEG] AVMEDIA_TYPE_VIDEO:", i);
-    //         _videoStream = _context->streams[i];
-    //     } else if (_context->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
-    //         // Log() << "[FFMPEG] AVMEDIA_TYPE_AUDIO";
-    //         _audioStream = _context->streams[i];
-    //     } else if (_context->streams[i]->codec->codec_type == AVMEDIA_TYPE_DATA) {
-    //         // Log() << "[FFMPEG] AVMEDIA_TYPE_DATA";
-    //     }
-    // }
-
     for (uint i = 0; i < _context->nb_streams; i++) {
         if (_context->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
             Log::trace("[FFMPEG] AVMEDIA_TYPE_VIDEO:", i);
@@ -298,12 +222,12 @@ bool CameraFFmpeg::openContext() {
             Log() << "[FFMPEG] AVMEDIA_TYPE_DATA";
         }
     }
-    _blockTimerTimeout = cam::ffmpeg::timeoutStream;
+    _blockTimerTimeout = sage::ffmpeg::timeoutStream;
     return true;
 }
 
 bool CameraFFmpeg::closeContext() {
-    _blockTimerTimeout = cam::ffmpeg::timeoutTeardown;
+    _blockTimerTimeout = sage::ffmpeg::timeoutTeardown;
     _blockTimer.restart();
     avformat_close_input(&_context);
     avformat_free_context(_context);
@@ -323,7 +247,7 @@ void CameraFFmpeg::handleError(int resCode) {
     Log::error(error.c_str());
 }
 
-img::ImageFormat CameraFFmpeg::getImageFormat() {
+sage::ImageFormat CameraFFmpeg::getImageFormat() {
     std::lock_guard<std::mutex> lck(_mutex);
     return imgFormat;
 }

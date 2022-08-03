@@ -14,10 +14,14 @@ endif()
 
 list(APPEND SOURCES
     ./ffmpeg/camera_ffmpeg.cpp
-    ./ffmpeg/FFmpegUtils.cpp
+    ./ffmpeg/ffmpeg_utils.cpp
+    ./opencv/camera_opencv.cpp
+
     ./decoder/ffmpeg/ffmpeg_decoder.cpp
     ./decoder/decoder.cpp
-    ./encoder/Encoder.cpp
+   
+    ./encoder/encoder.cpp
+   
     ./cameras/cameras_handler.cpp
     ./cameras/cameras_creator.cpp
 

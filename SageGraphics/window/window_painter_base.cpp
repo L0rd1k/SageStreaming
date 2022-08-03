@@ -1,4 +1,4 @@
-#include "WindowPainterBase.h"
+#include "window_painter_base.h"
 
 std::shared_ptr<PicturePainter> WindowPainterBase::_painter;
 

@@ -14,8 +14,8 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 endif()
 
 list(APPEND SOURCES
-    ML/LinearRegression.cpp
-    YOLO/YoloTranslator.cpp
+    ml/linear_regression.cpp
+    yolo/yolo_translator.cpp
 )
 
 

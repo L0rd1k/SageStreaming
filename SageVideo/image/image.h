@@ -2,22 +2,21 @@
 
 #include <opencv2/opencv.hpp>
 
-#include "data/Data.h"
+#include "data/data.h"
 #include "definitions/local_definitions.h"
-#include "utils/Size.h"
+#include "utils/size.h"
 
-
-namespace img {
+namespace sage {
 
 #pragma pack(push, 1)
 struct Image : public DataHeader {
     Image() : DataHeader(DataType::Image),
               imgFormat(ImageFormat::Undefined),
-              imgSize(um::Size<int>(0, 0)),
+              imgSize(sage::Size<int>(0, 0)),
               imgSourceType(ImageSource::Undefined) {
     }
     ImageFormat imgFormat;
-    um::Size<int> imgSize;
+    sage::Size<int> imgSize;
     ImageSource imgSourceType;
     ColorType imgColorType;
     uint8_t channels;
@@ -26,7 +25,7 @@ struct Image : public DataHeader {
 
 using swImage = DataCore<Image>;
 
-static cv::Mat cv_toMat(const img::swImage& img) {
+static cv::Mat cv_toMat(const sage::swImage& img) {
     int type = 0;
     if (img->channels == 1) {
         type = CV_8UC1;
@@ -39,4 +38,4 @@ static cv::Mat cv_toMat(const img::swImage& img) {
     return mat;
 }
 
-}  // namespace img
+}  // namespace sage

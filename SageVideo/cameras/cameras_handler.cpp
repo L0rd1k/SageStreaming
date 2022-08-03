@@ -8,10 +8,9 @@ _queue(1000) {
 sage::CamerasHandler::~CamerasHandler() {
 }
 
-void sage::CamerasHandler::triggerImage(img::swImage &image) {
+void sage::CamerasHandler::triggerImage(sage::swImage &image) {
     _queue.moveNext();
     sig_imageRecieved.emit(image);
-
 }
 
 bool sage::CamerasHandler::isStreaming() {
@@ -22,6 +21,6 @@ const ImageQueue* sage::CamerasHandler::getQueue() {
     return &_queue;
 } 
 
-img::ImageFormat sage::CamerasHandler::getImageFormat() {
-    return img::ImageFormat::Undefined;
+sage::ImageFormat sage::CamerasHandler::getImageFormat() {
+    return sage::ImageFormat::Undefined;
 }

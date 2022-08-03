@@ -3,9 +3,8 @@
 #include "definitions/sage_definitions.h"
 
 #include "substance/substance.h"
-#include "image/PicturePainter.h"
-
-#include "window/WindowPainterGlut.h"
+#include "image/picture_painter.h"
+#include "window/window_painter_glut.h"
 
 namespace sage {
 

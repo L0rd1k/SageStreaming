@@ -21,7 +21,7 @@ endif()
 set(LIBRARIES pthread)
 
 list(APPEND SOURCES
-  ./General/Features.cpp
+  ./general/features.cpp
 )
 
 add_subdirectory(test_camera)

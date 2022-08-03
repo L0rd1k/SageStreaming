@@ -10,22 +10,22 @@ sage::FFmpegDecoder::~FFmpegDecoder() {
     resetSwsContext();
 }
 
-int sage::FFmpegDecoder::selectDecoderType(const img::swImage& img) {
+int sage::FFmpegDecoder::selectDecoderType(const sage::swImage& img) {
     switch (img->imgFormat) {
-        case img::ImageFormat::H264: {
-            // Log::info("[FFmpeg][Decoder] H264");
+        case sage::ImageFormat::H264: {
+            Log::info("[FFmpeg][Decoder] H264");
             return AVCodecID::AV_CODEC_ID_H264;
         }
-        case img::ImageFormat::JPEG: {
-            // Log::info("[FFmpeg][Decoder] JPEG");
+        case sage::ImageFormat::JPEG: {
+            Log::info("[FFmpeg][Decoder] JPEG");
             return AVCodecID::AV_CODEC_ID_MJPEG;
         }
-        case img::ImageFormat::MPEG4: {
-            // Log::info("[FFmpeg][Decoder] MPEG4");
+        case sage::ImageFormat::MPEG4: {
+            Log::info("[FFmpeg][Decoder] MPEG4");
             return AVCodecID::AV_CODEC_ID_MPEG4;
         }
         default: {
-            // Log::info("[FFmpeg][Decoder] None");
+            Log::info("[FFmpeg][Decoder] None");
             return AVCodecID::AV_CODEC_ID_NONE;
         }
     }
@@ -54,7 +54,7 @@ void sage::FFmpegDecoder::preprocessDecoder(int codec, int width, int height) {
         return;
     }
     resetDecoderInfo();
-    Log::info("[FFmpeg][Decoder]Intialize ffmpeg decoder:", avcodec_get_name(AVCodecID(codec)), width, "x", height);
+    Log::trace("[FFmpeg][Decoder]Intialize ffmpeg decoder:", avcodec_get_name(AVCodecID(codec)), width, "x", height);
     /** Find appropriate decoder. **/
     const AVCodec* _codec = avcodec_find_decoder(static_cast<AVCodecID>(codec));
     if (_codec) {
@@ -64,14 +64,14 @@ void sage::FFmpegDecoder::preprocessDecoder(int codec, int width, int height) {
          * information is not available in the bitstream. **/
         _codecCtx->width = width;
         _codecCtx->height = height;
-        Log::critical("START:",_codecCtx->thread_count);
         if (_codecCtx) {
             int flag = avcodec_open2(_codecCtx, _codec, nullptr);
             if (flag < 0) {
                 Log::critical("[FFmpeg][Decoder]Can't open codec [avcodec_open2]!");
                 return;
             }
-            _packet = av_packet_alloc();
+            // _packet = av_packet_alloc();
+            _packet = new AVPacket();
             _frame = av_frame_alloc();
             if (!_frame) {
                 Log::critical("[FFmpeg][Decoder]Can't allocate video frame[av_frame_alloc]!");
@@ -110,8 +110,9 @@ void sage::FFmpegDecoder::resetSwsContext() {
         sws_freeContext(_swsCtx);
 }
 
-bool sage::FFmpegDecoder::decode(const img::swImage& in, img::swImage& out) {
+bool sage::FFmpegDecoder::decode(const sage::swImage& in, sage::swImage& out) {
     if (int codecType = selectDecoderType(in)) {
+        Log::critical(codecType, in->imgSize.width(), in->imgSize.height());
         preprocessDecoder(codecType, in->imgSize.width(), in->imgSize.height());
     }
 
@@ -121,10 +122,17 @@ bool sage::FFmpegDecoder::decode(const img::swImage& in, img::swImage& out) {
         _packet->data = in.data();
         _packet->size = in.dataSize();
 
+        Log::trace(_packet->size);
+
         int frameReceived = -1;
         int ret = avcodec_send_packet(_codecCtx, _packet);
         if (ret < 0) {
-            Log::error("[FFmpeg]Error sending a packet for decoding", stderr);
+            if (ret == AVERROR_EOF)
+                Log::error("[Decoder] avcodec_send_packet() return value is AVERROR_EOF.");
+            else if (ret == AVERROR_INVALIDDATA)
+                Log::error("[Decoder] avcodec_send_packet() INVALID DATA!");
+            else
+                Log::error("[Decoder] avcodec_send_packet() return value is negative:", ret);
             return false;
         }
 
@@ -148,10 +156,10 @@ bool sage::FFmpegDecoder::decode(const img::swImage& in, img::swImage& out) {
             int outLineSize[1] = {3 * width};
             sws_scale(_swsCtx, _frame->data, _frame->linesize, 0, height, outData, outLineSize);
 
-            out->imgFormat = img::ImageFormat::RAW;
-            out->imgSize = um::Size<int>(width, height);
-            out->channels = 3;
-            out->imgColorType = img::ColorType::BGR;
+            out->imgFormat = sage::ImageFormat::RAW;
+            out->imgSize = sage::Size<int>(width, height);
+            out->imgColorType = sage::ColorType::BGR;
+
             return true;
         }
     }

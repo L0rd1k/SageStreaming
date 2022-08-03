@@ -1,13 +1,11 @@
-#include "FFmpegUtils.h"
+#include "ffmpeg_utils.h"
 
 bool initializeFFmpeg(int logLevel) {
     static bool inited = false;
     static std::mutex mtx;
     std::lock_guard<std::mutex> lock(mtx);
     if(!inited) {
-        // av_register_all();
         avdevice_register_all(); //> Register all the input and output devices
-        // avcodec_register_all();
         avformat_network_init(); //> Initialization of network libraries.
         av_log_set_level(logLevel);
         inited = true;

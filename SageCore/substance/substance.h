@@ -4,7 +4,7 @@
 
 #include "cameras/cameras_creator.h"
 #include "decoder/decoder.h"
-#include "utils/ElapsedTimer.h"
+#include "utils/elapsed_timer.h"
 
 namespace sage {
 
@@ -26,14 +26,14 @@ public:
     Decoder* getDecoder();
 
 
-    void onImageReceived(const img::swImage& img);
+    void onImageReceived(const sage::swImage& img);
     void startCameraStreaming();
 
     std::vector<sage::Scope<void*> > callbacks;
     Decoder* _decoder = nullptr;
 
 private:
-    Signal<const img::swImage&> sig_imageDecoded;
+    Signal<const sage::swImage&> sig_imageDecoded;
     std::thread _mainThread;
     CamerasHandler* _camera = nullptr;
 

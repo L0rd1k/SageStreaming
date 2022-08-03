@@ -15,4 +15,12 @@ enum class DecTypes {
     FFMPEG = 1,
 };
 
+enum class CVCapType {
+    GSTREAMER = 0,
+    FFMPEG = 1,
+    V4L = 2,
+    ANY = 3,
+};
+
+
 }  // namespace sage

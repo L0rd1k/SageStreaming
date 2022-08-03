@@ -12,12 +12,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 set(LIBRARIES SageLib SageVideo glfw)
 
 list(APPEND SOURCES
-    ./plotting/DrawGraph.cpp
-    ./window/WindowPainterBase.cpp
-    ./window/WindowPainterGlut.cpp
-    ./image/PicturePainter.cpp
-    ./texture/Texture.cpp
-)
+    ./plotting/draw_graph.cpp
+    ./window/window_painter_base.cpp
+    ./window/window_painter_glut.cpp
+    ./image/picture_painter.cpp
+    ./texture/texture.cpp
+) 
 
 message("Looking for OpenGL...")
 if (UNIX)

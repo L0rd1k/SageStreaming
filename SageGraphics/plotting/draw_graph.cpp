@@ -1,4 +1,4 @@
-#include "DrawGraph.h" 
+#include "draw_graph.h" 
 
 DrawGraph::DrawGraph() {
 }

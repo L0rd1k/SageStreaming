@@ -9,8 +9,8 @@
 #include <memory>
 #include <sys/time.h>
 
-#include "utils/Log.h"
-#include "image/PicturePainter.h"
+#include "utils/log.h"
+#include "image/picture_painter.h"
 
 class WindowPainterBase {
 public:
@@ -20,7 +20,7 @@ public:
     void setPicturePainter(std::shared_ptr<PicturePainter> ptr);
     std::shared_ptr<PicturePainter> getPicturePainter();
 
-    virtual bool createWindow(int argc, char** argv, um::Size<int> _size) = 0;
+    virtual bool createWindow(int argc, char** argv, sage::Size<int> _size) = 0;
     virtual void run() = 0;
     
 protected:

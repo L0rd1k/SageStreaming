@@ -5,6 +5,7 @@
 #include "definitions/sage_definitions.h"
 //> Cameras
 #include "ffmpeg/camera_ffmpeg.h"
+#include "opencv/camera_opencv.h"
 //> Decoder
 #include "decoder/ffmpeg/ffmpeg_decoder.h"
 
@@ -16,7 +17,7 @@ public:
     virtual ~CamerasCreator() = default;
     static CamerasCreator& inst();
 
-    CamerasHandler* createCamera(short id, cam::CamTypes camType);
+    CamerasHandler* createCamera(short id, sage::CamTypes camType);
     Decoder* createDecoder(sage::DecTypes dectype);
 
 

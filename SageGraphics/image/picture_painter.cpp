@@ -1,4 +1,4 @@
-#include "PicturePainter.h"
+#include "picture_painter.h"
 
 PicturePainter::PicturePainter(uint8_t textCount) 
     : _isInited(false),
@@ -26,7 +26,7 @@ void PicturePainter::show() {
 
     for(auto i = 0; i < _textures.size(); i++) {
         if (_textures[i]->getLastDataFromQueue()) {
-            _textures[i]->draw(x[i], y[i], um::Size<int>(1024/2, 768/2));
+            _textures[i]->draw(x[i], y[i], sage::Size<int>(1024/2, 768/2));
         }       
     }
 

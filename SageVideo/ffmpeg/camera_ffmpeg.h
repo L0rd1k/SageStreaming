@@ -4,12 +4,12 @@
 #include <atomic>
 #include <unistd.h>
 
-#include "FFmpegUtils.h"
-#include "utils/ElapsedTimer.h"
-#include "utils/Log.h"
-#include "utils/Size.h"
-#include "image/Image.h"
-#include "image/ImageQueue.h"
+#include "ffmpeg_utils.h"
+#include "utils/elapsed_timer.h"
+#include "utils/log.h"
+#include "utils/size.h"
+#include "image/image.h"
+#include "image/image_queue.h"
 #include "definitions/local_definitions.h"
 #include "cameras/cameras_handler.h"
 
@@ -22,7 +22,6 @@ public:
     virtual ~CameraFFmpeg();
     virtual bool start() override;
     virtual bool stop() override;
-    bool isPlaying();
     bool prepareContext();
     bool openContext();
     bool closeContext();
@@ -35,10 +34,10 @@ public:
     void setUrl(std::string url);
     void logStreamInfo();    
     std::string getUrl();  
-    img::ImageFormat getImageFormat();
+    sage::ImageFormat getImageFormat();
 private:
     void performFpsDelay(AVStream* stream, AVPacket* packet);
-    img::ImageFormat imgFormat;
+    sage::ImageFormat imgFormat;
     std::string _url;
     std::thread _camThread;
     std::mutex _mutex;

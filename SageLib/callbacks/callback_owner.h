@@ -1,7 +1,7 @@
 #pragma once
 
-#include "CallbackList.h"
-#include "Slot.h"
+#include "callback_list.h"
+#include "slot.h"
 
 template<typename RET, typename ...Args>
 class CallbackList;

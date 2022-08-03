@@ -1,6 +1,6 @@
 #pragma once
 
-namespace um {
+namespace sage {
 
 template <typename T>
 class Size {
@@ -40,15 +40,16 @@ public:
     }
 
     bool isValid() {
-        return (_height > 0) || (_width > 0);    
+        return (_height > 0) || (_width > 0);
     }
 
     std::string toStr() {
         return std::to_string(_width) + "x" + std::to_string(_height);
     }
+
 private:
     T _width;
     T _height;
 };
 
-}
+}  // namespace sage

@@ -2,11 +2,11 @@
 
 #include <atomic>
 
-#include "callbacks/Signal.h"
+#include "callbacks/signal.h"
 #include "definitions/local_definitions.h"
-#include "image/Image.h"
-#include "image/ImageQueue.h"
-#include "utils/Log.h"
+#include "image/image.h"
+#include "image/image_queue.h"
+#include "utils/log.h"
 
 namespace sage {
 
@@ -18,12 +18,11 @@ public:
     virtual bool stop() = 0;
     bool isStreaming();
     const ImageQueue* getQueue();
-    virtual img::ImageFormat getImageFormat();
-
-    Signal<const img::swImage&> sig_imageRecieved;
+    virtual sage::ImageFormat getImageFormat();
+    Signal<const sage::swImage&> sig_imageRecieved;
 
 protected:
-    void triggerImage(img::swImage& image);
+    void triggerImage(sage::swImage& image);
     std::atomic<bool> _isStreaming;
     ImageQueue _queue;
 };
