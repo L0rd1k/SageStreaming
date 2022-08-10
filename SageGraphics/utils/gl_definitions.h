@@ -1,9 +1,14 @@
 #pragma once
 
-#ifdef __linux__
+// #include "utils/gl_header.h"
+
+// #ifdef USE_GLUT
+// #include <GL/gl.h>
+// #elif USE_GLFW
+// #include <glad/glad.h>
+// #endif
+
 #include <GL/gl.h>
-#include <GL/glut.h>
-#endif
 
 #include "definitions/local_definitions.h"
 #include "utils/log.h"

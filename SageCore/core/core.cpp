@@ -8,7 +8,11 @@ void sage::Core::createSubstances(int count = 0) {
 }
 
 void sage::Core::createWindow(int argc, char**argv) {
+#ifdef USE_GLUT
     _window = std::make_unique<WindowPainterGlut>();
+#elif USE_GLFW
+    _window = std::make_unique<WindowPainterGLFW>();
+#endif
     _pic = std::make_shared<PicturePainter>(_substns.size());
     _window->setPicturePainter(_pic);
     _window->createWindow(argc, argv, sage::Size<int>(1024, 768));

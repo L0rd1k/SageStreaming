@@ -44,6 +44,8 @@ void sage::Substance::connectCallbacks() {
         callbacks.push_back(
             std::make_unique<void*>(_camera->sig_imageRecieved.connect(this, &sage::Substance::onImageReceived)));
     }
+
+    
     // if (_decoder) {
     //     callbacks.push_back(
     //         std::make_shared<void*>(sig_imageDecoded.connect(this, &sage::Substance));

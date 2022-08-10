@@ -28,8 +28,13 @@ option(USE_GRAPHICS "Additional OPENGL support" ON)
 option(USE_VIDEO "Additional FFMPEG support" ON)
 option(USE_GUI "Additional QT support" ON)
 option(USE_TEST "Test area" ON)
+option(USE_GLUT "Use GLUT support" OFF)
+option(USE_GLFW "Use GLFW support" ON)
 
-add_subdirectory(3rdParty/glfw)
+if(USE_GLFW)
+    add_subdirectory(3rdParty/glad)
+    add_subdirectory(3rdParty/glfw)
+endif()
 
 # Create .lib files for MSVC compiler on Windows platform.
 if(MSVC)
@@ -67,6 +72,18 @@ if(USE_GUI)
     add_subdirectory(SageGUI)
 endif()
 
+if(USE_GLUT)
+    set(USE_GLUT ON)
+    set(USE_GLFW OFF)
+    add_definitions(-DUSE_GLUT)
+endif()
+
+if(USE_GLFW)
+    set(USE_GLFW ON)
+    set(USE_GLUT OFF)
+    add_definitions(-DUSE_GLFW)
+endif()
+
 if(USE_TEST)
     set(USE_TEST ON)
     add_definitions(-DUSE_TEST)
@@ -80,6 +97,7 @@ message(STATUS "    > USE_GRAPHICS: ${USE_GRAPHICS}")
 message(STATUS "    > USE_VIDEO: ${USE_VIDEO}")
 message(STATUS "    > USE GUI: ${USE_GUI}")
 message(STATUS "    > USE TEST: ${USE_TEST}")
-
+message(STATUS "    > USE GLFW: ${USE_GLFW}")
+message(STATUS "    > USE GLUT: ${USE_GLUT}")
 
 add_subdirectory(SageCore)

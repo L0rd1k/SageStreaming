@@ -81,22 +81,22 @@ bool CameraFFmpeg::handleVideoFrame(AVStream* stream, AVPacket* packet) {
     std::lock_guard<std::mutex> locker(_mutex);
     imgFormat = sage::ImageFormat::Undefined;
     if (stream->codecpar->codec_id == AV_CODEC_ID_MJPEG) {
-        Log::info("[FFmpeg][Reader] MJPEG");
+        // Log::info("[FFmpeg][Reader] MJPEG");
         imgFormat = sage::ImageFormat::JPEG;
     } else if (stream->codecpar->codec_id == AV_CODEC_ID_H264) {
-        Log::info("[FFmpeg][Reader] H264");
+        // Log::info("[FFmpeg][Reader] H264");
         imgFormat = sage::ImageFormat::H264;
     } else if (stream->codecpar->codec_id == AV_CODEC_ID_RAWVIDEO) {
-        Log::info("[FFmpeg][Reader] RAWVIDEO");
+        // Log::info("[FFmpeg][Reader] RAWVIDEO");
         imgFormat = sage::ImageFormat::RAW;
     } else if (stream->codecpar->codec_id == AV_CODEC_ID_MPEG4) {
-        Log::info("[FFmpeg][Reader] MPEG4");
+        // Log::info("[FFmpeg][Reader] MPEG4");
         imgFormat = sage::ImageFormat::MPEG4;
     } else {
         Log::error("[FFmpeg][Reader] Unsupported image format:", std::to_string(stream->codecpar->codec_id));
         return false;
     }
-    Log::info("[FFmpeg][Reader] Packet size:", packet->size);
+    // Log::info("[FFmpeg][Reader] Packet size:", packet->size);
     if (!packet->data || !packet->size) {
         return false;
     }
@@ -173,7 +173,7 @@ bool CameraFFmpeg::prepareContext() {
         av_dict_set(&dict, "rtps_transport", "udp", 0);
     } else if (_rtspTransportType == RtspTransportType::V4l) {
         inputFormat = av_find_input_format("v4l2");
-        Log::trace(inputFormat->long_name);
+        // Log::trace(inputFormat->long_name);
         av_dict_set(&dict, "framerate", "25", 0);
     } else if (_rtspTransportType == RtspTransportType::Vid) {
         av_dict_set(&dict, "framerate", "25", 0);
@@ -213,13 +213,13 @@ bool CameraFFmpeg::openContext() {
 
     for (uint i = 0; i < _context->nb_streams; i++) {
         if (_context->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
-            Log::trace("[FFMPEG] AVMEDIA_TYPE_VIDEO:", i);
+            // Log::trace("[FFMPEG] AVMEDIA_TYPE_VIDEO:", i);
             _videoStream = _context->streams[i];
         } else if (_context->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
-            Log() << "[FFMPEG] AVMEDIA_TYPE_AUDIO";
+            // Log() << "[FFMPEG] AVMEDIA_TYPE_AUDIO";
             _audioStream = _context->streams[i];
         } else if (_context->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_DATA) {
-            Log() << "[FFMPEG] AVMEDIA_TYPE_DATA";
+            // Log() << "[FFMPEG] AVMEDIA_TYPE_DATA";
         }
     }
     _blockTimerTimeout = sage::ffmpeg::timeoutStream;

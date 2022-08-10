@@ -25,17 +25,33 @@ struct Image : public DataHeader {
 
 using swImage = DataCore<Image>;
 
-static cv::Mat cv_toMat(const sage::swImage& img) {
+static cv::Mat toMat(const sage::swImage& in) {
     int type = 0;
-    if (img->channels == 1) {
+    if (in->channels == 1) {
         type = CV_8UC1;
-    } else if (img->channels == 3) {
+    } else if (in->channels == 3) {
         type = CV_8UC3;
-    } else if (img->channels == 4) {
+    } else if (in->channels == 4) {
         type = CV_8UC4;
     }
-    cv::Mat mat(img->imgSize.height(), img->imgSize.width(), type, img.data());
+    cv::Mat mat(in->imgSize.height(), in->imgSize.width(), type, in.data());
     return mat;
+}
+
+static swImage fromMat(cv::Mat* in) {
+    swImage result;
+    result->imgSize = sage::Size<int>(in->size().width, in->size().height);
+    result->channels = in->channels();
+    result->imgFormat = sage::ImageFormat::RAW;
+    if(in->channels() == 1) {
+        result->imgColorType = sage::ColorType::GRAY;
+    } else if(in->channels() == 3) {
+        result->imgColorType = sage::ColorType::BGR;
+    } else if(in->channels() == 4) {
+        result->imgColorType = sage::ColorType::BGRA;
+    }
+    result.setBytes(in->data, in->dataend - in->datastart);
+    return result;
 }
 
 }  // namespace sage

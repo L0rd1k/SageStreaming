@@ -4,12 +4,13 @@
 #include <vector>
 #include <memory>
 
-#ifdef __linux__ 
-    #include <GL/gl.h>
-    #include <GL/glut.h>
+#ifdef USE_GLUT
+#include <GL/gl.h>
+#elif USE_GLFW
+#include <glad/glad.h>
 #endif
 
-
+#include "utils/gl_header.h"
 #include "texture/texture.h"
 #include "definitions/local_definitions.h"
 #include "image/image_queue.h"

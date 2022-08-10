@@ -29,6 +29,8 @@ set(SOURCES
     ./core/core.cpp
 )
 
+list(APPEND LIBRARIES pthread)
+
 add_executable (${PROJECT_NAME} ${SOURCES})
 target_link_libraries(${PROJECT_NAME} ${LIBRARIES} ${PYTHON_LIBRARIES})
 

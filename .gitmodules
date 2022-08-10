@@ -4,3 +4,6 @@
 [submodule "3rdParty/FFmpeg"]
 	path = 3rdParty/FFmpeg
 	url = https://github.com/L0rd1k/FFmpeg.git
+[submodule "3rdParty/glad"]
+	path = 3rdParty/glad
+	url = https://github.com/Dav1dde/glad.git

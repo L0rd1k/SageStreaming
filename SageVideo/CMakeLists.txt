@@ -17,9 +17,10 @@ list(APPEND SOURCES
     ./ffmpeg/ffmpeg_utils.cpp
     ./opencv/camera_opencv.cpp
 
-    ./decoder/ffmpeg/ffmpeg_decoder.cpp
     ./decoder/decoder.cpp
-   
+    ./decoder/ffmpeg/ffmpeg_decoder.cpp
+    ./decoder/opencv/opencv_decoder.cpp
+
     ./encoder/encoder.cpp
    
     ./cameras/cameras_handler.cpp

@@ -1,7 +1,5 @@
 #include "texture.h"
 
-#include "opencv2/imgproc.hpp"
-#include "opencv2/opencv.hpp"
 #include <unistd.h>
 Texture::Texture(GLuint id) : _id(id),
                               _queueData(nullptr) {

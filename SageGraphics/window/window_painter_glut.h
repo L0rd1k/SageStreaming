@@ -3,6 +3,9 @@
 #include <chrono>
 #include <mutex>
 
+#include <GL/gl.h>
+#include <GL/glut.h>
+
 #include "window_painter_base.h"
 #include "image/picture_painter.h"
 

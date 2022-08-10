@@ -28,6 +28,7 @@ namespace sage {
         RGB = 1,
         BGR = 2,
         RGBA = 3,
+        BGRA = 4,
         Undefined = 255
     };
 

@@ -39,6 +39,7 @@ void WindowPainterGlut::displayEvent() {
             _painter->_isInited = true;
         }
         _painter->show();
+        glutSwapBuffers();
     }
 }
 

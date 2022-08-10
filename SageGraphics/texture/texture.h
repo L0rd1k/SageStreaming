@@ -1,11 +1,14 @@
 #pragma once
 
-#ifdef __linux__
+#include <thread>
+
+// #include "utils/gl_header.h"
+#ifdef USE_GLUT
 #include <GL/gl.h>
-#include <GL/glut.h>
+#elif USE_GLFW
+#include <glad/glad.h>
 #endif
 
-#include <thread>
 
 #include "image/image.h"
 #include "image/image_queue.h"

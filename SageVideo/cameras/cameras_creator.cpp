@@ -31,11 +31,7 @@ sage::CamerasHandler* sage::CamerasCreator::createCamera(short id, sage::CamType
         case sage::CamTypes::OPENCV: {
             if (id == 0) {
                 camHandler = new CameraOpencv("/dev/video0", sage::CVCapType::V4L);
-                // camHandler = new CameraOpencv("rtsp://root:123456@192.168.1.85/onvif-media/media.amp?profile=balanced_h264&sessiontimeout=60&streamtype=unicast", sage::CVCapType::FFMPEG);
             } else if (id == 1) {
-                Log::debug(cv::getBuildInformation());
-                // camHandler = new CameraOpencv("rtsp://root:123456@192.168.1.85/onvif-media/media.amp?profile=balanced_h264&sessiontimeout=60&streamtype=unicast", sage::CVCapType::FFMPEG);
-                // camHandler = new CameraOpencv("v4l2src device=/dev/video0 ! video/x-raw,width=640,height=360,framerate=52/1 ! nvvidconv flip-method='+str(flip)+' ! video/x-raw(memory:NVMM), format=I420, width=640, height=360 ! nvvidconv ! video/x-raw, format=BGRx ! videoconvert ! video/x-raw, format=BGR ! queue ! appsink drop=1", sage::CVCapType::GSTREAMER);
                 camHandler = new CameraOpencv("rtsp://admin:admin@121.23.46.111/onvif/media/PRF08.wxp", sage::CVCapType::FFMPEG);
             }
         }
@@ -58,3 +54,4 @@ sage::Decoder* sage::CamerasCreator::createDecoder(sage::DecTypes decType) {
     }
     return decoder;
 }
+ 

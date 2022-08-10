@@ -13,19 +13,19 @@ sage::FFmpegDecoder::~FFmpegDecoder() {
 int sage::FFmpegDecoder::selectDecoderType(const sage::swImage& img) {
     switch (img->imgFormat) {
         case sage::ImageFormat::H264: {
-            Log::info("[FFmpeg][Decoder] H264");
+            // Log::info("[FFmpeg][Decoder] H264");
             return AVCodecID::AV_CODEC_ID_H264;
         }
         case sage::ImageFormat::JPEG: {
-            Log::info("[FFmpeg][Decoder] JPEG");
+            // Log::info("[FFmpeg][Decoder] JPEG");
             return AVCodecID::AV_CODEC_ID_MJPEG;
         }
         case sage::ImageFormat::MPEG4: {
-            Log::info("[FFmpeg][Decoder] MPEG4");
+            // Log::info("[FFmpeg][Decoder] MPEG4");
             return AVCodecID::AV_CODEC_ID_MPEG4;
         }
         default: {
-            Log::info("[FFmpeg][Decoder] None");
+            // Log::info("[FFmpeg][Decoder] None");
             return AVCodecID::AV_CODEC_ID_NONE;
         }
     }
@@ -112,7 +112,7 @@ void sage::FFmpegDecoder::resetSwsContext() {
 
 bool sage::FFmpegDecoder::decode(const sage::swImage& in, sage::swImage& out) {
     if (int codecType = selectDecoderType(in)) {
-        Log::critical(codecType, in->imgSize.width(), in->imgSize.height());
+        // Log::critical(codecType, in->imgSize.width(), in->imgSize.height());
         preprocessDecoder(codecType, in->imgSize.width(), in->imgSize.height());
     }
 
@@ -121,9 +121,6 @@ bool sage::FFmpegDecoder::decode(const sage::swImage& in, sage::swImage& out) {
 
         _packet->data = in.data();
         _packet->size = in.dataSize();
-
-        Log::trace(_packet->size);
-
         int frameReceived = -1;
         int ret = avcodec_send_packet(_codecCtx, _packet);
         if (ret < 0) {

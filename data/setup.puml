@@ -1,0 +1,204 @@
+@startuml
+
+skinparam componentStyle rectangle
+
+package SageLib #WhiteSmoke {
+    class CallbackList {}
+    class CallbackOwner {}
+    class Signal {}
+    class Slot {}
+
+    class DataHeader {}
+
+    class DataCore <<class T>> {
+        + uchar* dataRaw() const
+        + DataCore& operator=(DataCore)
+        + T* operator->() const
+        + uchar* data() const
+        + int dataSize() const
+        + const int dataRawSize() const
+        + T& header() const
+        + const int headerSize() const
+        + void memAllocate(int)
+        + void setBytes(uchar*, uint32_t)
+    } 
+
+    class CircleQueue {
+        + void push(const T&)
+        + void moveNext()
+        + T& next()
+        + const T& next() const
+        + const int getPos() const
+    }
+    
+    class Queue <<class T, class SIZE>> {
+        + T& peak()
+        + const T& peak() const
+        + T& front()
+        + const T& front() const
+        - T _data[SIZE]
+    }
+
+    class ElapsedTimer {}
+    class Log {}
+    class Size {}
+
+    Slot <-- CallbackOwner
+    CallbackList <-- Signal
+    Queue <-- CircleQueue
+
+}
+
+package SageVideo #WhiteSmoke {
+    class CamerasCreator {
+        + {static} CamerasCreator& inst()
+        + CamerasHandler* createCamera(short, CamTypes)
+        + Decoder* createDecoder(DecTypes)
+    }
+
+    class CamerasHandler {
+        + {abstract} bool start() = 0
+        + {abstract} bool stop() = 0
+        + bool isStreaming()
+        + const ImageQueue* getQueue()
+        + {abstract} ImageFormat getImageFormat()
+        # void triggerImage(swImage&)
+    }
+
+    class Decoder {
+        + {abstract} bool decode(const swImage&, swImage&) = 0
+        + ImageQueue* getQueue()
+    }
+
+    class FFmpegDecoder {
+        + {abstract} bool decode(const swImage&, swImage&)
+        - int selectDecoderType(const swImage&)
+        - void preprocessDecoder(int, int, int)
+        - void resetDecoderInfo()
+        - void initSwsContext(int, int. int)
+        - void resetSwsContext() 
+    }
+
+    class OpencvDecoder {
+        + {abstract} bool decode(const swImage&, swImage&)
+    }
+
+    class Encoder {}
+
+    class CameraFFmpeg {
+        + {abstract} bool start()
+        + {abstract} bool stop()
+        + bool prepareContext();
+        + bool openContext()
+        + bool closeContext()
+        + bool receiveContext()
+        + bool blockingTimerExpired()
+        + void handleError(int)
+        + bool handleVideoFrame(AVStream*, AVPacket*)
+        + TrimmedAVPacket trimAVPacket(AVPacket*)
+        + void mainLoop()
+        + void setUrl(std::string)
+        + void logStreamInfo()
+        + std::string getUrl()
+        + ImageFormat getImageFormat()
+        - void performFpsDelay(AVStream*, AVPacket*)
+    }
+
+    class ImageQueue {
+        + ImageQueue(size_t)
+    }
+
+    class Image 
+
+
+    class CameraOpencv {
+        + {abstract} bool start()
+        + {abstract} bool stop()
+        + void selectCaptureType()
+        - void mainLoop()
+    }
+
+    Image *-- DataCore
+    Decoder <-- FFmpegDecoder
+    Decoder <-- OpencvDecoder
+    CamerasCreator::createCamera *-- CamerasHandler  
+    CamerasHandler <-- CameraFFmpeg
+    CamerasHandler <-- CameraOpencv
+    DataHeader <-- Image
+    CircleQueue <-- ImageQueue
+
+}
+
+package SageGraphics #WhiteSmoke {
+    class PicturePainter {
+        + void initTextures()
+        + void allocateTextures()
+        + void setDataBuffer(uint8_t, const ImageQueue*)
+        + void show()
+    }
+
+    class Texture {
+        + void setId(GLuint)
+        + void draw(int, int, Size<int>)
+        + void initBuffer(const ImageQueue*)
+        + bool getLastDataFromQueue()
+    }
+
+
+    class WindowPainterBase {
+        + void setPicturePainter(PicturePainter*)
+        + PicturePainter* getPicturePainter()
+        + {abstract} bool createWindow(int, char**, Size<int>) = 0
+        + {abstract} void run() = 0
+    }
+
+    class WindowPainterGlut {
+        + bool createWindow(int, char**, Size<int>) = 0
+        + void run()
+        + {static} WindowPainterGlut& inst()
+        + {static} void displayEvent()
+        + {static} void idleEvent()
+        + {static} void reshapeEvent(int, int)
+    }
+
+    WindowPainterBase <-- WindowPainterGlut
+    PicturePainter *-- Texture
+    WindowPainterBase::setPicturePainter *-- PicturePainter
+    
+}
+
+package SageCore #WhiteSmoke {
+    class Core {
+        + void createSubstances(int)
+        + void createWindow(int, char**)
+        + void enableWindow()
+        + void connectCamBufToWindow()
+    }
+
+    class Substance {
+        + bool initSubstance()
+        + bool isEnabled()
+        + CamerasHandler* getCamera()
+        + Decoder* getDecoder()
+        + void connectCallbacks()
+        + bool enableSubstance()
+        + bool disableSubstance()
+        + void startCameraStreaming()
+        + void mainSubstanceLoop()
+        + const ImageQueue* getImageQueue()
+        + void onImageReceived(const swImage&)
+    }
+
+    Core::createSubstances *-- Substance
+    Core::createWindow *-- WindowPainterBase
+    Core::createWindow *-- PicturePainter
+
+    Substance::getImageQueue *-- ImageQueue
+    Substance::initSubstance *-- CamerasHandler
+    Substance::initSubstance *-- Decoder
+
+
+}
+
+
+@enduml

@@ -39,7 +39,7 @@ int DrawGraph::createWindow(int argc, char**argv) {
 }
 
 void DrawGraph::display() {
-#ifdef __linux__
+#if defined(__linux__) && defined(USE_GLUT)  
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glBegin(GL_QUADS);

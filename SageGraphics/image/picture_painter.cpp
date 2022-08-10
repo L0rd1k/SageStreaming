@@ -32,7 +32,6 @@ void PicturePainter::show() {
 
     glRasterPos3f(0, 1, 0);
     glDrawPixels(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pix);
-    glutSwapBuffers();
 }
 
 void PicturePainter::initTextures() {
