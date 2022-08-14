@@ -3,13 +3,12 @@
 #include <chrono>
 #include <mutex>
 
-// #include "utils/gl_header.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <glad/glad.h>
 
 #include "image/picture_painter.h"
 #include "window_painter_base.h"
+#include "layer/gui_layer.h"
 
 class WindowPainterGLFW : public WindowPainterBase {
 public:
@@ -20,9 +19,12 @@ public:
     void close();
     static WindowPainterGLFW& inst();
     static sage::Size<int> _winSize;
+    GLFWwindow* getWindow();
 private:
     void setVSync(bool enable);
 private:
+    sage::GuiLayer* _gui = nullptr;
+
     GLFWwindow* _window;
     static void reshapeEvent(GLFWwindow* window, int width, int height);
     struct WindowData {

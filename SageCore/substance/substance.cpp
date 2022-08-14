@@ -98,7 +98,7 @@ void sage::Substance::onImageReceived(const sage::swImage& img) {
 
     /** Test received fps from camera. **/
     if(timer.elapsedMs() > 1000) {
-        Log::trace("Fps:", fps, " --> ", std::this_thread::get_id());
+        // Log::trace("Fps:", fps, " --> ", std::this_thread::get_id());
         fps = 0;
         timer.restart();
     } else {

@@ -10,7 +10,6 @@
 #include <glad/glad.h>
 #endif
 
-#include "utils/gl_header.h"
 #include "texture/texture.h"
 #include "definitions/local_definitions.h"
 #include "image/image_queue.h"

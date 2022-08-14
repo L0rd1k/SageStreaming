@@ -30,6 +30,7 @@ option(USE_GUI "Additional QT support" ON)
 option(USE_TEST "Test area" ON)
 option(USE_GLUT "Use GLUT support" OFF)
 option(USE_GLFW "Use GLFW support" ON)
+option(USE_IMGUI "USE IMGUI support" ON)
 
 if(USE_GLFW)
     add_subdirectory(3rdParty/glad)
@@ -90,6 +91,9 @@ if(USE_TEST)
     add_subdirectory(SageTest)
 endif()
 
+if(USE_IMGUI)
+    add_definitions(-DUSE_IMGUI)
+endif()
 
 message(STATUS "    > USE_ML: ${USE_ML}")
 message(STATUS "    > USE_LIB: ${USE_LIB}")
