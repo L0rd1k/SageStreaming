@@ -22,7 +22,8 @@ public:
     void initTextures();
     void allocateTextures();
     void setDataBuffer(uint8_t textId, const ImageQueue* buffer);
-    void show();
+    void show(sage::Size<int> size);
+    uint8_t getTexturesSize();
 public:
     std::atomic<bool> _isInited;
 private:

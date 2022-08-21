@@ -3,13 +3,16 @@
 sage::Size<int> WindowPainterGLFW::_winSize;
 
 WindowPainterGLFW::WindowPainterGLFW() : WindowPainterBase() {
+#ifdef USE_IMGUI
     _gui = new sage::GuiLayer();
+#endif
 }
 
 WindowPainterGLFW::~WindowPainterGLFW() {
-    Log::warning("Destroy");
+#ifdef USE_IMGUI
     _gui->detach();
     delete _gui;
+#endif
 }
 
 WindowPainterGLFW& WindowPainterGLFW::inst() {
@@ -37,7 +40,10 @@ bool WindowPainterGLFW::createWindow(int argc, char** argv, sage::Size<int> size
     glfwMakeContextCurrent(_window);
     int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);  //> Make use of existing GLFW loader;
     Log::info("OpenGL renderer:", glGetString(GL_VENDOR), glGetString(GL_RENDERER), glGetString(GL_VERSION));
+#ifdef USE_IMGUI
+    Log::critical("Set window");
     _gui->setGuiWindow(_window);
+#endif
     glfwSetWindowUserPointer(_window, &_data);
     glfwSetWindowSizeCallback(_window, reshapeEvent);
     setVSync(true);
@@ -53,8 +59,10 @@ void WindowPainterGLFW::reshapeEvent(GLFWwindow* window, int width, int height) 
 }
 
 void WindowPainterGLFW::run() {
-    /** @todo Find a better way of intital window shaping. **/ 
+    /** @todo Find a better way of intital window shaping. **/
+#ifdef USE_IMGUI
     _gui->init();
+#endif
     reshapeEvent(_window, _data.width, _data.height);
     while (!glfwWindowShouldClose(_window)) {
         if (_painter) {
@@ -62,11 +70,14 @@ void WindowPainterGLFW::run() {
                 _painter->initTextures();
                 _painter->_isInited = true;
             }
+#ifdef USE_IMGUI
             _gui->beginDraw();
             _gui->processDraw();
-            _painter->show();
-
+#endif
+            _painter->show(_winSize);
+#ifdef USE_IMGUI
             _gui->endDraw();
+#endif
             glfwPollEvents();
             glfwSwapBuffers(_window);
         }

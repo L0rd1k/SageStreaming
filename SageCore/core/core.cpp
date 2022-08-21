@@ -13,9 +13,9 @@ void sage::Core::createWindow(int argc, char**argv) {
 #elif USE_GLFW
     _window = std::make_unique<WindowPainterGLFW>();
 #endif
+    _window->createWindow(argc, argv, sage::Size<int>(1024, 768));
     _pic = std::make_shared<PicturePainter>(_substns.size());
     _window->setPicturePainter(_pic);
-    _window->createWindow(argc, argv, sage::Size<int>(1024, 768));
 }
 
 void sage::Core::enableWindow() {

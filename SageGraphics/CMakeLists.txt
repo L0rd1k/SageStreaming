@@ -20,7 +20,6 @@ list(APPEND SOURCES
     ./window/window_painter_base.cpp
     ./image/picture_painter.cpp
     ./texture/texture.cpp
-    ./layer/gui_layer.cpp
 )
 
 if(USE_GLUT)
@@ -60,33 +59,34 @@ endif(UNIX)
 
 if(USE_IMGUI)
     list(APPEND SOURCES
-        ./imgui/imconfig.h
-        ./imgui/imgui_demo.cpp
-        ./imgui/imgui_draw.cpp
-        ./imgui/imgui_tables.cpp
-        ./imgui/backends/imgui_impl_opengl3.cpp
-        ./imgui/backends/imgui_impl_opengl3.h
-        ./imgui/imgui_internal.h
-        ./imgui/imgui_widgets.cpp
-        ./imgui/imgui.cpp
-        ./imgui/imgui.h
-        ./imgui/imstb_rectpack.h
-        ./imgui/imstb_textedit.h
-        ./imgui/imstb_truetype.h
+        ./layer/imgui_layer.cpp
+        ../3rdParty/imgui/imconfig.h
+        ../3rdParty/imgui/imgui_demo.cpp
+        ../3rdParty/imgui/imgui_draw.cpp
+        ../3rdParty/imgui/imgui_tables.cpp
+        ./imgui/imgui_impl_opengl3.cpp
+        ./imgui/imgui_impl_opengl3.h
+        ../3rdParty/imgui/imgui_internal.h
+        ../3rdParty/imgui/imgui_widgets.cpp
+        ../3rdParty/imgui/imgui.cpp
+        ../3rdParty/imgui/imgui.h
+        ../3rdParty/imgui/imstb_rectpack.h
+        ../3rdParty/imgui/imstb_textedit.h
+        ../3rdParty/imgui/imstb_truetype.h
     )
 endif()
 
-if(USE_GLUT)
+if(USE_GLUT AND USE_IMGUI)
     list(APPEND SOURCES         
-    ./imgui/backends/imgui_impl_glut.cpp
-    ./imgui/backends/imgui_impl_glut.h
+    ./imgui/imgui_impl_glut.cpp
+    ./imgui/imgui_impl_glut.h
     )
 endif()
 
-if(USE_GLFW)
+if(USE_GLFW AND USE_IMGUI)
     list(APPEND SOURCES         
-    ./imgui/backends/imgui_impl_glfw.cpp
-    ./imgui/backends/imgui_impl_glfw.h
+    ./imgui/imgui_impl_glfw.cpp
+    ./imgui/imgui_impl_glfw.h
     )
 endif()
 

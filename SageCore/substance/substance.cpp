@@ -4,7 +4,7 @@ sage::Substance::Substance(short id)
     : _id(id),
       _camera(nullptr),
       _inProcess(false) {
-    initSubstance();
+    _isInited = initSubstance();
     connectCallbacks();
     timer.start();
 }
@@ -45,19 +45,19 @@ void sage::Substance::connectCallbacks() {
             std::make_unique<void*>(_camera->sig_imageRecieved.connect(this, &sage::Substance::onImageReceived)));
     }
 
-    
-    // if (_decoder) {
-    //     callbacks.push_back(
-    //         std::make_shared<void*>(sig_imageDecoded.connect(this, &sage::Substance));
-    //     )
-    // }
-
+    if (_decoder) {
+        callbacks.push_back(
+            std::make_unique<void*>(sig_imageDecoded.connect(this, &sage::Substance::onImageDecode)));
+    }
 }
 
 bool sage::Substance::enableSubstance() {
-    if (!isEnabled()) {
-        _inProcess = true;
-        _mainThread = std::thread(&sage::Substance::mainSubstanceLoop, this);
+    if (_isInited) {
+        if (!isEnabled()) {
+            _inProcess = true;
+            _mainThread = std::thread(&sage::Substance::mainSubstanceLoop, this);
+            return true;
+        }
     }
     return false;
 }
@@ -94,23 +94,24 @@ const ImageQueue* sage::Substance::getImageQueue() {
 }
 
 void sage::Substance::onImageReceived(const sage::swImage& img) {
-    sage::swImage& decImg = _decoder->getQueue()->next();
-
     /** Test received fps from camera. **/
-    if(timer.elapsedMs() > 1000) {
-        // Log::trace("Fps:", fps, " --> ", std::this_thread::get_id());
+    if (timer.elapsedMs() > 1000) {
+        Log::trace("Fps:", fps, " --> ", std::this_thread::get_id());
         fps = 0;
         timer.restart();
     } else {
         fps++;
     }
+    
+    sig_imageDecoded.emit(img);
+}
 
-    if(img->imgFormat == sage::ImageFormat::RAW) {
+void sage::Substance::onImageDecode(const sage::swImage& img) {
+    sage::swImage& decImg = _decoder->getQueue()->next();
+    if (img->imgFormat == sage::ImageFormat::RAW) {
         decImg = img;
     } else {
         _decoder->decode(img, decImg);
     }
-
-
     _decoder->getQueue()->moveNext();
 }

@@ -1,8 +1,8 @@
 #include "picture_painter.h"
 
-PicturePainter::PicturePainter(uint8_t textCount) 
+PicturePainter::PicturePainter(uint8_t textCount)
     : _isInited(false),
-    _textures(textCount, nullptr) {
+      _textures(textCount, nullptr) {
     allocateTextures();
 }
 
@@ -15,21 +15,25 @@ void PicturePainter::allocateTextures() {
     }
 }
 
-void PicturePainter::show() {
+uint8_t PicturePainter::getTexturesSize() {
+    return _textures.size();
+}
+
+void PicturePainter::show(sage::Size<int> size) {
     unsigned char pix[4] = {0, 0, 0, 255};
 
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    int x[4] = { 0, 1024/2, 0, 1024/2 };
-    int y[4] = { 768/2, 768/2, 0, 0 };
+    int x[4] = {0, size.width() / 2, 0, size.width() / 2};
+    int y[4] = {size.height() / 2, size.height() / 2, 0, 0};
 
-    for(auto i = 0; i < _textures.size(); i++) {
+    for (auto i = 0; i < _textures.size(); i++) {
         if (_textures[i]->getLastDataFromQueue()) {
-            _textures[i]->draw(x[i], y[i], sage::Size<int>(1024/2, 768/2));
-        }       
+            // _textures[i]->draw(x[i], y[i], sage::Size<int>(size.width()/2, size.height()/2));
+            _textures[i]->draw(0, 0, sage::Size<int>(size.width(), size.height()));
+        }
     }
-
     glRasterPos3f(0, 1, 0);
     glDrawPixels(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pix);
 }

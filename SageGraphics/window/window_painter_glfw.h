@@ -1,14 +1,17 @@
 #pragma once
 
-#include <chrono>
-#include <mutex>
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <chrono>
+#include <mutex>
+
 #include "image/picture_painter.h"
 #include "window_painter_base.h"
-#include "layer/gui_layer.h"
+
+#ifdef USE_IMGUI
+#include "layer/imgui_layer.h"
+#endif
 
 class WindowPainterGLFW : public WindowPainterBase {
 public:
@@ -23,8 +26,9 @@ public:
 private:
     void setVSync(bool enable);
 private:
+#ifdef USE_IMGUI
     sage::GuiLayer* _gui = nullptr;
-
+#endif
     GLFWwindow* _window;
     static void reshapeEvent(GLFWwindow* window, int width, int height);
     struct WindowData {
