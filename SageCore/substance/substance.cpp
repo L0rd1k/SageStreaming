@@ -1,10 +1,13 @@
 #include "substance.h"
 
-sage::Substance::Substance(short id)
+sage::Substance::Substance(short id, sage::CamTypes camType, sage::DecTypes decType)
     : _id(id),
       _camera(nullptr),
+      _camType(camType),
+      _decType(decType),
       _inProcess(false) {
-    _isInited = initSubstance();
+    _subInfo = std::make_unique<SubstanceInfo>();
+    _isInited = initSubstance(camType, decType);
     connectCallbacks();
     timer.start();
 }
@@ -16,14 +19,19 @@ sage::Substance::~Substance() {
     delete _camera;
 }
 
-bool sage::Substance::initSubstance() {
-    _camera = CamerasCreator::inst().createCamera(_id, sage::CamTypes::FFMPEG);
+bool sage::Substance::initSubstance(sage::CamTypes& camType, sage::DecTypes& decType) {
+    _camera = CamerasCreator::inst().createCamera(_id, camType);
     if (!_camera)
         return false;
-    _decoder = CamerasCreator::inst().createDecoder(sage::DecTypes::FFMPEG);
+    _decoder = CamerasCreator::inst().createDecoder(decType);
     if (!_decoder)
         return false;
 
+    /** Substance info. **/
+    _subInfo->camType = camType;
+    _subInfo->decType = decType;
+    _subInfo->_id = _id;
+    
     return true;
 }
 
@@ -44,7 +52,6 @@ void sage::Substance::connectCallbacks() {
         callbacks.push_back(
             std::make_unique<void*>(_camera->sig_imageRecieved.connect(this, &sage::Substance::onImageReceived)));
     }
-
     if (_decoder) {
         callbacks.push_back(
             std::make_unique<void*>(sig_imageDecoded.connect(this, &sage::Substance::onImageDecode)));
@@ -82,6 +89,7 @@ void sage::Substance::startCameraStreaming() {
 void sage::Substance::mainSubstanceLoop() {
     startCameraStreaming();
     while (_inProcess) {
+        onSubstanceInfoSend();
         // Log() << "Main loop: " << _id << " " << std::this_thread::get_id();
     }
 }
@@ -93,22 +101,31 @@ const ImageQueue* sage::Substance::getImageQueue() {
     }
 }
 
+void sage::Substance::onSubstanceInfoSend() {
+    sig_sendSubstInfo.emit(*_subInfo);
+}
+
 void sage::Substance::onImageReceived(const sage::swImage& img) {
     /** Test received fps from camera. **/
+    _subInfo->_size = img->imgSize;
+    _subInfo->duration = img->duration;
+    _subInfo->format = img->imgFormat;
     if (timer.elapsedMs() > 1000) {
-        Log::trace("Fps:", fps, " --> ", std::this_thread::get_id());
+        _subInfo->_fps = fps;
+        sig_LogMsgSend.emit(std::to_string(_id) + ":  Fps:" + std::to_string(fps) + "\n");
         fps = 0;
         timer.restart();
     } else {
         fps++;
     }
-    
+
     sig_imageDecoded.emit(img);
 }
 
 void sage::Substance::onImageDecode(const sage::swImage& img) {
     sage::swImage& decImg = _decoder->getQueue()->next();
-    if (img->imgFormat == sage::ImageFormat::RAW) {
+    /** @brief Add raw checking for opencv fwork **/
+    if (img->imgFormat == sage::ImageFormat::RAW || _camType == sage::CamTypes::OPENCV) {
         decImg = img;
     } else {
         _decoder->decode(img, decImg);

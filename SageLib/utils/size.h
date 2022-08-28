@@ -47,6 +47,11 @@ public:
         return std::to_string(_width) + "x" + std::to_string(_height);
     }
 
+    const std::string toStr() const {
+        return std::to_string(_width) + "x" + std::to_string(_height);
+    }
+
+
 private:
     T _width;
     T _height;

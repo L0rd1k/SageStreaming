@@ -20,6 +20,7 @@ struct Image : public DataHeader {
     ImageSource imgSourceType;
     ColorType imgColorType;
     uint8_t channels;
+    int64_t duration;
 };
 #pragma pack(pop)
 

@@ -1,5 +1,7 @@
 #include "local_definitions.h"
 
+Signal<const std::string&> sage::sig_LogMsgSend;
+
 const char* toString(sage::ImageFormat format) {
     switch (format) {
     case sage::ImageFormat::H264:
@@ -10,6 +12,8 @@ const char* toString(sage::ImageFormat format) {
         return "RAW";
     case sage::ImageFormat::MPEG4:
         return "MPEG4";
+    case sage::ImageFormat::YUYV:
+        return "YUYV";
     default:
         return "Undefined";
     }        

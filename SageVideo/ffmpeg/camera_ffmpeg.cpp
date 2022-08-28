@@ -35,7 +35,6 @@ bool CameraFFmpeg::stop() {
     }
 }
 
-
 void CameraFFmpeg::mainLoop() {
     if (prepareContext() && openContext()) {
         while (isStreaming() && receiveContext())
@@ -47,7 +46,7 @@ void CameraFFmpeg::mainLoop() {
 }
 
 bool CameraFFmpeg::receiveContext() {
-    AVPacket* packet = av_packet_alloc(); //> make 
+    AVPacket* packet = av_packet_alloc();  //> make
     int code = av_read_frame(_context, packet);
     if (code != 0) {
         handleError(code);
@@ -112,6 +111,11 @@ bool CameraFFmpeg::handleVideoFrame(AVStream* stream, AVPacket* packet) {
         image.setBytes(packet->data, packet->size);
     }
 
+    if (_context->duration > 0) {
+        image->duration = _context->duration / 1000000;
+    } else {
+        image->duration = 0;
+    }
     image->imgFormat = imgFormat;
     image->imgSourceType = sage::ImageSource::RTSP;
     image->imgSize = sage::Size<int>(stream->codecpar->width, stream->codecpar->height);
@@ -181,10 +185,8 @@ bool CameraFFmpeg::prepareContext() {
         Log::error("[FFmpeg][Reader] Unknown transport type");
         return false;
     }
-
-    
     int resCode = avformat_open_input(&_context, _url.c_str(), NULL, &dict);
-    
+
     if (resCode != 0 || _blockTimerExp) {
         Log::error("[FFmpeg][Reader] Video input error found:", _url.c_str());
         handleError(resCode);

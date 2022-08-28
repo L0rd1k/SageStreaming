@@ -7,6 +7,10 @@
 #include "utils/log.h"
 #include "image/picture_painter.h"
 
+#ifdef USE_IMGUI
+#include "layer/imgui_layer.h"
+#endif
+
 class WindowPainterBase {
 public:
     WindowPainterBase();
@@ -16,6 +20,9 @@ public:
     std::shared_ptr<PicturePainter> getPicturePainter();
     
     virtual bool createWindow(int argc, char** argv, sage::Size<int> _size) = 0;
+#ifdef USE_IMGUI
+    virtual sage::GuiLayer* getGuiLayer();
+#endif
     virtual void run() = 0;
     
 protected:

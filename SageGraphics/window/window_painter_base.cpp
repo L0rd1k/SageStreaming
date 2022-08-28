@@ -17,3 +17,9 @@ std::shared_ptr<PicturePainter> WindowPainterBase::getPicturePainter() {
     std::lock_guard<std::mutex> _lock(_mutex);
     return _painter;    
 }
+
+#ifdef USE_IMGUI
+    sage::GuiLayer* WindowPainterBase::getGuiLayer() {
+        return nullptr;
+    }
+#endif

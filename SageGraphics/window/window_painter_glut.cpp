@@ -38,7 +38,7 @@ void WindowPainterGlut::displayEvent() {
             _painter->initTextures();
             _painter->_isInited = true;
         }
-        _painter->show();
+        _painter->show(_winSize);
         glutSwapBuffers();
     }
 }

@@ -23,6 +23,9 @@ public:
     static WindowPainterGLFW& inst();
     static sage::Size<int> _winSize;
     GLFWwindow* getWindow();
+#ifdef USE_IMGUI
+    sage::GuiLayer* getGuiLayer() override;
+#endif
 private:
     void setVSync(bool enable);
 private:

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <inttypes.h>
+#include "callbacks/signal.h"
 
 enum class DataType {
     Image = 0,
@@ -9,12 +10,16 @@ enum class DataType {
 
 
 namespace sage {
+    
+    extern Signal<const std::string&> sig_LogMsgSend;
+    
     const int queueSize = 3;
     enum class ImageFormat {
         JPEG = 0,
         H264 = 1,
         RAW = 2,
         MPEG4 = 3,
+        YUYV = 4,
         Undefined = 255 
     };
     enum class ImageSource {
@@ -36,12 +41,6 @@ namespace sage {
         const int timeoutConnect = 15000;
         const int timeoutStream = 5000;
         const int timeoutTeardown = 1000;
-    };
-
-    enum class CamTypes {
-        FFMPEG = 0,
-        OPENCV = 1,
-        Undefined = 255
     };
 
     // GL definitions

@@ -45,7 +45,7 @@ if(UNIX)
     if(USE_GLUT)
         find_package(GLUT REQUIRED) # GLUT
         include_directories(${GLUT_INCLUDE_DIRS})
-        list(APPEND LIBRARIES ${GLUT_LIBRARY} glad)
+        list(APPEND LIBRARIES ${GLUT_LIBRARY})
     endif()
 
     if(USE_GLFW)

@@ -24,6 +24,12 @@ GLFWwindow* WindowPainterGLFW::getWindow() {
     return _window;
 }
 
+#ifdef USE_IMGUI
+sage::GuiLayer* WindowPainterGLFW::getGuiLayer() {
+    return _gui;
+}
+#endif
+
 bool WindowPainterGLFW::createWindow(int argc, char** argv, sage::Size<int> size) {
     _winSize = size;
     _data.height = size.height();
