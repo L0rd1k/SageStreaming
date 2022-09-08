@@ -2,14 +2,34 @@
 
 void sage::Core::createSubstances(int count = 0) {
     for (int id = 0; id < count; id++) {
-        _substns.push_back(std::make_shared<sage::Substance>(id));
-        _substns.back()->enableSubstance();
+        auto camType = toCamType(sage::IniParser::inst().get("reader_type", id));
+        auto decType = toDecType(sage::IniParser::inst().get("decoder_type", id));
+        if (camType != sage::CamTypes::Undefined && decType != sage::DecTypes::Undefined) {
+            _substns.push_back(std::make_shared<sage::Substance>(id, camType, decType));
+            _substns.back()->enableSubstance();
+        }
     }
 }
 
-void sage::Core::createSingleSubstance() {
+void sage::Core::createSingleSubstance(const sage::CameraState& camState) {
     uint8_t id_size = _substns.size();
-    _substns.push_back(std::make_shared<sage::Substance>(id_size));
+    _substns.push_back(std::make_shared<sage::Substance>(id_size, camState.camType, camState.decType, camState.url,
+                                                         camState.ffmpegcapType, camState.cvcapType, true));
+    Log::critical(_substns.back()->getId());
+    if (_substns.back()->_decoder) {
+        _pic->createTexture();
+        _pic->setDataBuffer(id_size, _substns.back()->_decoder->getQueue());
+    }
+    _substns.back()->enableSubstance();
+#ifdef USE_IMGUI
+    _window->getGuiLayer()->first_time = true;
+    global_callbacks.push_back(
+        std::make_unique<void*>(_substns.back()->sig_sendSubstInfo.connect(_window->getGuiLayer(),
+                                                                        &sage::GuiLayer::appendSubstInfo)));
+    global_callbacks.push_back(
+        std::make_unique<void*>(_substns.back()->sig_sendSubstState.connect(_window->getGuiLayer(),
+                                                                         &sage::GuiLayer::appendSubstState)));
+#endif
 }
 
 void sage::Core::createWindow(int argc, char** argv) {
@@ -45,10 +65,16 @@ void sage::Core::enableCallbacks() {
 #ifdef USE_IMGUI
     global_callbacks.push_back(
         std::make_unique<void*>(sig_LogMsgSend.connect(this, &sage::Core::sendLog)));
-#endif
+    global_callbacks.push_back(
+        std::make_unique<void*>(sig_sendCameraState.connect(this, &sage::Core::createSingleSubstance)));
+
     for (int id = 0; id < _substns.size(); id++) {
         global_callbacks.push_back(
             std::make_unique<void*>(_substns[id]->sig_sendSubstInfo.connect(_window->getGuiLayer(),
                                                                             &sage::GuiLayer::appendSubstInfo)));
+        global_callbacks.push_back(
+            std::make_unique<void*>(_substns[id]->sig_sendSubstState.connect(_window->getGuiLayer(),
+                                                                             &sage::GuiLayer::appendSubstState)));
     }
+#endif
 }

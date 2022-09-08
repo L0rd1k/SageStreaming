@@ -14,13 +14,7 @@ extern "C" {
     #include <libavdevice/avdevice.h>
 };
 
-enum class RtspTransportType {
-    Tcp = 0,
-    Udp = 1,
-    V4l = 2,
-    Vid = 3,
-    Indefined = 255
-};
+#include "definitions/local_definitions.h"
 
 enum class RtspCameraState {
     Undefined = 0,

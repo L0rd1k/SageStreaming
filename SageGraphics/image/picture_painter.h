@@ -3,6 +3,7 @@
 #include <atomic>
 #include <vector>
 #include <memory>
+#include <numeric>
 
 #ifdef USE_GLUT
 #include <GL/gl.h>
@@ -21,11 +22,15 @@ public:
     virtual ~PicturePainter();
     void initTextures();
     void allocateTextures();
+    void createTexture();
     void setDataBuffer(uint8_t textId, const ImageQueue* buffer);
     void show(sage::Size<int> size);
-    uint8_t getTexturesSize();
+    uint8_t getTexturesCount();
 public:
     std::atomic<bool> _isInited;
+    std::mutex _mtx;
 private:
     std::vector<std::shared_ptr<Texture> > _textures;
+    std::vector<uint> textures;
+
 };

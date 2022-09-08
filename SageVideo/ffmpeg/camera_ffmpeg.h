@@ -18,7 +18,7 @@
 
 class CameraFFmpeg : public sage::CamerasHandler {
 public:
-    CameraFFmpeg(std::string url, RtspTransportType type = RtspTransportType::Indefined);
+    CameraFFmpeg(std::string url, sage::RtspTransportType type = sage::RtspTransportType::Undefined);
     virtual ~CameraFFmpeg();
     virtual bool start() override;
     virtual bool stop() override;
@@ -42,7 +42,7 @@ private:
     std::thread _camThread;
     std::mutex _mutex;
     RtspCameraState _rtspState;
-    RtspTransportType _rtspTransportType;
+    sage::RtspTransportType _rtspTransportType;
     AVFormatContext* _context = nullptr;
     AVStream* _videoStream = nullptr;
     AVStream* _audioStream = nullptr;

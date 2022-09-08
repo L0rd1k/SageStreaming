@@ -20,6 +20,7 @@ void Texture::initBuffer(const ImageQueue* data) {
 bool Texture::getLastDataFromQueue() {
     if (_queueData != nullptr) {
         auto& data = _queueData->peak();
+        // Log::trace("Texture cool", _id, data->imgSize.toStr());
         if (data->imgSize.isValid()) {
             GLenum format = gl_GetColorType(data->imgColorType);
             GLenum internalFormat = gl_GetInternalFormat(data->imgColorType);
@@ -46,7 +47,6 @@ bool Texture::getLastDataFromQueue() {
 void Texture::draw(int x, int y, sage::Size<int> sz) {
     glBindTexture(GL_TEXTURE_2D, _id);
     glBegin(GL_QUADS);
-
     glTexCoord2f(0, 0);
     glVertex2f(x, y);
     glTexCoord2f(1, 0);
@@ -55,6 +55,5 @@ void Texture::draw(int x, int y, sage::Size<int> sz) {
     glVertex2f(x + sz.width(), y + sz.height());
     glTexCoord2f(0, 1);
     glVertex2f(x, y + sz.height());
-
     glEnd();
 }

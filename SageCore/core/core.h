@@ -1,9 +1,9 @@
 #pragma once
 
-#include "definitions/sage_definitions.h"
 #include "definitions/local_definitions.h"
 #include "image/picture_painter.h"
 #include "substance/substance.h"
+#include "config/ini_parser.h"
 
 #ifdef USE_GLUT
 #include "window/window_painter_glut.h"
@@ -26,9 +26,7 @@ public:
     }
     virtual ~Core() = default;
     void createSubstances(int count);
-    void createSingleSubstance();
-
-
+    void createSingleSubstance(const sage::CameraState& camState);
 
     void createWindow(int argc, char** argv);
     void connectCamBufToWindow();
@@ -43,7 +41,6 @@ public:
     sage::Ref<PicturePainter> _pic;
 private:
     std::vector<sage::Scope<void*>> global_callbacks;
-    // Signal<std::string&> sig_LogMsgSend;
 };
 
 }  // namespace sage

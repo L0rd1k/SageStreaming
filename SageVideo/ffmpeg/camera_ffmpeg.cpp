@@ -4,7 +4,7 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgcodecs.hpp>
 
-CameraFFmpeg::CameraFFmpeg(std::string url, RtspTransportType type)
+CameraFFmpeg::CameraFFmpeg(std::string url, sage::RtspTransportType type)
     : sage::CamerasHandler(),
       _url(url),
       _rtspTransportType(type),
@@ -99,7 +99,7 @@ bool CameraFFmpeg::handleVideoFrame(AVStream* stream, AVPacket* packet) {
     if (!packet->data || !packet->size) {
         return false;
     }
-    if (_rtspTransportType == RtspTransportType::Vid) {
+    if (_rtspTransportType == sage::RtspTransportType::Vid) {
         performFpsDelay(stream, packet);
     }
 
@@ -171,15 +171,15 @@ bool CameraFFmpeg::prepareContext() {
 
     AVDictionary* dict = nullptr;
     const AVInputFormat* inputFormat = NULL;
-    if (_rtspTransportType == RtspTransportType::Tcp) {
+    if (_rtspTransportType == sage::RtspTransportType::Tcp) {
         av_dict_set(&dict, "rtps_transport", "tcp", 0);
-    } else if (_rtspTransportType == RtspTransportType::Udp) {
+    } else if (_rtspTransportType == sage::RtspTransportType::Udp) {
         av_dict_set(&dict, "rtps_transport", "udp", 0);
-    } else if (_rtspTransportType == RtspTransportType::V4l) {
+    } else if (_rtspTransportType == sage::RtspTransportType::V4l) {
         inputFormat = av_find_input_format("v4l2");
         // Log::trace(inputFormat->long_name);
         av_dict_set(&dict, "framerate", "25", 0);
-    } else if (_rtspTransportType == RtspTransportType::Vid) {
+    } else if (_rtspTransportType == sage::RtspTransportType::Vid) {
         av_dict_set(&dict, "framerate", "25", 0);
     } else {
         Log::error("[FFmpeg][Reader] Unknown transport type");

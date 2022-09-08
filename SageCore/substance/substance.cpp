@@ -1,13 +1,15 @@
 #include "substance.h"
 
-sage::Substance::Substance(short id, sage::CamTypes camType, sage::DecTypes decType)
+sage::Substance::Substance(short id, sage::CamTypes camType, sage::DecTypes decType, std::string url,
+                           sage::RtspTransportType transportType, sage::CVCapType cvcaptureType, bool newOne)
     : _id(id),
       _camera(nullptr),
       _camType(camType),
       _decType(decType),
       _inProcess(false) {
     _subInfo = std::make_unique<SubstanceInfo>();
-    _isInited = initSubstance(camType, decType);
+    _state = std::make_unique<CameraState>();
+    _isInited = initSubstance(url, _camType, _decType, transportType, cvcaptureType, newOne);
     connectCallbacks();
     timer.start();
 }
@@ -17,10 +19,17 @@ sage::Substance::~Substance() {
         _mainThread.join();
     }
     delete _camera;
+    delete _decoder;
 }
 
-bool sage::Substance::initSubstance(sage::CamTypes& camType, sage::DecTypes& decType) {
-    _camera = CamerasCreator::inst().createCamera(_id, camType);
+bool sage::Substance::initSubstance(std::string url, sage::CamTypes& camType, sage::DecTypes& decType,
+                                    sage::RtspTransportType transportType, sage::CVCapType cvcaptureType, bool newOne) {
+    if(!newOne) {  
+        url = sage::IniParser::inst().get("name", _id);                                  
+        transportType = toFFmpegCapType(sage::IniParser::inst().get("ffmpegcap_type", _id));
+        cvcaptureType = toOpenCVCapType(sage::IniParser::inst().get("cvcap_type", _id));
+    }
+    _camera = CamerasCreator::inst().createCamera(camType, url, transportType, cvcaptureType);
     if (!_camera)
         return false;
     _decoder = CamerasCreator::inst().createDecoder(decType);
@@ -30,9 +39,19 @@ bool sage::Substance::initSubstance(sage::CamTypes& camType, sage::DecTypes& dec
     /** Substance info. **/
     _subInfo->camType = camType;
     _subInfo->decType = decType;
-    _subInfo->_id = _id;
-    
+    _subInfo->id = _id;
+
+    /** Camera state. **/
+    _state->id = _id;
+    _state->url = url;
+    _state->camType = camType;
+    _state->decType = decType;
+
     return true;
+}
+
+short sage::Substance::getId() {
+    return _id;
 }
 
 bool sage::Substance::isEnabled() {
@@ -89,7 +108,6 @@ void sage::Substance::startCameraStreaming() {
 void sage::Substance::mainSubstanceLoop() {
     startCameraStreaming();
     while (_inProcess) {
-        onSubstanceInfoSend();
         // Log() << "Main loop: " << _id << " " << std::this_thread::get_id();
     }
 }
@@ -103,18 +121,23 @@ const ImageQueue* sage::Substance::getImageQueue() {
 
 void sage::Substance::onSubstanceInfoSend() {
     sig_sendSubstInfo.emit(*_subInfo);
+    sig_sendSubstState.emit(*_state);
 }
 
 void sage::Substance::onImageReceived(const sage::swImage& img) {
     /** Test received fps from camera. **/
-    _subInfo->_size = img->imgSize;
+
+    // Log::trace("Received: ", _id);
+
+    _subInfo->size = img->imgSize;
     _subInfo->duration = img->duration;
     _subInfo->format = img->imgFormat;
     if (timer.elapsedMs() > 1000) {
-        _subInfo->_fps = fps;
+        _subInfo->fps = fps;
         sig_LogMsgSend.emit(std::to_string(_id) + ":  Fps:" + std::to_string(fps) + "\n");
         fps = 0;
         timer.restart();
+        onSubstanceInfoSend();  // Send cam info once per second;
     } else {
         fps++;
     }
@@ -124,7 +147,7 @@ void sage::Substance::onImageReceived(const sage::swImage& img) {
 
 void sage::Substance::onImageDecode(const sage::swImage& img) {
     sage::swImage& decImg = _decoder->getQueue()->next();
-    /** @brief Add raw checking for opencv fwork **/
+    /** @brief Added raw checking for opencv fwork **/
     if (img->imgFormat == sage::ImageFormat::RAW || _camType == sage::CamTypes::OPENCV) {
         decImg = img;
     } else {

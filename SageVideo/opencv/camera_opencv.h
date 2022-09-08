@@ -5,7 +5,7 @@
 
 #include "cameras/cameras_handler.h"
 #include "image/image.h"
-#include "definitions/sage_definitions.h"
+#include "definitions/local_definitions.h"
 
 class CameraOpencv : public sage::CamerasHandler {
 public:
