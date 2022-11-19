@@ -32,5 +32,5 @@ public:
 private:
     std::vector<std::shared_ptr<Texture> > _textures;
     std::vector<uint> textures;
-
+    
 };

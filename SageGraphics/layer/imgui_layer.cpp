@@ -7,8 +7,8 @@
 #include "window/window_painter_glfw.h"
 
 bool sage::GuiLayer::_winManager = true;
-ImGuiLog sage::GuiLayer::log;
 bool sage::GuiLayer::first_time = true;
+ImGuiLog sage::GuiLayer::log;
 
 void sage::GuiLayer::init() {
     IMGUI_CHECKVERSION();
@@ -17,7 +17,7 @@ void sage::GuiLayer::init() {
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-    io.FontGlobalScale = 1;
+    // io.FontGlobalScale = 1;
     ImGui::StyleColorsClassic();
     ImGuiStyle& style = ImGui::GetStyle();
     if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
@@ -64,7 +64,6 @@ void sage::GuiLayer::processDraw() {
         static bool dockspaceOpen = true;
         static bool opt_fullscreen_persistant = true;
         static bool _winManage = false;
-        // static bool first_time = true;
         bool opt_fullscreen = opt_fullscreen_persistant;
         static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
@@ -344,6 +343,8 @@ void sage::GuiLayer::appendSubstState(const CameraState& subst) {
 }
 
 void sage::GuiLayer::dockViewport() {
+    std::lock_guard<std::mutex> _locker(_mtx);
+    // Log::trace("C:", (int)WindowPainterGLFW::inst().getPicturePainter()->getTexturesCount());
     for (uint8_t i = 1; i <= WindowPainterGLFW::inst().getPicturePainter()->getTexturesCount(); i++) {
         std::string name = "Viewport" + std::to_string(i);
         ImGui::Begin(name.c_str());

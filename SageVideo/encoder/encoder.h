@@ -1,7 +1,18 @@
 #pragma once
 
-class EncoderCreator {
+#include "image/image.h"
+#include "image/image_queue.h"
+
+namespace sage {
+
+class Encoder {
 public:
-    EncoderCreator();
-    virtual ~EncoderCreator();
+    Encoder();
+    virtual ~Encoder();
+    virtual bool encoder(const sage::swImage& in, sage::swImage& out) = 0;
+    ImageQueue* getQueue();
+protected:
+    ImageQueue _queue;
 };
+
+}  // namespace sage

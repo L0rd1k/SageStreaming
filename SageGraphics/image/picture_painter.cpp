@@ -17,16 +17,16 @@ void PicturePainter::allocateTextures() {
 
 void PicturePainter::createTexture() {
     std::lock_guard<std::mutex> locker(_mtx);
-
-    _textures.push_back(std::make_shared<Texture>(-1));
-
-    uint textId = textures[_textures.size() - 1];
-    _textures[_textures.size() - 1]->setId(textId);
-    glBindTexture(GL_TEXTURE_2D, textId);
+    glEnable(GL_TEXTURE_2D);
+    Log::critical("Tsize:", _textures.size() + 1);
+    textures.push_back(_textures.size() + 1);
+    _textures.push_back(std::make_shared<Texture>(textures.back()));
+    glGenTextures(1, &textures.back());
+    glBindTexture(GL_TEXTURE_2D, textures.back());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-
+    glDisable(GL_TEXTURE_2D);
 }
 
 uint8_t PicturePainter::getTexturesCount() {
@@ -35,13 +35,10 @@ uint8_t PicturePainter::getTexturesCount() {
 
 void PicturePainter::show(sage::Size<int> size) {
     unsigned char pix[4] = {0, 0, 0, 255};
-
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
-
     int x[4] = {0, size.width() / 2, 0, size.width() / 2};
     int y[4] = {size.height() / 2, size.height() / 2, 0, 0};
-
     for (auto i = 0; i < _textures.size(); i++) {
         if (_textures[i]->getLastDataFromQueue()) {
             // Log::trace("SHOW", i, _textures.size(), size.width(), size.height());
@@ -54,23 +51,25 @@ void PicturePainter::show(sage::Size<int> size) {
 }
 
 void PicturePainter::initTextures() {
-    textures.assign(25, 0);
-    std::iota(std::begin(textures), std::end(textures), 1);
+    std::lock_guard<std::mutex> locker(_mtx);
     glEnable(GL_TEXTURE_2D);
-    glGenTextures(25, textures.data());
-    for (int itr = 0; itr < _textures.size(); itr++) {
-        uint textId = textures[itr];
-        glBindTexture(GL_TEXTURE_2D, textId);
+    textures.assign(_textures.size(), 0);
+    std::iota(std::begin(textures), std::end(textures), 1);
+    glGenTextures(_textures.size(), textures.data());
+    for(uint itr = 0; itr < _textures.size(); itr++) {
+        glBindTexture(GL_TEXTURE_2D, textures[itr]);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-        _textures[itr]->setId(textId);
+        _textures[itr]->setId(textures[itr]);
     }
+    glDisable(GL_TEXTURE_2D);
 }
 
 void PicturePainter::setDataBuffer(uint8_t textId, const ImageQueue *buffer) {
     std::lock_guard<std::mutex> locker(_mtx);
     if (textId < (int)_textures.size() && textId >= 0) {
+        Log::info((int)textId);
         _textures[textId]->initBuffer(buffer);
     }
 }

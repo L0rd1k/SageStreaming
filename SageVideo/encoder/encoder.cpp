@@ -1,7 +1,12 @@
 #include "encoder.h"
 
-EncoderCreator::EncoderCreator() {
+sage::Encoder::Encoder() 
+    : _queue(1000) {
 }
 
-EncoderCreator::~EncoderCreator() {
+sage::Encoder::~Encoder() {
+}
+
+ImageQueue* sage::Encoder::getQueue() {
+    return &_queue;
 }

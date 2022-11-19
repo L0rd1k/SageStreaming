@@ -33,6 +33,7 @@ option(USE_BOOST "USE Boost library support" ON)
 option(USE_GLUT "Use GLUT support" OFF)
 option(USE_GLFW "Use GLFW support" ON)
 option(USE_IMGUI "USE IMGUI support" ON)
+option(USE_GSTREAMER "USE GSTREAMER" ON)
 
 if(USE_GLFW)
     add_subdirectory(3rdParty/glad)
@@ -96,6 +97,11 @@ if(USE_GUI)
     add_subdirectory(SageGUI)
 endif()
 
+if(USE_GSTREAMER)
+    set(USE_GSTREAMER ON)
+    add_definitions(-DUSE_GSTREAMER)
+endif()
+
 if(USE_TEST)
     set(USE_TEST ON)
     add_definitions(-DUSE_TEST)
@@ -111,6 +117,7 @@ message(STATUS "    > USE TEST: ${USE_TEST}")
 message(STATUS "    > USE GLFW: ${USE_GLFW}")
 message(STATUS "    > USE GLUT: ${USE_GLUT}")
 message(STATUS "    > USE IMGUI: ${USE_IMGUI}")
+message(STATUS "    > USE GSTREAMER: ${USE_GSTREAMER}")
 
 configure_file("./data/cameraConf.ini" "./data/cameraConf.ini" COPYONLY)
 

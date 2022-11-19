@@ -4,7 +4,6 @@ PACKAGE_DIR="FFmpeg"
 CURRENT_DIR=$PWD
 BUILD_DIR="$PWD/build_${PACKAGE_DIR}"
 
-git checkout release/4.0
 
 rm -rf $BUILD_DIR
 mkdir -p packs
@@ -12,6 +11,8 @@ mkdir -p $BUILD_DIR/usr
 mkdir -p $BUILD_DIR/DEBIAN
 
 cd ../$PACKAGE_DIR/
+git checkout release/4.0
+
 
 make clean > /dev/null | true
 ./configure	\

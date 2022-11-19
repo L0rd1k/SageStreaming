@@ -1,33 +1,54 @@
 #include "core.h"
 
-void sage::Core::createSubstances(int count = 0) {
-    for (int id = 0; id < count; id++) {
+void sage::Core::createSubstances(uint8_t count = 0) {
+    for (uint8_t id = 0; id < count; id++) {
+        //> Select Reader type.
         auto camType = toCamType(sage::IniParser::inst().get("reader_type", id));
+        //> Select Decoder type.
         auto decType = toDecType(sage::IniParser::inst().get("decoder_type", id));
+        //> Create substance if its parameters defined.
         if (camType != sage::CamTypes::Undefined && decType != sage::DecTypes::Undefined) {
-            _substns.push_back(std::make_shared<sage::Substance>(id, camType, decType));
-            _substns.back()->enableSubstance();
+            _substns[id] = std::make_shared<sage::Substance>(id, camType, decType);
+        }
+    }
+}
+
+void sage::Core::runSubstances() {
+    Log::info(_substns.size());
+    for(uint8_t id = 0; id < _substns.size(); id++) {
+        //> If substance not empty, launch it.
+        if(_substns[id]) {
+            _substns[id]->enableSubstance();
         }
     }
 }
 
 void sage::Core::createSingleSubstance(const sage::CameraState& camState) {
-    uint8_t id_size = _substns.size();
-    _substns.push_back(std::make_shared<sage::Substance>(id_size, camState.camType, camState.decType, camState.url,
-                                                         camState.ffmpegcapType, camState.cvcapType, true));
-    Log::critical(_substns.back()->getId());
-    if (_substns.back()->_decoder) {
+    //> Check substance list size.
+    uint8_t new_id = _substns.size();
+    //> Create new substance.
+    _substns[new_id] = std::make_shared<sage::Substance>(new_id,
+        camState.camType, 
+        camState.decType, 
+        camState.url,
+        camState.ffmpegcapType, 
+        camState.cvcapType, 
+        true);
+    Log::critical(_substns[new_id]->getId());
+    //> If decoder created, create texture and assign image queue to it.
+    if(_substns[new_id]->getDecoder()) {
         _pic->createTexture();
-        _pic->setDataBuffer(id_size, _substns.back()->_decoder->getQueue());
+        _pic->setDataBuffer(new_id, _substns[new_id]->getDecoder()->getQueue());
     }
-    _substns.back()->enableSubstance();
-#ifdef USE_IMGUI
+    _substns[new_id]->enableSubstance();  
     _window->getGuiLayer()->first_time = true;
+
+#ifdef USE_IMGUI
     global_callbacks.push_back(
-        std::make_unique<void*>(_substns.back()->sig_sendSubstInfo.connect(_window->getGuiLayer(),
+        std::make_unique<void*>(_substns[new_id]->sig_sendSubstInfo.connect(_window->getGuiLayer(),
                                                                         &sage::GuiLayer::appendSubstInfo)));
     global_callbacks.push_back(
-        std::make_unique<void*>(_substns.back()->sig_sendSubstState.connect(_window->getGuiLayer(),
+        std::make_unique<void*>(_substns[new_id]->sig_sendSubstState.connect(_window->getGuiLayer(),
                                                                          &sage::GuiLayer::appendSubstState)));
 #endif
 }
@@ -38,10 +59,14 @@ void sage::Core::createWindow(int argc, char** argv) {
 #elif USE_GLFW
     _window = std::make_unique<WindowPainterGLFW>();
 #endif
+    //> Create window context.
     _window->createWindow(argc, argv, sage::Size<int>(1024, 768));
+    //> Create textures in painter for every substance. 
     _pic = std::make_shared<PicturePainter>(_substns.size());
+    //> Set current picture painter.
     _window->setPicturePainter(_pic);
 }
+
 
 void sage::Core::enableWindow() {
     _window->run();

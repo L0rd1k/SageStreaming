@@ -49,6 +49,26 @@ if (UNIX)
     include_directories(${FFMPEG_PATH}/include)
     link_directories(${FFMPEG_LIB_PATH})
     list(APPEND LIBRARIES ${AVCODEC_LIB} ${AVFORMAT_LIB} ${AVUTIL_LIB} ${SWSCALE_LIB} ${AVDEVICE_LIB})
+
+    if(USE_GSTREAMER)
+        find_package(PkgConfig)
+        pkg_check_modules(GST REQUIRED 
+            gstreamer-1.0>=1.0
+            gstreamer-sdp-1.0>=1.0
+            gstreamer-pbutils-1.0>=1.0
+            gstreamer-video-1.0>=1.0
+            gstreamer-app-1.0>=1.0
+        )
+        include_directories(${GST_INCLUDE_DIRS})
+        message(STATUS "Gstreamer library staus:")  
+        message(STATUS "    > libraries: ${GST_LIBRARIES}")         
+        message(STATUS "    > include path: ${GST_INCLUDE_DIRS}")
+        list(APPEND LIBRARIES ${GST_LIBRARIES})
+
+        list(APPEND SOURCES ./gstreamer/gstreamer_capture.cpp)
+
+    endif()
+
 endif(UNIX)
 
 find_package(OpenCV REQUIRED )

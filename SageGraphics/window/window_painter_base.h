@@ -24,7 +24,6 @@ public:
     virtual sage::GuiLayer* getGuiLayer();
 #endif
     virtual void run() = 0;
-    
 protected:
     static std::shared_ptr<PicturePainter> _painter;
     int _isInited = false;
