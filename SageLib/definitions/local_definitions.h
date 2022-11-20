@@ -29,6 +29,7 @@ enum class ImageFormat {
     RAW = 2,
     MPEG4 = 3,
     YUYV = 4,
+    BAYER = 5,
     Undefined = 255
 };
 enum class ImageSource {
@@ -43,6 +44,11 @@ enum class ColorType {
     BGR = 2,
     RGBA = 3,
     BGRA = 4,
+    BGRX = 5,
+    RGBX = 6,
+    UYVY = 7,
+    YUY2 = 8,
+    YVYU = 9,
     Undefined = 255
 };
 

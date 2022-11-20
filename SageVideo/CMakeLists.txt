@@ -65,7 +65,9 @@ if (UNIX)
         message(STATUS "    > include path: ${GST_INCLUDE_DIRS}")
         list(APPEND LIBRARIES ${GST_LIBRARIES})
 
-        list(APPEND SOURCES ./gstreamer/gstreamer_capture.cpp)
+        list(APPEND SOURCES 
+        ./gstreamer/gstreamer_capture.cpp 
+        ./gstreamer/gstreamer_initializer.cpp)
 
     endif()
 

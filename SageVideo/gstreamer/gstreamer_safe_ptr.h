@@ -4,7 +4,7 @@
 #include <gst/pbutils/encoding-profile.h>
 
 #include <algorithm>
-
+#include <assert.h>
 
 namespace sage {
 
@@ -141,23 +141,23 @@ class GSafePtr {
     }  // there is no const correctness in Gst C API
 
     T* get() {
-        CV_Assert(ptr);
+        assert(ptr);
         return ptr;
     }
     /*const*/ T* get() const {
-        CV_Assert(ptr);
+        assert(ptr);
         return (T*)ptr;
     }  // there is no const correctness in Gst C API
 
     const T* operator->() const {
-        CV_Assert(ptr);
+        assert(ptr);
         return ptr;
     }
     inline operator bool() const noexcept { return ptr != NULL; }
     inline bool operator!() const noexcept { return ptr == NULL; }
 
     T** getRef() {
-        CV_Assert(ptr == NULL);
+        assert(ptr == NULL);
         return &ptr;
     }
 
