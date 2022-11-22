@@ -1,5 +1,11 @@
 #include "gstreamer_capture.h"
 
+#include <gst/gst.h>
+#include <gst/gstelement.h>
+#include <gst/video/video.h>
+#include <gst/app/gstappsink.h>
+#include <gst/app/gstappsrc.h>
+
 gstrmr::GStreamerCapture::GStreamerCapture() {
     _gstData = std::make_shared<gstrmr::GstCaptureData>();
     _gstData->duration = -1;

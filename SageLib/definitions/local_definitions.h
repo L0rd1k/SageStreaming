@@ -82,6 +82,7 @@ enum class RtspTransportType {
 enum class CamTypes {
     FFMPEG = 0,
     OPENCV = 1,
+    GSTREAMER = 2,
     Undefined = 255
 };
 

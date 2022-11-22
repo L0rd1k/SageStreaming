@@ -62,6 +62,11 @@ if(USE_GLFW)
     add_definitions(-DUSE_GLFW)
 endif()
 
+if(USE_GSTREAMER)
+    set(USE_GSTREAMER ON)
+    add_definitions(-DUSE_GSTREAMER)
+endif()
+
 if(USE_IMGUI)
     set(USE_IMGUI ON)
     add_definitions(-DUSE_IMGUI)
@@ -95,11 +100,6 @@ if(USE_GUI)
     set(USE_GUI ON)
     add_definitions(-DUSE_GUI)
     add_subdirectory(SageGUI)
-endif()
-
-if(USE_GSTREAMER)
-    set(USE_GSTREAMER ON)
-    add_definitions(-DUSE_GSTREAMER)
 endif()
 
 if(USE_TEST)

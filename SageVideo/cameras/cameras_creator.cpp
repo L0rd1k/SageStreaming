@@ -19,6 +19,10 @@ sage::CamerasHandler* sage::CamerasCreator::createCamera(sage::CamTypes camType,
             camHandler = new CameraOpencv(url, opencvType);
             break;
         }
+        case sage::CamTypes::GSTREAMER: {
+            camHandler = new GstreamerCamera(url);
+            break;
+        }
         default:
             break;
     }

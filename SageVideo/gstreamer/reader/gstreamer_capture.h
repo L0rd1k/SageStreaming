@@ -1,11 +1,5 @@
 #pragma once
 
-#include <gst/gst.h>
-#include <gst/gstelement.h>
-#include <gst/video/video.h>
-#include <gst/app/gstappsink.h>
-#include <gst/app/gstappsrc.h>
-
 #include <memory>
 #include <sstream>
 #include <string>
@@ -20,7 +14,7 @@
 #include "image/image.h"
 
 namespace gstrmr {
-
+    
 class GStreamerCapture final {
 public:
     GStreamerCapture();

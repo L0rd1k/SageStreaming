@@ -5,9 +5,12 @@
 //> Cameras
 #include "ffmpeg/camera_ffmpeg.h"
 #include "opencv/camera_opencv.h"
+#include "gstreamer/camera_gstreamer.h"
 //> Decoder
 #include "config/ini_parser.h"
 #include "decoder/ffmpeg/ffmpeg_decoder.h"
+
+
 
 namespace sage {
 
