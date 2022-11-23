@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.10.0)
 
 project(SageGraphics)
 
-# if (POLICY CMP0072)
-#   cmake_policy (SET CMP0072 NEW)
-# endif(POLICY CMP0072)
+if (POLICY CMP0072)
+   cmake_policy (SET CMP0072 NEW)
+endif(POLICY CMP0072)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 

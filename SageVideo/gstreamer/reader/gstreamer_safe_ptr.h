@@ -1,6 +1,6 @@
 #pragma once
 
-#include <gstreamer-1.0/gst/gst.h>
+#include <gst/gst.h>
 #include <gst/gstbuffer.h>
 #include <gst/pbutils/encoding-profile.h>
 

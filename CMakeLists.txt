@@ -35,6 +35,20 @@ option(USE_GLFW "Use GLFW support" ON)
 option(USE_IMGUI "USE IMGUI support" ON)
 option(USE_GSTREAMER "USE GSTREAMER" ON)
 
+if(USE_GSTREAMER)
+    set(USE_GSTREAMER ON)
+    add_definitions(-DUSE_GSTREAMER)
+    find_package(PkgConfig) #finding pkg-config is a helper tool
+    pkg_check_modules(GST REQUIRED 
+        gstreamer-1.0
+        gstreamer-sdp-1.0
+        gstreamer-pbutils-1.0
+        gstreamer-video-1.0
+        gstreamer-app-1.0)
+    include_directories(${GLIB_INCLUDE_DIRS} ${GST_INCLUDE_DIRS})
+    link_directories(${GLIB_LIBRARY_DIRS} ${GST_LIBRARY_DIRS})
+endif()
+
 if(USE_GLFW)
     add_subdirectory(3rdParty/glad)
     add_subdirectory(3rdParty/glfw)
@@ -60,11 +74,6 @@ if(USE_GLFW)
     set(USE_GLFW ON)
     set(USE_GLUT OFF)
     add_definitions(-DUSE_GLFW)
-endif()
-
-if(USE_GSTREAMER)
-    set(USE_GSTREAMER ON)
-    add_definitions(-DUSE_GSTREAMER)
 endif()
 
 if(USE_IMGUI)

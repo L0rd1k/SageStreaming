@@ -86,6 +86,8 @@ sage::CamTypes toCamType(std::string val) {
         return sage::CamTypes::FFMPEG;
     } else if(!val.compare("opencv")) {
         return sage::CamTypes::OPENCV;
+    } else if(!val.compare("gstreamer")) {
+        return sage::CamTypes::GSTREAMER;
     } else {
         return sage::CamTypes::Undefined;
     }
