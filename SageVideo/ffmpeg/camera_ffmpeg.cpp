@@ -112,7 +112,7 @@ bool CameraFFmpeg::handleVideoFrame(AVStream* stream, AVPacket* packet) {
     }
 
     if (_context->duration > 0) {
-        image->duration = _context->duration / 1000000;
+        image->duration = _context->duration;
     } else {
         image->duration = 0;
     }

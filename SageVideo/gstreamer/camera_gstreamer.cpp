@@ -31,6 +31,7 @@ void GstreamerCamera::mainLoop() {
         sage::swImage& image = _queue.next();
         if(_gstCap->grabFrame(image)) {
             if(_gstCap->retrieveFrame(image)) {
+                image->type = DataType::Image;
                 triggerImage(image);
             }
         }

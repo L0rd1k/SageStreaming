@@ -51,7 +51,6 @@ bool gstrmr::GStreamerCapture::grabFrame(sage::swImage& img) {
         gst_app_sink_pull_sample(GST_APP_SINK(_gstData->sink.get())));
     if (!_gstData->sample) return false;
     if (_gstData->isPosFramesEmulated) _gstData->emulatedFrameNumber++;
-
     bool isBufferExist = false;
     if (!retrieveVideoFrame(img, isBufferExist)) {
         return false;
@@ -80,13 +79,17 @@ bool gstrmr::GStreamerCapture::retrieveVideoFrame(sage::swImage& img,
             "GStreamer: gst_video_info_from_caps() is failed. Can't handle "
             "unknown layout");
     }
-
     int frame_width = GST_VIDEO_INFO_WIDTH(&info);
     int frame_height = GST_VIDEO_INFO_HEIGHT(&info);
     if (frame_width <= 0 || frame_height <= 0) {
         Log::error("GStreamer: Can't query frame size from GStreamer sample");
         return false;
-    }
+    } 
+    // else {
+    //     Log::debug("[Gstreamer] Frame size:", frame_width, "x", frame_height);
+    // }
+    img->duration = _gstData->duration;
+    img->imgSize = sage::Size<int>(frame_width, frame_height);
 
     GstStructure* structure =
         gst_caps_get_structure(frame_caps, 0);  // no lifetime transfer
@@ -100,7 +103,10 @@ bool gstrmr::GStreamerCapture::retrieveVideoFrame(sage::swImage& img,
     if (!name_) {
         Log::error("GStreamer: Can't query 'name' from GStreamer sample");
         return false;
-    }
+    } 
+    // else {
+    //     Log::debug("[Gstreamer] Name:", std::string(name_));
+    // }
     std::string name(name_);
     // we support these types of data:
     //     video/x-raw, format=BGR                      -> 8bit, 3 channels
@@ -125,7 +131,10 @@ bool gstrmr::GStreamerCapture::retrieveVideoFrame(sage::swImage& img,
         if (!format_) {
             Log::error("GStreamer: Can't query 'format' of 'video/x-raw'");
             return false;
-        }
+        } 
+        // else {
+        //     Log::debug("[Gstreamer] Format:", std::string(format_));
+        // }
         std::string format(format_);
         img->imgFormat = sage::ImageFormat::RAW;
         if (format == "BGR") {
@@ -204,7 +213,7 @@ bool gstrmr::GStreamerCapture::isPipelinePlaying() {
         return false;
     }
     GstState current, pending;
-    GstClockTime timeout = 5 * GST_SECOND;
+    GstClockTime timeout = 20 * GST_SECOND;
     GstStateChangeReturn ret =
         gst_element_get_state(_gstData->pipeline, &current, &pending, timeout);
     if (!ret) {
@@ -395,7 +404,7 @@ bool gstrmr::GStreamerCapture::open(const std::string& filename_) {
     // else, we might have a file or a manual pipeline.
     // if gstreamer cannot parse the manual pipeline, we assume we were given
     // and ordinary file path.
-    Log::debug("OpenCV | GStreamer: ", filename);
+    Log::info("GStreamer: ", filename);
     if (!gst_uri_is_valid(filename)) {
         if (isPathExist(filename_)) {
             sage::gstrmr::GSafePtr<GError> err;
@@ -489,7 +498,7 @@ bool gstrmr::GStreamerCapture::open(const std::string& filename_) {
         }
         gst_iterator_free(it);
         if (!_gstData->sink) {
-            Log::warning("cannot find appsink in manual pipeline");
+            Log::warning("Cannot find appsink in manual pipeline");
             return false;
         }
         _gstData->pipeline.swap(uridecodebin);
@@ -584,13 +593,14 @@ bool gstrmr::GStreamerCapture::open(const std::string& filename_) {
 
         GstFormat format;
 
-        format = GST_FORMAT_DEFAULT;
+        format = GST_FORMAT_BYTES;
         if (!gst_element_query_duration(_gstData->sink, format,
                                         &_gstData->duration)) {
             handleMessage(_gstData->pipeline);
             Log::warning("unable to query duration of stream");
             _gstData->duration = -1;
         }
+
         handleMessage(_gstData->pipeline);
         const GstStructure* structure =
             gst_caps_get_structure(buffer_caps, 0);  // no lifetime transfer
@@ -654,7 +664,7 @@ double gstrmr::GStreamerCapture::getProperty(int propId) const {
                 _gstData->sink.get(), SAGE_GST_FORMAT(format), &value);
             if (!status) {
                 handleMessage(_gstData->pipeline);
-                Log::warning("GStreamer: unable to query position of stream");
+                Log::warning("GStreamer GST_CAP_PROP_POS_MSEC: unable to query position of stream");
                 return 0;
             }
             return value * 1e-6;  // nano seconds to milli seconds
@@ -670,7 +680,7 @@ double gstrmr::GStreamerCapture::getProperty(int propId) const {
                 _gstData->sink.get(), SAGE_GST_FORMAT(format), &value);
             if (!status) {
                 handleMessage(_gstData->pipeline);
-                Log::warning("GStreamer: unable to query position of stream");
+                Log::warning("GStreamer GST_FORMAT_DEFAULT: unable to query position of stream");
                 return 0;
             }
             return value;
@@ -680,7 +690,7 @@ double gstrmr::GStreamerCapture::getProperty(int propId) const {
                 _gstData->sink.get(), SAGE_GST_FORMAT(format), &value);
             if (!status) {
                 handleMessage(_gstData->pipeline);
-                Log::warning("GStreamer: unable to query position of stream");
+                Log::warning("GStreamer GST_CAP_PROP_POS_AVI_RATIO: unable to query position of stream");
                 return 0;
             }
             return ((double)value) / GST_FORMAT_PERCENT_MAX;
