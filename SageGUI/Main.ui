@@ -2,8 +2,8 @@
  <author/>
  <comment/>
  <exportmacro/>
- <class>MainWindow</class>
- <widget name="MainWindow" class="QMainWindow">
+ <class>Main</class>
+ <widget name="Main" class="QMainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -13,7 +13,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Main</string>
   </property>
   <widget name="menubar" class="QMenuBar"/>
   <widget name="centralwidget" class="QWidget"/>

@@ -42,8 +42,8 @@ void PicturePainter::show(sage::Size<int> size) {
     for (auto i = 0; i < _textures.size(); i++) {
         if (_textures[i]->getLastDataFromQueue()) {
             // Log::trace("SHOW", i, _textures.size(), size.width(), size.height());
-            // _textures[i]->draw(x[i], y[i], sage::Size<int>(size.width()/2, size.height()/2));
-            _textures[i]->draw(0, 0, sage::Size<int>(size.width(), size.height()));
+            _textures[i]->draw(x[i], y[i], sage::Size<int>(size.width()/2, size.height()/2));
+            // _textures[i]->draw(0, 0, sage::Size<int>(size.width(), size.height()));
         }
     }
     glRasterPos3f(0, 1, 0);
@@ -63,7 +63,6 @@ void PicturePainter::initTextures() {
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
         _textures[itr]->setId(textures[itr]);
     }
-    glDisable(GL_TEXTURE_2D);
 }
 
 void PicturePainter::setDataBuffer(uint8_t textId, const ImageQueue *buffer) {

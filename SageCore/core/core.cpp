@@ -37,9 +37,9 @@ void sage::Core::createSingleSubstance(const sage::CameraState& camState) {
         _pic->setDataBuffer(new_id, _substns[new_id]->getDecoder()->getQueue());
     }
     _substns[new_id]->enableSubstance();
-    _window->getGuiLayer()->first_time = true;
 
 #ifdef USE_IMGUI
+    _window->getGuiLayer()->first_time = true;
     global_callbacks.push_back(
         std::make_unique<void*>(_substns[new_id]->sig_sendSubstInfo.connect(
             _window->getGuiLayer(), &sage::GuiLayer::appendSubstInfo)));

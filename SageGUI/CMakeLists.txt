@@ -10,15 +10,15 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 
 set (SOURCES
     ./main.cpp
-    ./MainWindow.cpp
+    ./Main.cpp
 )
 
 set (MOC_HEADERS
-	./MainWindow.h
+	./Main.h
 )
 
 set (UIS
-	./MainWindow.ui
+	./Main.ui
 )
 
 set (RESOURCES
@@ -30,7 +30,7 @@ if(UNIX)
 	set(CMAKE_AUTOUIC ON)
 	set(CMAKE_AUTOMOC ON)
 	set(CMAKE_AUTORCC ON)
-	find_package(Qt5 COMPONENTS Widgets Core REQUIRED )
+	find_package(Qt5 5.14 COMPONENTS Widgets Core REQUIRED )
 	message(STATUS "	> QT_VERSION: ${Qt5Widgets_VERSION}")
 	message(STATUS "	> QT_LIBRARIES: ${Qt5Widgets_LIBRARIES}")
 	list(APPEND QTLIBS Qt5::Core Qt5::Widgets)
