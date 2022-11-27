@@ -45,6 +45,7 @@ list(APPEND SOURCES
     ./decoder/ffmpeg/ffmpeg_decoder.cpp
     ./decoder/opencv/opencv_decoder.cpp
     ./encoder/encoder.cpp
+    ./encoder/opencv/opencv_encoder.cpp
     ./cameras/cameras_handler.cpp
     ./cameras/cameras_creator.cpp
 )
