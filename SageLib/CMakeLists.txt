@@ -24,6 +24,7 @@ endif()
 list(APPEND SOURCES
     ./definitions/local_definitions.cpp
     ./config/ini_parser.cpp
+    ./net/socket/unix_socket.cpp
 )
 
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
