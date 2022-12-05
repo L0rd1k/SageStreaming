@@ -25,6 +25,8 @@ list(APPEND SOURCES
 )
 
 add_subdirectory(test_camera)
+add_subdirectory(test_structure)
+
 
 add_library(SageTest SHARED ${SOURCES})
 
