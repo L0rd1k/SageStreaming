@@ -3,7 +3,7 @@
 #include "queue.h"
 #include "utils/log.h"
 
-template <typename T, int SIZE = 3>
+template <typename T, uint32_t SIZE = 3>
 class CircleQueue : public Queue<T, SIZE> {
 public:
     CircleQueue() : Queue<T, SIZE>() {
