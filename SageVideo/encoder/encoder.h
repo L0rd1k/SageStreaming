@@ -9,7 +9,7 @@ class Encoder {
 public:
     Encoder();
     virtual ~Encoder();
-    virtual bool encoder(const sage::swImage& in, sage::swImage& out) = 0;
+    virtual bool encode(const sage::swImage& in, sage::swImage& out) = 0;
     ImageQueue* getQueue();
 protected:
     ImageQueue _queue;

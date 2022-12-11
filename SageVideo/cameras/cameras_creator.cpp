@@ -7,8 +7,8 @@ sage::CamerasCreator& sage::CamerasCreator::inst() {
 
 sage::CamerasHandler* sage::CamerasCreator::createCamera(sage::CamTypes camType,
                                                          std::string url,
-                                                         sage::RtspTransportType ffmpegType,
-                                                         sage::CVCapType opencvType) {
+                                                         sage::FFmpegType ffmpegType,
+                                                         sage::OpencvType opencvType) {
     CamerasHandler* camHandler = nullptr;
     switch (camType) {
         case sage::CamTypes::FFMPEG: {
@@ -41,4 +41,18 @@ sage::Decoder* sage::CamerasCreator::createDecoder(sage::DecTypes decType) {
             break;
     }
     return decoder;
+}
+
+sage::Encoder* sage::CamerasCreator::createEncoder(sage::EncTypes encType) {
+    Encoder* encoder = nullptr;
+    switch (encType) {
+        case sage::EncTypes::OPENCV: {
+            Log::info("Create OPENCV jpeg Encoder");
+            encoder = new OpencvEncoder();
+            break;
+        }
+        default:
+            break;
+    }
+    return encoder;    
 }

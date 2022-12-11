@@ -26,6 +26,7 @@ endif()
 set(SOURCES
     ./main.cpp
     ./substance/substance.cpp
+    ./substance/substance_config.cpp
     ./core/core.cpp
 )
 

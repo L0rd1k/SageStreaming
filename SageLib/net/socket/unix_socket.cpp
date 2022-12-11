@@ -49,7 +49,8 @@ bool sage::UnixSocket::bind(uint16_t port, time_t time_recv, time_t time_send) {
             sin_port : htons(port),
             sin_addr : in_addr{INADDR_ANY}
         };
-        if(::bind(getSocket(), (struct sockaddr*)&address, sizeof(address)) == -1) {
+        if (::bind(getSocket(), (struct sockaddr*)&address, sizeof(address)) ==
+            -1) {
             Log::critical("[Socket] Failed to bind socket");
             return false;
         }
@@ -58,6 +59,55 @@ bool sage::UnixSocket::bind(uint16_t port, time_t time_recv, time_t time_send) {
     return false;
 }
 
-bool sage::UnixSocket::send(void* data, uint32_t size, sage::Address* addr) {
+bool sage::UnixSocket::send(void* data, uint32_t size, sage::Address* addrReceiver) {
+    if (getSocket() != -1) {
+        if (addrReceiver) {
+            sockaddr_in address{
+                sin_family : AF_INET,
+                sin_port : htons(addrReceiver->getPort()),
+            };
+            if (!inet_aton(addrReceiver->getIp().c_str(), &address.sin_addr)) {
+                Log::critical("[Socket] Can't convert IP", addrReceiver->getIp(),
+                              "to binary mode.");
+                return false;
+            }
+            if (sendto(getSocket(), data, size, 0, (struct sockaddr*)&address,
+                       sizeof(address)) == -1) {
+                return false;
+            }
+            return true;
+        }
+    }
+    return false;
+}
 
+bool sage::UnixSocket::receive(void* data, uint32_t size, sage::Address* addrSender) {
+    if (getSocket() != -1) {
+        if (addrSender) {
+            struct sockaddr_storage address;
+            socklen_t address_len = sizeof(address);
+            if (recvfrom(getSocket(), data, size, 0, (struct sockaddr*)&address,
+                         &address_len) > 0) {
+                char host[NI_MAXHOST];
+                char port[NI_MAXSERV];
+                if (!getnameinfo((struct sockaddr*)&address, address_len, host,
+                                 sizeof(host), port, sizeof(port),
+                                 NI_NUMERICHOST | NI_NUMERICSERV)) {
+                    addrSender->setIp(std::string(host));
+                    addrSender->setPort(std::stoi(port));
+                    return true;
+                } else {
+                    Log::critical("[Socket] Error obtain sender address");
+                }
+            }
+        }
+    }
+    return false;
+}
+
+bool sage::UnixSocket::close() {
+    if(::close(getSocket() == -1)) {
+        return false;
+    }    
+    return true;
 }

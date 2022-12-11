@@ -63,7 +63,12 @@ enum class DecTypes {
     Undefined = 255,
 };
 
-enum class CVCapType {
+enum class EncTypes {
+    OPENCV = 0,
+    Undefined = 255,
+};
+
+enum class OpencvType {
     GSTREAMER = 0,
     FFMPEG = 1,
     V4L = 2,
@@ -71,7 +76,7 @@ enum class CVCapType {
     Undefined = 255
 };
 
-enum class RtspTransportType {
+enum class FFmpegType {
     Tcp = 0,
     Udp = 1,
     V4l = 2,
@@ -86,8 +91,8 @@ enum class CamTypes {
     Undefined = 255
 };
 
-struct SubstanceInfo {
-    SubstanceInfo() : id(-1),
+struct SubstanceState {
+    SubstanceState() : id(-1),
                       fps(0),
                       camType(sage::CamTypes::Undefined),
                       decType(sage::DecTypes::Undefined),
@@ -107,8 +112,8 @@ struct CameraState {
     std::string url;
     sage::CamTypes camType;
     sage::DecTypes decType;
-    sage::RtspTransportType ffmpegcapType;
-    sage::CVCapType cvcapType;
+    sage::FFmpegType ffmpegcapType;
+    sage::OpencvType cvcapType;
 };
 
 //< Signals
@@ -120,11 +125,12 @@ extern Signal<const CameraState&> sig_sendCameraState;
 const char* toString(sage::ImageFormat format);
 const char* toString(sage::ImageSource source);
 const char* toString(sage::DecTypes decoderType);
-const char* toString(sage::CVCapType captureType);
-const char* toString(sage::RtspTransportType cameraType);
+const char* toString(sage::OpencvType captureType);
+const char* toString(sage::FFmpegType cameraType);
 const char* toString(sage::CamTypes cameraType);
 
 sage::CamTypes toCamType(std::string val);
 sage::DecTypes toDecType(std::string val);
-sage::RtspTransportType toFFmpegCapType(std::string val);
-sage::CVCapType toOpenCVCapType(std::string val);
+sage::EncTypes toEncType(std::string val);
+sage::FFmpegType toFFmpegCapType(std::string val);
+sage::OpencvType toOpenCVCapType(std::string val);

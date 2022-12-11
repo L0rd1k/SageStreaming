@@ -40,30 +40,30 @@ const char* toString(sage::DecTypes decoderType) {
     }
 }
 
-const char* toString(sage::CVCapType captureType) {
+const char* toString(sage::OpencvType captureType) {
     switch (captureType) {
-        case sage::CVCapType::GSTREAMER:
+        case sage::OpencvType::GSTREAMER:
             return "Gstreamer";
-        case sage::CVCapType::FFMPEG:
+        case sage::OpencvType::FFMPEG:
             return "FFmpeg";
-        case sage::CVCapType::V4L:
+        case sage::OpencvType::V4L:
             return "Video4Linux";
-        case sage::CVCapType::ANY:
+        case sage::OpencvType::ANY:
             return "Default";
         default:
             return "Undefined";
     }
 }
 
-const char* toString(sage::RtspTransportType captureType) {
+const char* toString(sage::FFmpegType captureType) {
     switch (captureType) {
-        case sage::RtspTransportType::Tcp:
+        case sage::FFmpegType::Tcp:
             return "Tcp";
-        case sage::RtspTransportType::Udp:
+        case sage::FFmpegType::Udp:
             return "Udp";
-        case sage::RtspTransportType::V4l:
+        case sage::FFmpegType::V4l:
             return "V4l";
-        case sage::RtspTransportType::Vid:
+        case sage::FFmpegType::Vid:
             return "Vid";
         default:
             return "Undefined";
@@ -102,30 +102,38 @@ sage::DecTypes toDecType(std::string val) {
     }
 }
 
-sage::RtspTransportType toFFmpegCapType(std::string val) {
-    if(!val.compare("tcp")) {
-        return sage::RtspTransportType::Tcp;
-    } else if(!val.compare("udp")) {
-        return sage::RtspTransportType::Udp;
-    } else if(!val.compare("v4l")) {
-        return sage::RtspTransportType::V4l;
-    } else if(!val.compare("vid")) {
-        return sage::RtspTransportType::Vid;
+sage::EncTypes toEncType(std::string val) {
+    if(!val.compare("opencv")) {
+        return sage::EncTypes::OPENCV;
     } else {
-        return sage::RtspTransportType::Undefined;
+        return sage::EncTypes::Undefined;
     }
 }
 
-sage::CVCapType toOpenCVCapType(std::string val) {
-    if(!val.compare("gstreamer")) {
-        return sage::CVCapType::GSTREAMER;
-    } else if(!val.compare("ffmpeg")) {
-        return sage::CVCapType::FFMPEG;
+sage::FFmpegType toFFmpegCapType(std::string val) {
+    if(!val.compare("tcp")) {
+        return sage::FFmpegType::Tcp;
+    } else if(!val.compare("udp")) {
+        return sage::FFmpegType::Udp;
     } else if(!val.compare("v4l")) {
-        return sage::CVCapType::V4L;
-    } else if(!val.compare("any")) {
-        return sage::CVCapType::ANY;
+        return sage::FFmpegType::V4l;
+    } else if(!val.compare("vid")) {
+        return sage::FFmpegType::Vid;
     } else {
-        return sage::CVCapType::Undefined;
+        return sage::FFmpegType::Undefined;
+    }
+}
+
+sage::OpencvType toOpenCVCapType(std::string val) {
+    if(!val.compare("gstreamer")) {
+        return sage::OpencvType::GSTREAMER;
+    } else if(!val.compare("ffmpeg")) {
+        return sage::OpencvType::FFMPEG;
+    } else if(!val.compare("v4l")) {
+        return sage::OpencvType::V4L;
+    } else if(!val.compare("any")) {
+        return sage::OpencvType::ANY;
+    } else {
+        return sage::OpencvType::Undefined;
     }
 }

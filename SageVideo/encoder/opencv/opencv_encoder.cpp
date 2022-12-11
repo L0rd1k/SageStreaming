@@ -13,7 +13,7 @@ sage::OpencvEncoder::OpencvEncoder() {}
 
 sage::OpencvEncoder::~OpencvEncoder() {}
 
-bool sage::OpencvEncoder::encoder(const sage::swImage& in, sage::swImage& out) {
+bool sage::OpencvEncoder::encode(const sage::swImage& in, sage::swImage& out) {
     cv::Mat srcImg = sage::toMat(in);
     std::vector<uchar> buffer; 
     std::vector<int32_t> params = {cv::IMWRITE_JPEG_QUALITY, 100};

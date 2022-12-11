@@ -28,7 +28,7 @@ public:
     void processDraw();
     void setGuiWindow(GLFWwindow* win);
     void appendLog(const std::string& str);
-    void appendSubstInfo(const SubstanceInfo& subst);
+    void appendSubstInfo(const SubstanceState& subst);
     void appendSubstState(const CameraState& subst);
     static bool first_time;
 
@@ -53,7 +53,7 @@ private:
     };
 
     std::vector<PlottingSubstInfo> _plotInfo;
-    std::unordered_map<uint8_t, const SubstanceInfo*> substanceInfo;
+    std::unordered_map<uint8_t, const SubstanceState*> substanceInfo;
     std::unordered_map<uint8_t, const CameraState*> substanceState;
 
     std::mutex _mtx;

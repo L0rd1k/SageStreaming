@@ -249,8 +249,8 @@ void sage::GuiLayer::winManager() {
             camera_url,
             static_cast<sage::CamTypes>(readerType),
             static_cast<sage::DecTypes>(decoderType),
-            static_cast<sage::RtspTransportType>(ffmpegcaptureType),
-            static_cast<sage::CVCapType>(cvcaptureType)};
+            static_cast<sage::FFmpegType>(ffmpegcaptureType),
+            static_cast<sage::OpencvType>(cvcaptureType)};
         sig_sendCameraState.emit(cam_state);
     }
 
@@ -324,7 +324,7 @@ void sage::GuiLayer::appendLog(const std::string& str) {
     log.AddLog(str.c_str());
 }
 
-void sage::GuiLayer::appendSubstInfo(const SubstanceInfo& subst) {
+void sage::GuiLayer::appendSubstInfo(const SubstanceState& subst) {
     std::lock_guard<std::mutex> _locker(_mtx);
     if (_plotInfo.size() > subst.id) {
         if (_plotInfo[subst.id]._timerFps.elapsed() > 1) {

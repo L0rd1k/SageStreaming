@@ -22,15 +22,14 @@ void sage::Core::createSingleSubstance(const sage::CameraState& camState) {
     uint8_t new_id = _substns.size();
     _substns[new_id] = std::make_shared<sage::Substance>(new_id, true);
 
-    _substns[new_id]->setCamReaderType(camState.camType);
-    _substns[new_id]->setCamDecoderType(camState.decType);
-    _substns[new_id]->setCamUrl(camState.url);
-    _substns[new_id]->setFFmpegCaptureType(camState.ffmpegcapType);
-    _substns[new_id]->setOpenCVCaptureType(camState.cvcapType);
+    _substns[new_id]->getConfig()->setCamReaderType(camState.camType);
+    _substns[new_id]->getConfig()->setCamDecoderType(camState.decType);
+    _substns[new_id]->getConfig()->setCamUrl(camState.url);
+    _substns[new_id]->getConfig()->setFFmpegCaptureType(camState.ffmpegcapType);
+    _substns[new_id]->getConfig()->setOpenCVCaptureType(camState.cvcapType);
     
     _substns[new_id]->initSubstance();
 
-    Log::critical(_substns[new_id]->getId());
     //> If decoder created, create texture and assign image queue to it.
     if (_substns[new_id]->getDecoder()) {
         _pic->createTexture();

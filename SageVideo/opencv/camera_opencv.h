@@ -9,7 +9,7 @@
 
 class CameraOpencv : public sage::CamerasHandler {
 public:
-    CameraOpencv(std::string url, sage::CVCapType type);
+    CameraOpencv(std::string url, sage::OpencvType type);
     virtual ~CameraOpencv();
     virtual bool start() override;
     virtual bool stop() override;
@@ -20,6 +20,6 @@ private:
     bool _isCapOpened;
     std::mutex _mutex;
     std::string _url;
-    sage::CVCapType _capType;
+    sage::OpencvType _capType;
     std::thread _camThread;
 };

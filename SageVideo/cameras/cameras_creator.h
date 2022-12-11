@@ -2,14 +2,15 @@
 
 #include "cameras_handler.h"
 #include "definitions/local_definitions.h"
+#include "config/ini_parser.h"
 //> Cameras
 #include "ffmpeg/camera_ffmpeg.h"
 #include "opencv/camera_opencv.h"
 #include "gstreamer/camera_gstreamer.h"
 //> Decoder
-#include "config/ini_parser.h"
 #include "decoder/ffmpeg/ffmpeg_decoder.h"
-
+//> Decoder
+#include "encoder/opencv/opencv_encoder.h"
 
 
 namespace sage {
@@ -22,9 +23,11 @@ public:
 
     CamerasHandler* createCamera(sage::CamTypes camType = sage::CamTypes::Undefined,
                                  std::string name = std::string(), 
-                                 sage::RtspTransportType ffmpegType = sage::RtspTransportType::Undefined, 
-                                 sage::CVCapType opencvType = sage::CVCapType::Undefined);
+                                 sage::FFmpegType ffmpegType = sage::FFmpegType::Undefined, 
+                                 sage::OpencvType opencvType = sage::OpencvType::Undefined);
     Decoder* createDecoder(sage::DecTypes dectype);
+    Encoder* createEncoder(sage::EncTypes encType);
+
 };
 
 }  // namespace sage

@@ -1,6 +1,6 @@
 #include "camera_opencv.h"
 
-CameraOpencv::CameraOpencv(std::string url, sage::CVCapType type)
+CameraOpencv::CameraOpencv(std::string url, sage::OpencvType type)
     : _url(url),
       _capType(type),
       _isCapOpened(false) {
@@ -29,19 +29,19 @@ bool CameraOpencv::stop() {
 
 void CameraOpencv::selectCaptureType() {
     switch (_capType) {
-        case sage::CVCapType::V4L: {
+        case sage::OpencvType::V4L: {
             _isCapOpened = _cap.open(_url, cv::CAP_V4L);
             break;
         }
-        case sage::CVCapType::FFMPEG: {
+        case sage::OpencvType::FFMPEG: {
             _isCapOpened = _cap.open(_url, cv::CAP_FFMPEG);
             break;
         }
-        case sage::CVCapType::GSTREAMER: {
+        case sage::OpencvType::GSTREAMER: {
             _isCapOpened = _cap.open(_url, cv::CAP_GSTREAMER);
             break;
         }
-        case sage::CVCapType::ANY: {
+        case sage::OpencvType::ANY: {
             _isCapOpened = _cap.open(_url, cv::CAP_ANY);
             break;
         }
@@ -87,7 +87,6 @@ void CameraOpencv::mainLoop() {
             image->imgSize = sage::Size<int>(_frame.cols, _frame.rows);
             image->imgFormat = cv_imgFormat;
             image->imgColorType = sage::ColorType::BGR;
-            image->imgSourceType = sage::ImageSource::RTSP;
             image->channels = _frame.channels();
             triggerImage(image);
             if (framecount > 0) {

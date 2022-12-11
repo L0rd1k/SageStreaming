@@ -16,7 +16,7 @@ class OpencvEncoder : public Encoder {
 public:
     OpencvEncoder();
     virtual ~OpencvEncoder();
-    virtual bool encoder(const sage::swImage& in, sage::swImage& out) override;
+    virtual bool encode(const sage::swImage& in, sage::swImage& out) override;
 };
 
 }  // namespace sage

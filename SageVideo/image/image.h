@@ -12,12 +12,10 @@ namespace sage {
 struct Image : public DataHeader {
     Image() : DataHeader(DataType::Image),
               imgFormat(ImageFormat::Undefined),
-              imgSize(sage::Size<int>(0, 0)),
-              imgSourceType(ImageSource::Undefined) {
+              imgSize(sage::Size<int>(0, 0)) {
     }
     ImageFormat imgFormat;
     sage::Size<int> imgSize;
-    ImageSource imgSourceType;
     ColorType imgColorType;
     uint8_t channels;
     int64_t duration;

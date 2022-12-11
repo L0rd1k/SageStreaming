@@ -4,6 +4,9 @@
 
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <netdb.h>
+#include <string.h>
+#include <unistd.h>
 
 namespace sage {
 
@@ -27,8 +30,10 @@ public:
     bool init(const sage::Domain domain, const sage::ConnType conn) override;
     bool bind(uint16_t, time_t, time_t) override;
     bool send(void* data, uint32_t size, sage::Address* addr) override;
+    bool receive(void* data, uint32_t size, sage::Address* addr) override;
     bool enableBroadcast();
     int setOption(int sockfd, int level, int optname,  const void *optval, socklen_t optlen);
+    bool close() override;
 };
 
 }

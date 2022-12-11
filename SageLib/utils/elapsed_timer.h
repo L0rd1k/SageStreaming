@@ -15,8 +15,11 @@ public:
     const double elapsed() const {
         return std::chrono::duration_cast<_second_>(_clock_::now() - _beg).count();
     }
-    const int elapsedMs() const {
+    const double elapsedMs() const {
         return elapsed() * 1000;
+    }
+    const double elapsedMcrs() const {
+        return elapsed() * 100000;
     }
     bool expired(int ms) {
         return elapsedMs() > ms;
