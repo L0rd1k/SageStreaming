@@ -10,6 +10,9 @@
 #include <string>
 #include <unordered_map>
 
+#include "layer/imgui_main_handler.h"
+
+
 #include "callbacks/signal.h"
 #include "definitions/local_definitions.h"
 #include "utils/elapsed_timer.h"
@@ -38,6 +41,9 @@ private:
     void dockLog();
     void dockViewport();
     void winManager();
+
+private:
+    ImgGuiMainHandler imguiHandler_;
 
 private:
     GLFWwindow* _winPtr = NULL;

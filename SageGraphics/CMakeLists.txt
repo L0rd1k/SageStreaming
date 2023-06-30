@@ -64,12 +64,13 @@ endif(UNIX)
 if(USE_IMGUI)
     list(APPEND SOURCES
         ./layer/imgui_layer.cpp
+        ./layer/imgui_main_handler.cpp
+        ./imgui/imgui_impl_opengl3.cpp
+        ./imgui/imgui_impl_opengl3.h
         ../3rdParty/imgui/imconfig.h
         ../3rdParty/imgui/imgui_demo.cpp
         ../3rdParty/imgui/imgui_draw.cpp
         ../3rdParty/imgui/imgui_tables.cpp
-        ./imgui/imgui_impl_opengl3.cpp
-        ./imgui/imgui_impl_opengl3.h
         ../3rdParty/imgui/imgui_internal.h
         ../3rdParty/imgui/imgui_widgets.cpp
         ../3rdParty/imgui/imgui.cpp
