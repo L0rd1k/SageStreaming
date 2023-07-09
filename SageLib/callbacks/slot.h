@@ -16,7 +16,7 @@ public:
         _callback([this, inst, callback](Args&&... args) {
             return (inst->*callback)(std::forward<Args>(args)...);
         }) {
-    };
+    }
 
     virtual ~Slot() {};
 
@@ -27,7 +27,7 @@ public:
             Log() << "Error: " << e.what() << "\n";
             throw e;
         }
-    };
+    }
 
 protected:
     std::function<void(Args...)> _callback;

@@ -97,6 +97,7 @@ sage::DecTypes toDecType(std::string val) {
     if(!val.compare("ffmpeg")) {
         return sage::DecTypes::FFMPEG;
     } else if (!val.compare("opencv")) {
+        return sage::DecTypes::Undefined;
     } else {
         return sage::DecTypes::Undefined;
     }

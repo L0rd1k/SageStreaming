@@ -15,7 +15,11 @@ public:
         ip_ = addr.ip_;
         port_ = addr.port_;
     }
-    Address &operator=(const Address &addr) { return *this; }
+    Address &operator=(const Address &addr) {
+        ip_ = addr.ip_;
+        port_ = addr.port_;
+        return *this;
+    }
     std::string getIp() { return ip_; }
     uint16_t getPort() { return port_; }
     void setIp(std::string ip) { ip_ = ip; }
