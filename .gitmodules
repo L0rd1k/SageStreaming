@@ -13,3 +13,11 @@
 [submodule "3rdParty/boost"]
 	path = 3rdParty/boost
 	url = https://github.com/boostorg/boost
+[submodule "3rdParty/opencv"]
+	path = 3rdParty/opencv
+	url = https://github.com/opencv/opencv
+	branch = 4.7.0
+[submodule "3rdParty/opencv_contrib"]
+	path = 3rdParty/opencv_contrib
+	url = https://github.com/opencv/opencv_contrib
+	branch = 4.7.0
