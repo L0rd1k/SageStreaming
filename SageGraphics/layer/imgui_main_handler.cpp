@@ -172,6 +172,51 @@ void ImgGuiMainHandler::updateManager() {
     if (ImGui::BeginTabBar("##Tabs", ImGuiTabBarFlags_None)) {
         if (ImGui::BeginTabItem("Active cameras")) {
             const int COLUMNS_COUNT = 5;
+
+                std::vector<std::string> names({"one", "two", "three"});
+                static size_t selected_index = 1;
+                static bool clicked = false;
+                ImGui::Checkbox("was clicked", &clicked);
+                ImGui::SameLine();
+                if (ImGui::Button("del")) clicked = (!clicked);
+                if (ImGui::BeginCombo("My_combo1", names[selected_index].c_str())) {
+                    for (const std::string &name : names) { 
+                        ImGui::PushID(name.c_str());
+                        size_t index = &name - &names.front();
+                        bool is_selected = index == selected_index;
+                        ImGui::AlignTextToFramePadding();
+                        if (ImGui::Selectable(name.c_str(), is_selected, ImGuiSelectableFlags_AllowItemOverlap )) 
+                            selected_index = index;            
+                        ImGui::SameLine();
+                        ImGui::SetCursorPosX(200);
+                        if (ImGui::Button("del")) clicked = (!clicked);
+                        ImGui::PopID(); 
+                    }
+                    ImGui::EndCombo();
+                }
+                if (ImGui::BeginCombo("My_combo2", names[selected_index].c_str())) {
+                    for (const std::string &name : names) {
+                        ImGui::PushID(name.c_str());
+                        size_t index       = &name - &names.front();
+                        bool   is_selected = index == selected_index;
+                        float  pos_x       = ImGui::GetCursorPosX();
+                        ImGui::SetCursorPosX(200);
+                        if (ImGui::Button("del")) { 
+                            std::cout << "Delete: " << name << std::endl;
+                            clicked = (!clicked); 
+                        }
+                        ImGui::SameLine();
+                        ImGui::SetCursorPosX(pos_x);
+                        ImGui::AlignTextToFramePadding();
+                        if (ImGui::Selectable(name.c_str(), is_selected, ImGuiSelectableFlags_AllowItemOverlap ))
+                            selected_index = index;
+                        ImGui::PopID();
+                    }
+                    ImGui::EndCombo();
+                }
+
+
+
             if (ImGui::BeginTable("table_custom_headers", COLUMNS_COUNT, ImGuiTableFlags_Borders | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable)) {
                 ImGui::TableSetupColumn("ID", ImGuiTableColumnFlags_WidthFixed);
                 ImGui::TableSetupColumn("Reader", ImGuiTableColumnFlags_WidthFixed);
@@ -191,50 +236,34 @@ void ImgGuiMainHandler::updateManager() {
                     ImGui::PopID();
                 }
 
-                for (auto row = 0; row < 10; ++row) {
-                    ImGui::TableNextRow();
-                    for (int column = 0; column < COLUMNS_COUNT; ++column) {
-                        if (ImGui::TableSetColumnIndex(column)) {
-                            std::string strInfo = std::string("");
-                            if (column == 0) {
-                                strInfo = std::to_string(column);
-                            }
-                            if (column == 4) {
-                                if (ImGui::Button("Remove")) {
-                                    std::cout << "Remove" << std::endl;
+
+                for (auto row = 0; row < 10; row++) {
+                    ImGui::TableNextRow(ImGuiTableRowFlags_None, 0.0f);
+
+                    for(auto cols = 0; cols < COLUMNS_COUNT; ++cols) {
+                        if (ImGui::TableSetColumnIndex(cols)) {
+                            switch (cols) {
+                                case 0: {
+                                    ImGui::AlignTextToFramePadding();
+                                    if (ImGui::Selectable(std::to_string(row).c_str(), selectedRow == row, ImGuiSelectableFlags_SpanAllColumns, ImVec2(0, 0))) {
+                                        selectedRow = row;
+                                        std::cout << selectedRow << std::endl;
+                                    }
+                                    break;
                                 }
-                            }
-                            bool isItemSelected = (selectedRow == row) ? true : false;
-                            if (ImGui::Selectable(strInfo.c_str(), &isItemSelected, ImGuiSelectableFlags_SpanAllColumns)) {
-                                selectedRow = row;
-                                std::cout << "Selected: " << row << " " << column << std::endl;
+                                case 1: { ImGui::Text("ReaderType"); break; }
+                                case 2: { ImGui::Text("DecoderType"); break; }
+                                case 3: { ImGui::Text("My url"); break; }
+                                case 4: { 
+                                    if (ImGui::Button("Remove")) { 
+                                        std::cout << "Remove element" << std::endl;
+                                    }
+                                    break;
+                                }
                             }
                         }
                     }
                 }
-
-                // int row = 0;
-                // for (auto elem : substanceState) {
-                //     ImGui::TableNextRow();
-                //     for (int col = 0; col < 4; col++) {
-                //         ImGui::TableSetColumnIndex(col);
-                //         std::string str_elem = std::string();
-                //         if (col == 0) {
-                //             str_elem = std::to_string(elem.second->id);
-                //         } else if (col == 1) {
-                //             str_elem = toString(elem.second->camType);
-                //         } else if (col == 2) {
-                //             str_elem = toString(elem.second->decType);
-                //         } else if (col == 3) {
-                //             str_elem = elem.second->url;
-                //         }
-                //         if (ImGui::Selectable(str_elem.c_str(), selectedRow == row, ImGuiSelectableFlags_SpanAllColumns)) {
-                //             selectedRow = row;
-                //             Log::trace(row, col, str_elem.c_str());
-                //         }
-                //     }
-                //     row++;
-                // }
                 ImGui::EndTable();
             }
             ImGui::SameLine();
