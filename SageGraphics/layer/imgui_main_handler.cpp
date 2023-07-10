@@ -3,7 +3,8 @@
 #include "window/window_painter_glfw.h"
 
 void ImgGuiMainHandler::mainHandler() {
-    // ImGui::ShowDemoWindow(&isShowingDemo_);
+    ImGui::ShowDemoWindow(&isShowingDemo_);
+
     if (isDockingEnabled_) {
         createMainWindow();
         ImGuiIO& io = ImGui::GetIO();
@@ -16,12 +17,12 @@ void ImgGuiMainHandler::mainHandler() {
                 firstRunInit(availableSize);
                 isFirstLaunch_ = false;
             }
+            updateManager();
+            updateMenuBar();
+            updateLogging();
+            updateViewPort();
+            updateSettingsWindow();
         }
-
-
-
-
-
         closeWindow();
     }
 }
@@ -32,13 +33,32 @@ void ImgGuiMainHandler::firstRunInit(ImVec2& size) {
     ImGui::DockBuilderAddNode(dockspaceId_, ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_DockSpace);
     ImGui::DockBuilderSetNodeSize(dockspaceId_, size);
 
-    // Create Viewport Windows
-    // for (int i = 0; i <= WindowPainterGLFW::inst().getPicturePainter()->getTexturesCount(); i++) {
-    //     std::string name = "Viewport" + std::to_string(i);
-    //     ImGui::DockBuilderDockWindow(name.c_str(), dockspaceId_);
-    //     ImGui::DockBuilderFinish(dockspaceId_);
-    // }
+    /** Settings main window. **/
+    ImGuiID dockSettings = ImGui::DockBuilderSplitNode(dockspaceId_, ImGuiDir_Right, settingsWinCap, nullptr, &dockspaceId_);
+    ImGui::DockBuilderDockWindow(settingsWinName.c_str(), dockSettings);
+    ImGui::DockBuilderFinish(dockSettings);
+    /** Setting sub-camera settings windows. **/
+    ImGuiID camsSettings = ImGui::DockBuilderSplitNode(dockSettings, ImGuiDir_Down, camSettingsWinCap, nullptr, &dockSettings);
+    for (int i = WindowPainterGLFW::inst().getPicturePainter()->getTexturesCount(); i >= 1; --i) {
+        std::string name = "Cam" + std::to_string(i);
+        ImGui::DockBuilderDockWindow(name.c_str(), camsSettings);
+    }
+    /** Logging windows **/
+    ImGuiID dockLogging = ImGui::DockBuilderSplitNode(dockspaceId_, ImGuiDir_Down, loggingWinCap, nullptr, &dockspaceId_);
+    ImGui::DockBuilderDockWindow(loggingWinName.c_str(), dockLogging);
+    ImGui::DockBuilderFinish(dockLogging);
 
+    /** Logging windows **/
+    ImGuiID dockManager = ImGui::DockBuilderSplitNode(dockspaceId_, ImGuiDir_Right, managerWinCap, nullptr, &dockspaceId_);
+    ImGui::DockBuilderDockWindow(managerWinName.c_str(), dockManager);
+    ImGui::DockBuilderFinish(dockManager);
+
+    /** Create Viewport Windows **/
+    for (int i = 0; i <= WindowPainterGLFW::inst().getPicturePainter()->getTexturesCount(); i++) {
+        std::string name = "Viewport" + std::to_string(i);
+        ImGui::DockBuilderDockWindow(name.c_str(), dockspaceId_);
+        ImGui::DockBuilderFinish(dockspaceId_);
+    }
 
     ImGui::DockBuilderFinish(dockspaceId_);
 }
@@ -66,6 +86,176 @@ void ImgGuiMainHandler::createMainWindow() {
     if (isFullScreenEnabled_) {
         ImGui::PopStyleVar(3);
     }
+}
+
+void ImgGuiMainHandler::updateSettingsWindow() {
+    ImGui::Begin(settingsWinName.c_str());
+    ImGui::Text("Cameras count: %d", WindowPainterGLFW::inst().getPicturePainter()->getTexturesCount());
+    for (uint8_t i = 0; i < WindowPainterGLFW::inst().getPicturePainter()->getTexturesCount(); i++) {
+        std::string name = "Cam" + std::to_string(i + 1);
+        ImGui::Begin(name.c_str());
+        /** Average complexity for find in unordered_map 0(1). **/
+        //     if (substanceInfo.find(i) != substanceInfo.end()) {
+        //         ImGui::BeginGroup();
+        //         if (ImGui::CollapsingHeader("Status", 32)) {
+        //             ImGui::Text("Channel ID:        %d", substanceInfo.at(i)->id);
+        //             ImGui::Text("Fps:               %d", substanceInfo.at(i)->fps);
+        //             ImGui::PlotLines(" ", _plotInfo.at(i)._fpsValues, 25, 0, NULL, 0.0f, 40.0f, ImVec2(300, 50));
+        //             ImGui::Text("Resolution:        %s", substanceInfo.at(i)->size.toStr().c_str());
+        //             ImGui::Text("Stream duration:   %ld sec.", substanceInfo.at(i)->duration);
+        //             ImGui::Text("Reader Type:       %s", toString(substanceInfo.at(i)->camType));
+        //             ImGui::Text("Decoder Type:      %s", toString(substanceInfo.at(i)->decType));
+        //             ImGui::Text("Decoder Codec:     %s", toString(substanceInfo.at(i)->format));
+        //         }
+        //         if (ImGui::CollapsingHeader("Commands")) {
+        //         }
+        //         ImGui::EndGroup();
+        //     }
+        ImGui::End();
+    }
+    ImGui::End();
+}
+
+void ImgGuiMainHandler::updateMenuBar() {
+    if (ImGui::BeginMenuBar()) {
+        if (ImGui::BeginMenu("File")) {
+            ImGui::MenuItem("Exit", NULL, nullptr);
+            ImGui::EndMenu();
+        }
+        ImGui::BeginMenu("Edit");
+        ImGui::BeginMenu("Deploy");
+        ImGui::MenuItem("Manager", NULL, &isShowingWinManager_);
+        if (ImGui::BeginMenu("Window")) {
+            ImGui::MenuItem("Single", NULL, nullptr);
+            ImGui::MenuItem("Quadra", NULL, nullptr);
+            ImGui::EndMenu();
+        }
+        ImGui::BeginMenu("Settings");
+        ImGui::EndMenuBar();
+    }
+}
+
+void ImgGuiMainHandler::updateViewPort() {
+    std::lock_guard<std::mutex> locker(mtx_);
+    for (uint8_t i = 1; i <= WindowPainterGLFW::inst().getPicturePainter()->getTexturesCount(); i++) {
+        std::string name = "Viewport" + std::to_string(i);
+        ImGui::Begin(name.c_str());
+        ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+        float x = viewportPanelSize.x;
+        float y = viewportPanelSize.y;
+        ImGui::Image((void*)(intptr_t)i, ImVec2{x, y});
+        ImGui::End();
+    }
+}
+
+void ImgGuiMainHandler::updateManager() {
+    ImGui::Begin(managerWinName.c_str(), &isShowingWinManager_);
+    char camera_url[256];
+    ImGui::InputText("Camera URL", camera_url, IM_ARRAYSIZE(camera_url));
+    ImGui::Combo("Reader type", &readerType_, combobox_readerTypes);
+    switch (readerType_) {
+        case 0:
+            ImGui::Combo("Transport type", &ffmpegCaptureType_, combobox_ffmpegCapTypes);
+            break;
+        case 1:
+            ImGui::Combo("Capture type", &opencvCaptureType_, combobox_opencvCapTypes);
+            break;
+    }
+    ImGui::Separator();
+    ImGui::Combo("Texture size", &textureSize_, combobox_textureSize);
+    ImGui::Combo("Decoder Type", &decoderType_, combobox_decoderType);
+    ImGui::SetNextWindowSize(ImVec2(500, 440), ImGuiCond_FirstUseEver);
+
+    ImGui::BeginGroup();
+    ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing()));  // Leave room for 1 line below us
+    ImGui::Separator();
+    if (ImGui::BeginTabBar("##Tabs", ImGuiTabBarFlags_None)) {
+        if (ImGui::BeginTabItem("Active cameras")) {
+            const int COLUMNS_COUNT = 5;
+            if (ImGui::BeginTable("table_custom_headers", COLUMNS_COUNT, ImGuiTableFlags_Borders | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable)) {
+                ImGui::TableSetupColumn("ID", ImGuiTableColumnFlags_WidthFixed);
+                ImGui::TableSetupColumn("Reader", ImGuiTableColumnFlags_WidthFixed);
+                ImGui::TableSetupColumn("Decoder", ImGuiTableColumnFlags_WidthFixed);
+                ImGui::TableSetupColumn("URL", ImGuiTableColumnFlags_WidthStretch);
+                ImGui::TableSetupColumn("Remove", ImGuiTableColumnFlags_WidthFixed);
+
+                static int selectedRow = -1;
+
+                // Instead of calling TableHeadersRow() we'll submit custom headers ourselves
+                ImGui::TableNextRow(ImGuiTableRowFlags_Headers);
+                for (int column = 0; column < COLUMNS_COUNT; column++) {
+                    ImGui::TableSetColumnIndex(column);
+                    const char* column_name = ImGui::TableGetColumnName(column);  // Retrieve name passed to TableSetupColumn()
+                    ImGui::PushID(column);
+                    ImGui::TableHeader(column_name);
+                    ImGui::PopID();
+                }
+
+                for (auto row = 0; row < 10; ++row) {
+                    ImGui::TableNextRow();
+                    for (int column = 0; column < COLUMNS_COUNT; ++column) {
+                        if (ImGui::TableSetColumnIndex(column)) {
+                            std::string strInfo = std::string("");
+                            if (column == 0) {
+                                strInfo = std::to_string(column);
+                            }
+                            if (column == 4) {
+                                if (ImGui::Button("Remove")) {
+                                    std::cout << "Remove" << std::endl;
+                                }
+                            }
+                            bool isItemSelected = (selectedRow == row) ? true : false;
+                            if (ImGui::Selectable(strInfo.c_str(), &isItemSelected, ImGuiSelectableFlags_SpanAllColumns)) {
+                                selectedRow = row;
+                                std::cout << "Selected: " << row << " " << column << std::endl;
+                            }
+                        }
+                    }
+                }
+
+                // int row = 0;
+                // for (auto elem : substanceState) {
+                //     ImGui::TableNextRow();
+                //     for (int col = 0; col < 4; col++) {
+                //         ImGui::TableSetColumnIndex(col);
+                //         std::string str_elem = std::string();
+                //         if (col == 0) {
+                //             str_elem = std::to_string(elem.second->id);
+                //         } else if (col == 1) {
+                //             str_elem = toString(elem.second->camType);
+                //         } else if (col == 2) {
+                //             str_elem = toString(elem.second->decType);
+                //         } else if (col == 3) {
+                //             str_elem = elem.second->url;
+                //         }
+                //         if (ImGui::Selectable(str_elem.c_str(), selectedRow == row, ImGuiSelectableFlags_SpanAllColumns)) {
+                //             selectedRow = row;
+                //             Log::trace(row, col, str_elem.c_str());
+                //         }
+                //     }
+                //     row++;
+                // }
+                ImGui::EndTable();
+            }
+            ImGui::SameLine();
+            ImGui::EndTabItem();
+        }
+        if (ImGui::BeginTabItem("Details")) {
+            ImGui::EndTabItem();
+        }
+        ImGui::EndTabBar();
+    }
+    ImGui::EndChild();
+    ImGui::EndGroup();
+
+    ImGui::End();
+    ImGui::Separator();
+}
+
+void ImgGuiMainHandler::updateLogging() {
+    ImGui::Begin(loggingWinName.c_str());
+    ImGui::End();
+    // log.Draw("Logging");
 }
 
 void ImgGuiMainHandler::closeWindow() {

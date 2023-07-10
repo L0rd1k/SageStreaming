@@ -107,6 +107,7 @@ void sage::GuiLayer::processDraw() {
     //             // ImGuiID dockSettings = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Right, 0.3f, nullptr, &dockspace_id);
     //             // ImGui::DockBuilderDockWindow("Settings", dockSettings);
     //             // ImGui::DockBuilderFinish(dockSettings);
+    
     //             // /** Setting sub-settings windows. **/
     //             // auto docktest = ImGui::DockBuilderSplitNode(dockSettings, ImGuiDir_Down, 0.5f, nullptr, &dockSettings);
     //             // for (int i = WindowPainterGLFW::inst().getPicturePainter()->getTexturesCount(); i >= 1; i--) {
