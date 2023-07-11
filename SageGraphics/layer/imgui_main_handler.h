@@ -1,7 +1,10 @@
 #pragma once
 
-#include <string>
 #include <mutex>
+#include <string>
+#include <unordered_map>
+
+#include "definitions/local_definitions.h"
 #include "imgui_defintions.h"
 
 #define IMGUI_IMPL_API
@@ -9,6 +12,8 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
+using MapSubstState = std::unordered_map<uint8_t, const sage::CameraState*>;
+using MapCameraInfo = std::unordered_map<uint8_t, const sage::SubstanceState*>;
 
 class ImgGuiMainHandler {
 public:
@@ -18,12 +23,19 @@ public:
     void createMainWindow();
     void closeWindow();
     void firstRunInit(ImVec2& size);
+
+    void updateSubstancePlot(const sage::SubstanceState& subst);
+
+    MapSubstState* getSubstanceState();
+    MapCameraInfo* getCameraInfo();
+
 private:
     void updateSettingsWindow();
     void updateMenuBar();
     void updateLogging();
     void updateViewPort();
     void updateManager();
+
 private:
     bool isShowingDemo_ = false;  //< Show demo window
     bool isDockingEnabled_ = true;
@@ -33,9 +45,9 @@ private:
     bool isShowingWinManager_ = true;
 
     ImGuiID dockspaceId_;
-
     std::mutex mtx_;
 
+private:
     int readerType_ = 0;
     int ffmpegCaptureType_ = 0;
     int opencvCaptureType_ = 0;
@@ -45,4 +57,9 @@ private:
 private:
     ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+
+    MapCameraInfo cameraInfo;
+    MapSubstState substanceState;
+
+    std::vector<PlottingSubstInfo> _plotInfo;
 };

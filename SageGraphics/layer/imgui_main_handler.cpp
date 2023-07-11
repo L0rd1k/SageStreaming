@@ -3,7 +3,7 @@
 #include "window/window_painter_glfw.h"
 
 void ImgGuiMainHandler::mainHandler() {
-    ImGui::ShowDemoWindow(&isShowingDemo_);
+    // ImGui::ShowDemoWindow(&isShowingDemo_);
 
     if (isDockingEnabled_) {
         createMainWindow();
@@ -25,6 +25,14 @@ void ImgGuiMainHandler::mainHandler() {
         }
         closeWindow();
     }
+}
+
+MapSubstState* ImgGuiMainHandler::getSubstanceState() {
+    return &substanceState;
+}
+
+MapCameraInfo* ImgGuiMainHandler::getCameraInfo() {
+    return &cameraInfo;
 }
 
 void ImgGuiMainHandler::firstRunInit(ImVec2& size) {
@@ -58,6 +66,7 @@ void ImgGuiMainHandler::firstRunInit(ImVec2& size) {
         std::string name = "Viewport" + std::to_string(i);
         ImGui::DockBuilderDockWindow(name.c_str(), dockspaceId_);
         ImGui::DockBuilderFinish(dockspaceId_);
+        _plotInfo.push_back(PlottingSubstInfo());
     }
 
     ImGui::DockBuilderFinish(dockspaceId_);
@@ -95,22 +104,24 @@ void ImgGuiMainHandler::updateSettingsWindow() {
         std::string name = "Cam" + std::to_string(i + 1);
         ImGui::Begin(name.c_str());
         /** Average complexity for find in unordered_map 0(1). **/
-        //     if (substanceInfo.find(i) != substanceInfo.end()) {
-        //         ImGui::BeginGroup();
-        //         if (ImGui::CollapsingHeader("Status", 32)) {
-        //             ImGui::Text("Channel ID:        %d", substanceInfo.at(i)->id);
-        //             ImGui::Text("Fps:               %d", substanceInfo.at(i)->fps);
-        //             ImGui::PlotLines(" ", _plotInfo.at(i)._fpsValues, 25, 0, NULL, 0.0f, 40.0f, ImVec2(300, 50));
-        //             ImGui::Text("Resolution:        %s", substanceInfo.at(i)->size.toStr().c_str());
-        //             ImGui::Text("Stream duration:   %ld sec.", substanceInfo.at(i)->duration);
-        //             ImGui::Text("Reader Type:       %s", toString(substanceInfo.at(i)->camType));
-        //             ImGui::Text("Decoder Type:      %s", toString(substanceInfo.at(i)->decType));
-        //             ImGui::Text("Decoder Codec:     %s", toString(substanceInfo.at(i)->format));
-        //         }
-        //         if (ImGui::CollapsingHeader("Commands")) {
-        //         }
-        //         ImGui::EndGroup();
-        //     }
+        if (cameraInfo.find(i) != cameraInfo.end()) {
+            ImGui::BeginGroup();
+            if (ImGui::CollapsingHeader("Status", 32)) {
+                ImGui::Text("Channel ID:        %d", cameraInfo.at(i)->id);
+                ImGui::Text("Fps:               %d", cameraInfo.at(i)->fps);
+                
+                ImGui::PlotLines(" ", _plotInfo.at(i).pltFpsValues, 25, 0, NULL, 0.0f, 40.0f, ImVec2(300, 50));
+                
+                ImGui::Text("Resolution:        %s", cameraInfo.at(i)->size.toStr().c_str());
+                ImGui::Text("Stream duration:   %ld sec.", cameraInfo.at(i)->duration);
+                ImGui::Text("Reader Type:       %s", toString(cameraInfo.at(i)->camType));
+                ImGui::Text("Decoder Type:      %s", toString(cameraInfo.at(i)->decType));
+                ImGui::Text("Decoder Codec:     %s", toString(cameraInfo.at(i)->format));
+            }
+            if (ImGui::CollapsingHeader("Commands")) {
+            }
+            ImGui::EndGroup();
+        }
         ImGui::End();
     }
     ImGui::End();
@@ -172,60 +183,13 @@ void ImgGuiMainHandler::updateManager() {
     if (ImGui::BeginTabBar("##Tabs", ImGuiTabBarFlags_None)) {
         if (ImGui::BeginTabItem("Active cameras")) {
             const int COLUMNS_COUNT = 5;
-
-                std::vector<std::string> names({"one", "two", "three"});
-                static size_t selected_index = 1;
-                static bool clicked = false;
-                ImGui::Checkbox("was clicked", &clicked);
-                ImGui::SameLine();
-                if (ImGui::Button("del")) clicked = (!clicked);
-                if (ImGui::BeginCombo("My_combo1", names[selected_index].c_str())) {
-                    for (const std::string &name : names) { 
-                        ImGui::PushID(name.c_str());
-                        size_t index = &name - &names.front();
-                        bool is_selected = index == selected_index;
-                        ImGui::AlignTextToFramePadding();
-                        if (ImGui::Selectable(name.c_str(), is_selected, ImGuiSelectableFlags_AllowItemOverlap )) 
-                            selected_index = index;            
-                        ImGui::SameLine();
-                        ImGui::SetCursorPosX(200);
-                        if (ImGui::Button("del")) clicked = (!clicked);
-                        ImGui::PopID(); 
-                    }
-                    ImGui::EndCombo();
-                }
-                if (ImGui::BeginCombo("My_combo2", names[selected_index].c_str())) {
-                    for (const std::string &name : names) {
-                        ImGui::PushID(name.c_str());
-                        size_t index       = &name - &names.front();
-                        bool   is_selected = index == selected_index;
-                        float  pos_x       = ImGui::GetCursorPosX();
-                        ImGui::SetCursorPosX(200);
-                        if (ImGui::Button("del")) { 
-                            std::cout << "Delete: " << name << std::endl;
-                            clicked = (!clicked); 
-                        }
-                        ImGui::SameLine();
-                        ImGui::SetCursorPosX(pos_x);
-                        ImGui::AlignTextToFramePadding();
-                        if (ImGui::Selectable(name.c_str(), is_selected, ImGuiSelectableFlags_AllowItemOverlap ))
-                            selected_index = index;
-                        ImGui::PopID();
-                    }
-                    ImGui::EndCombo();
-                }
-
-
-
             if (ImGui::BeginTable("table_custom_headers", COLUMNS_COUNT, ImGuiTableFlags_Borders | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable)) {
                 ImGui::TableSetupColumn("ID", ImGuiTableColumnFlags_WidthFixed);
                 ImGui::TableSetupColumn("Reader", ImGuiTableColumnFlags_WidthFixed);
                 ImGui::TableSetupColumn("Decoder", ImGuiTableColumnFlags_WidthFixed);
                 ImGui::TableSetupColumn("URL", ImGuiTableColumnFlags_WidthStretch);
                 ImGui::TableSetupColumn("Remove", ImGuiTableColumnFlags_WidthFixed);
-
                 static int selectedRow = -1;
-
                 // Instead of calling TableHeadersRow() we'll submit custom headers ourselves
                 ImGui::TableNextRow(ImGuiTableRowFlags_Headers);
                 for (int column = 0; column < COLUMNS_COUNT; column++) {
@@ -236,33 +200,45 @@ void ImgGuiMainHandler::updateManager() {
                     ImGui::PopID();
                 }
 
-
-                for (auto row = 0; row < 10; row++) {
+                int row = 0;
+                for (const auto& elem : substanceState) {
+                    ImGui::PushID(std::to_string(elem.second->id).c_str());
                     ImGui::TableNextRow(ImGuiTableRowFlags_None, 0.0f);
-
-                    for(auto cols = 0; cols < COLUMNS_COUNT; ++cols) {
+                    for (auto cols = 0; cols < COLUMNS_COUNT; ++cols) {
                         if (ImGui::TableSetColumnIndex(cols)) {
-                            switch (cols) {
-                                case 0: {
-                                    ImGui::AlignTextToFramePadding();
-                                    if (ImGui::Selectable(std::to_string(row).c_str(), selectedRow == row, ImGuiSelectableFlags_SpanAllColumns, ImVec2(0, 0))) {
-                                        selectedRow = row;
-                                        std::cout << selectedRow << std::endl;
+                            if (elem.second) {
+                                switch (cols) {
+                                    case 0: {
+                                        ImGui::AlignTextToFramePadding();
+                                        if (ImGui::Selectable(std::to_string(elem.second->id).c_str(), selectedRow == row, ImGuiSelectableFlags_AllowItemOverlap, ImVec2(0, 0))) {
+                                            selectedRow = row;
+                                        }
+                                        break;
                                     }
-                                    break;
-                                }
-                                case 1: { ImGui::Text("ReaderType"); break; }
-                                case 2: { ImGui::Text("DecoderType"); break; }
-                                case 3: { ImGui::Text("My url"); break; }
-                                case 4: { 
-                                    if (ImGui::Button("Remove")) { 
-                                        std::cout << "Remove element" << std::endl;
+                                    case 1: {
+                                        ImGui::Text("%s", toString(elem.second->camType));
+                                        break;
                                     }
-                                    break;
+                                    case 2: {
+                                        ImGui::Text("%s", toString(elem.second->decType));
+                                        break;
+                                    }
+                                    case 3: {
+                                        ImGui::Text("%s", elem.second->url.c_str());
+                                        break;
+                                    }
+                                    case 4: {
+                                        if (ImGui::Button("Remove")) {
+                                            std::cout << "Remove element: " << row << "-" << cols << std::endl;
+                                        }
+                                        break;
+                                    }
                                 }
                             }
                         }
                     }
+                    row++;
+                    ImGui::PopID();
                 }
                 ImGui::EndTable();
             }
@@ -277,8 +253,29 @@ void ImgGuiMainHandler::updateManager() {
     ImGui::EndChild();
     ImGui::EndGroup();
 
+    if (ImGui::Button("Create Camera")) {
+        // CameraState cam_state = {
+        //     (uint8_t)-1,
+        //     camera_url,
+        //     static_cast<sage::CamTypes>(readerType),
+        //     static_cast<sage::DecTypes>(decoderType),
+        //     static_cast<sage::FFmpegType>(ffmpegcaptureType),
+        //     static_cast<sage::OpencvType>(cvcaptureType)};
+        // sig_sendCameraState.emit(cam_state);
+    }
     ImGui::End();
     ImGui::Separator();
+}
+
+void ImgGuiMainHandler::updateSubstancePlot(const sage::SubstanceState& subst) {
+    if (_plotInfo.size() > subst.id) {
+        if (_plotInfo[subst.id].pltTimerFps.elapsed() > 1) {
+            _plotInfo[subst.id].pltFpsValues[_plotInfo[subst.id].pltValOffset] = subst.fps;
+            _plotInfo[subst.id].pltValOffset =
+                (_plotInfo[subst.id].pltValOffset + 1) % IM_ARRAYSIZE(_plotInfo[subst.id].pltFpsValues);
+            _plotInfo[subst.id].pltTimerFps.restart();
+        }
+    }
 }
 
 void ImgGuiMainHandler::updateLogging() {

@@ -76,6 +76,8 @@ const char* toString(sage::CamTypes cameraType) {
             return "FFmpeg";
         case sage::CamTypes::OPENCV:
             return "OpenCV";
+        case sage::CamTypes::GSTREAMER:
+            return "Gstreamer";
         default:
             return "Undefined";
     }

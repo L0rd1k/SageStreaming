@@ -52,15 +52,15 @@ private:
     static bool _winManager;
     static ImGuiLog log;
 
-    struct PlottingSubstInfo {
-        float _fpsValues[25] = {};
-        int _valOffset = 0;
-        ElapsedTimer _timerFps;
-    };
+    // struct PlottingSubstInfo {
+    //     float _fpsValues[25] = {};
+    //     int _valOffset = 0;
+    //     ElapsedTimer _timerFps;
+    // };
 
-    std::vector<PlottingSubstInfo> _plotInfo;
-    std::unordered_map<uint8_t, const SubstanceState*> substanceInfo;
-    std::unordered_map<uint8_t, const CameraState*> substanceState;
+    // std::vector<PlottingSubstInfo> _plotInfo;
+    // std::unordered_map<uint8_t, const SubstanceState*> substanceInfo;
+    // std::unordered_map<uint8_t, const CameraState*> substanceState;
 
     std::mutex _mtx;
 };

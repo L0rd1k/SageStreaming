@@ -2,9 +2,22 @@
 
 #include <string>
 
+#include "utils/elapsed_timer.h"
+
 const std::string settingsWinName = "Settings";
 const std::string loggingWinName = "Logger";
 const std::string managerWinName = "Manager";
+
+struct PlottingSubstInfo {
+    float pltFpsValues[25];
+    int pltValOffset;
+    ElapsedTimer pltTimerFps;
+
+    PlottingSubstInfo()
+        : pltFpsValues{},
+          pltValOffset(0) {
+    }
+};
 
 const double settingsWinCap = 0.3f;     //< Settings main window width form main window.
 const double camSettingsWinCap = 0.3f;  //< Camera window settings from main settings window
