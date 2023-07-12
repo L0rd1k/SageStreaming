@@ -152,9 +152,30 @@ void ImgGuiMainHandler::updateViewPort() {
         std::string name = "Viewport" + std::to_string(i);
         ImGui::Begin(name.c_str());
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-        float x = viewportPanelSize.x;
-        float y = viewportPanelSize.y;
-        ImGui::Image((void*)(intptr_t)i, ImVec2{x, y});
+        // std::cout << x << " " << y << std::endl;
+        GLint textureWidth, textureHeight;
+        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &textureWidth);
+        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &textureHeight);
+        // std::cout << viewportPanelSize.x << "x" <<  viewportPanelSize.y << " " << textureWidth << "x" << textureHeight << std::endl;
+
+        double ratioX = viewportPanelSize.x / (float)textureWidth;
+        double ratioY = viewportPanelSize.y / (float)textureHeight;
+        double ratio = (ratioX < ratioY) ? ratioX : ratioY;
+
+        float viewWidth = textureWidth * ratio;
+        float viewHeight = textureHeight * ratio;
+        float viewX = (viewportPanelSize.x - textureWidth * ratio) / 2;
+        float viewY = (viewportPanelSize.y - textureHeight * ratio) / 2;
+
+        // std::cout << viewX << " " << viewY << " " << viewWidth << " " << viewHeight << std::endl;
+
+        ImGui::SetCursorPos(ImVec2{viewX + 7, viewY + 15});
+        ImGui::Image((void*)(intptr_t)i, ImVec2{viewWidth, viewHeight});
+
+
+        // float x = viewportPanelSize.x;
+        // float y = viewportPanelSize.y;
+        // ImGui::Image((void*)(intptr_t)i, ImVec2{x, y});
         ImGui::End();
     }
 }

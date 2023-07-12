@@ -1,5 +1,8 @@
 #pragma once
 
+#include <fstream>
+#include <iostream>
+
 namespace sage {
 
 template <typename T>
@@ -21,6 +24,11 @@ public:
         _width = obj.width();
         _height = obj.height();
         return *this;
+    }
+
+    friend std::ostream& operator<< (std::ostream& out, const Size& size) {
+        return out << "[" << size._width << "x" << size._height << "]";
+
     }
 
     void setWidth(T width) {
@@ -56,5 +64,6 @@ private:
     T _width;
     T _height;
 };
+
 
 }  // namespace sage

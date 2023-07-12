@@ -8,7 +8,7 @@
 
 #include "image/picture_painter.h"
 #include "window_painter_base.h"
-
+#include "utils/elapsed_timer.h"
 #ifdef USE_IMGUI
 #include "layer/imgui_layer.h"
 #endif
@@ -38,4 +38,8 @@ private:
         unsigned int width, height;
     };
     WindowData _data;
+
+    ElapsedTimer _hzTimer;
+
+
 };

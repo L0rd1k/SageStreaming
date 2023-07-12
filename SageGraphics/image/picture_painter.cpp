@@ -37,6 +37,12 @@ void PicturePainter::show(sage::Size<int> size) {
     unsigned char pix[4] = {0, 0, 0, 255};
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
+
+    // std::cout << size.width() << " " << size.height() << std::endl;
+    // if (_textures[0]->getLastDataFromQueue()) {
+    //     _textures[0]->draw(0, 0, sage::Size<int>(size.width(), size.height()));
+    // }
+
     int x[4] = {0, size.width() / 2, 0, size.width() / 2};
     int y[4] = {size.height() / 2, size.height() / 2, 0, 0};
     for (auto i = 0; i < _textures.size(); i++) {
@@ -46,8 +52,21 @@ void PicturePainter::show(sage::Size<int> size) {
             // _textures[i]->draw(0, 0, sage::Size<int>(size.width(), size.height()));
         }
     }
-    glRasterPos3f(0, 1, 0);
-    glDrawPixels(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pix);
+
+    /** SPLITTER **/
+    // const int thickness = 2;
+    // glLineWidth((GLfloat)thickness);
+    // glColor3f(1, 0, 0);
+    // glBegin(GL_LINES);
+    // glVertex2i(size.width() / 2, 0);
+    // glVertex2i(size.width() / 2, size.height());
+    // glEnd();
+    // glBegin(GL_LINES);
+    // glVertex2i(0, size.height() / 2);
+    // glVertex2i(size.width(), size.height() / 2);
+    // glEnd();
+    // glRasterPos3f(0, 1, 0);
+    // glDrawPixels(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pix);
 }
 
 void PicturePainter::initTextures() {
@@ -56,7 +75,7 @@ void PicturePainter::initTextures() {
     textures.assign(_textures.size(), 0);
     std::iota(std::begin(textures), std::end(textures), 1);
     glGenTextures(_textures.size(), textures.data());
-    for(uint itr = 0; itr < _textures.size(); itr++) {
+    for (uint itr = 0; itr < _textures.size(); itr++) {
         glBindTexture(GL_TEXTURE_2D, textures[itr]);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);

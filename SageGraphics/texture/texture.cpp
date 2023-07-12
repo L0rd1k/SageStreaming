@@ -30,6 +30,7 @@ bool Texture::getLastDataFromQueue() {
             }
             glBindTexture(GL_TEXTURE_2D, _id);
             if (_lastSize.height() == data->imgSize.height() && _lastSize.width() == data->imgSize.width() && _lastFormat == format) {
+                // std::cout << "Img:" << data->imgSize.width() << " " << data->imgSize.height() << std::endl;
                 glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, data->imgSize.width(), data->imgSize.height(),
                                 format, GL_UNSIGNED_BYTE, data.data());
             } else {
@@ -47,6 +48,16 @@ bool Texture::getLastDataFromQueue() {
 void Texture::draw(int x, int y, sage::Size<int> sz) {
     glBindTexture(GL_TEXTURE_2D, _id);
     glBegin(GL_QUADS);
+
+    // glTexCoord2f(0.0f, 0.0f);
+    // glVertex2f(0.0f, 0.0f);
+    // glTexCoord2f(1.0f, 0.0f);
+    // glVertex2f(sz.width(), 0.0f);
+    // glTexCoord2f(1.0f, 1.0f);
+    // glVertex2f(sz.width(), sz.height());
+    // glTexCoord2f(0.0f, 1.0f);
+    // glVertex2f(0.0f, sz.height());
+
     glTexCoord2f(0, 0);
     glVertex2f(x, y);
     glTexCoord2f(1, 0);
@@ -55,5 +66,8 @@ void Texture::draw(int x, int y, sage::Size<int> sz) {
     glVertex2f(x + sz.width(), y + sz.height());
     glTexCoord2f(0, 1);
     glVertex2f(x, y + sz.height());
+
     glEnd();
+
+ 
 }
