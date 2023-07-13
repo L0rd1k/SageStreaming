@@ -1,6 +1,8 @@
 #pragma once
 
 #include "config/ini_parser.h"
+#include "config/config_params.h"
+
 #include "definitions/local_definitions.h"
 #include "image/picture_painter.h"
 #include "substance/substance.h"

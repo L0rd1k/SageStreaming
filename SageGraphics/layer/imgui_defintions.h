@@ -19,10 +19,23 @@ struct PlottingSubstInfo {
     }
 };
 
-const double settingsWinCap = 0.3f;     //< Settings main window width form main window.
-const double camSettingsWinCap = 0.3f;  //< Camera window settings from main settings window
-const double loggingWinCap = 0.3f;
-const double managerWinCap = 0.7f;
+struct ImGuiCameraSettings {
+    ImGuiCameraSettings()
+        : isAspectRatio_(false) {
+    }
+
+    bool* getAspectRatio() {
+        return &isAspectRatio_;
+    }
+
+private:
+    bool isAspectRatio_;
+};
+
+const double settingsWinCap = 0.2f;     //< Settings window width
+const double camSettingsWinCap = 0.6f;  //< Camera settings window width
+const double loggingWinCap = 0.2f;      //< Logging window width
+const double managerWinCap = 0.3f;      //< Manager window width
 
 static const char* combobox_readerTypes =
     "FFmpeg\0"

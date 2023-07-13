@@ -6,8 +6,8 @@
 #include "imgui/imgui_impl_opengl3.h"
 #include "window/window_painter_glfw.h"
 
-bool sage::GuiLayer::_winManager = true;
-bool sage::GuiLayer::first_time = true;
+// bool sage::GuiLayer::_winManager = true;
+// bool sage::GuiLayer::first_time = true;
 ImGuiLog sage::GuiLayer::log;
 
 void sage::GuiLayer::init() {

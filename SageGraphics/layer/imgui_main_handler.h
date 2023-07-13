@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mutex>
+#include <map>
 #include <string>
 #include <unordered_map>
 
@@ -45,6 +46,8 @@ private:
     bool isFirstLaunch_ = true;
     bool isShowingWinManager_ = true;
 
+    // bool isAspectRatio_ = false;
+
     ImGuiID dockspaceId_;
     std::mutex mtx_;
 
@@ -61,6 +64,11 @@ private:
 
     MapCameraInfo cameraInfo;
     MapSubstState substanceState;
-
+    
     std::vector<PlottingSubstInfo> _plotInfo;
+
+
+
+    std::map<int8_t, ImGuiCameraSettings> camSettings_;
+
 };

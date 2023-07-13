@@ -3,7 +3,7 @@
 #include "window/window_painter_glfw.h"
 
 void ImgGuiMainHandler::mainHandler() {
-    // ImGui::ShowDemoWindow(&isShowingDemo_);
+    ImGui::ShowDemoWindow(&isShowingDemo_);
 
     if (isDockingEnabled_) {
         createMainWindow();
@@ -50,6 +50,8 @@ void ImgGuiMainHandler::firstRunInit(ImVec2& size) {
     for (int i = WindowPainterGLFW::inst().getPicturePainter()->getTexturesCount(); i >= 1; --i) {
         std::string name = "Cam" + std::to_string(i);
         ImGui::DockBuilderDockWindow(name.c_str(), camsSettings);
+
+        camSettings_.insert({i, ImGuiCameraSettings()});
     }
     /** Logging windows **/
     ImGuiID dockLogging = ImGui::DockBuilderSplitNode(dockspaceId_, ImGuiDir_Down, loggingWinCap, nullptr, &dockspaceId_);
@@ -109,16 +111,17 @@ void ImgGuiMainHandler::updateSettingsWindow() {
             if (ImGui::CollapsingHeader("Status", 32)) {
                 ImGui::Text("Channel ID:        %d", cameraInfo.at(i)->id);
                 ImGui::Text("Fps:               %d", cameraInfo.at(i)->fps);
-                
                 ImGui::PlotLines(" ", _plotInfo.at(i).pltFpsValues, 25, 0, NULL, 0.0f, 40.0f, ImVec2(300, 50));
-                
                 ImGui::Text("Resolution:        %s", cameraInfo.at(i)->size.toStr().c_str());
                 ImGui::Text("Stream duration:   %ld sec.", cameraInfo.at(i)->duration);
                 ImGui::Text("Reader Type:       %s", toString(cameraInfo.at(i)->camType));
                 ImGui::Text("Decoder Type:      %s", toString(cameraInfo.at(i)->decType));
                 ImGui::Text("Decoder Codec:     %s", toString(cameraInfo.at(i)->format));
             }
-            if (ImGui::CollapsingHeader("Commands")) {
+            if (ImGui::CollapsingHeader("Commands", 32)) {
+                bool* isChecked = camSettings_[i].getAspectRatio();
+                // std::cout << *isChecked << std::endl;
+                ImGui::Checkbox("Aspect ratio", isChecked);
             }
             ImGui::EndGroup();
         }
@@ -152,30 +155,31 @@ void ImgGuiMainHandler::updateViewPort() {
         std::string name = "Viewport" + std::to_string(i);
         ImGui::Begin(name.c_str());
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-        // std::cout << x << " " << y << std::endl;
-        GLint textureWidth, textureHeight;
-        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &textureWidth);
-        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &textureHeight);
-        // std::cout << viewportPanelSize.x << "x" <<  viewportPanelSize.y << " " << textureWidth << "x" << textureHeight << std::endl;
 
-        double ratioX = viewportPanelSize.x / (float)textureWidth;
-        double ratioY = viewportPanelSize.y / (float)textureHeight;
-        double ratio = (ratioX < ratioY) ? ratioX : ratioY;
+        if (*camSettings_[i - 1].getAspectRatio()) {
+            GLint textureWidth, textureHeight;
+            glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &textureWidth);
+            glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &textureHeight);
+            // std::cout << viewportPanelSize.x << "x" <<  viewportPanelSize.y << " " << textureWidth << "x" << textureHeight << std::endl;
 
-        float viewWidth = textureWidth * ratio;
-        float viewHeight = textureHeight * ratio;
-        float viewX = (viewportPanelSize.x - textureWidth * ratio) / 2;
-        float viewY = (viewportPanelSize.y - textureHeight * ratio) / 2;
+            double ratioX = viewportPanelSize.x / (float)textureWidth;
+            double ratioY = viewportPanelSize.y / (float)textureHeight;
+            double ratio = (ratioX < ratioY) ? ratioX : ratioY;
 
-        // std::cout << viewX << " " << viewY << " " << viewWidth << " " << viewHeight << std::endl;
+            float viewWidth = textureWidth * ratio;
+            float viewHeight = textureHeight * ratio;
+            float viewX = (viewportPanelSize.x - textureWidth * ratio) / 2;
+            float viewY = (viewportPanelSize.y - textureHeight * ratio) / 2;
 
-        ImGui::SetCursorPos(ImVec2{viewX + 7, viewY + 15});
-        ImGui::Image((void*)(intptr_t)i, ImVec2{viewWidth, viewHeight});
+            // std::cout << viewX << " " << viewY << " " << viewWidth << " " << viewHeight << std::endl;
 
-
-        // float x = viewportPanelSize.x;
-        // float y = viewportPanelSize.y;
-        // ImGui::Image((void*)(intptr_t)i, ImVec2{x, y});
+            ImGui::SetCursorPos(ImVec2{viewX, viewY});
+            ImGui::Image((void*)(intptr_t)i, ImVec2{viewWidth, viewHeight});
+        } else {
+            float x = viewportPanelSize.x;
+            float y = viewportPanelSize.y;
+            ImGui::Image((void*)(intptr_t)i, ImVec2{x, y});
+        }
         ImGui::End();
     }
 }

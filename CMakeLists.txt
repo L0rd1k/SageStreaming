@@ -77,6 +77,8 @@ if(USE_GLFW)
 endif()
 
 if(USE_IMGUI)
+    set(USE_GLFW ON)
+    set(USE_GLUT OFF)
     set(USE_IMGUI ON)
     add_definitions(-DUSE_IMGUI)
 endif()

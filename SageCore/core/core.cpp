@@ -1,7 +1,7 @@
 #include "core.h"
 
 void sage::Core::createSubstances(uint8_t count = 0) {
-    for (uint8_t id = 0; id < count; id++) {
+    for (uint8_t id = 0; id < sage::IniParser::inst().get(CFG_SUBSTANCE_COUNT); id++) {
         _substns[id] = std::make_shared<sage::Substance>(id);
         _substns[id]->initSubstance();
     }
@@ -38,7 +38,7 @@ void sage::Core::createSingleSubstance(const sage::CameraState& camState) {
     _substns[new_id]->enableSubstance();
 
 #ifdef USE_IMGUI
-    _window->getGuiLayer()->first_time = true;
+    // _window->getGuiLayer()->first_time = true;
     global_callbacks.push_back(
         std::make_unique<void*>(_substns[new_id]->sig_sendSubstInfo.connect(
             _window->getGuiLayer(), &sage::GuiLayer::appendSubstInfo)));
@@ -55,7 +55,7 @@ void sage::Core::createWindow(int argc, char** argv) {
     _window = std::make_unique<WindowPainterGLFW>();
 #endif
     //> Create window context.
-    _window->createWindow(argc, argv, sage::Size<int>(1024, 768));
+    _window->createWindow(argc, argv, sage::Size<int>(1680, 1050));
     //> Create textures in painter for every substance.
     _pic = std::make_shared<PicturePainter>(_substns.size());
     //> Set current picture painter.

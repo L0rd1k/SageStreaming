@@ -15,17 +15,23 @@ bool sage::IniParser::setIniFile(std::string iniFilePath) {
     return false;
 }
 
-std::string sage::IniParser::get(const std::string value, uint8_t substanceId) {
-    std::string group = selectGroup(substanceId);
-    try {
-        auto result = _ini_pt.get<std::string>(group + "." + value);
-        return result;
-    } catch(std::exception& msg) {
-        Log::critical(msg.what());
+std::string sage::IniParser::get(const std::string value, int8_t substanceId) {
+    if(!value.empty()) {
+        std::string group = (substanceId != -1) ? selectGroup(substanceId) : getMainGroup();
+        try {
+            auto result = _ini_pt.get<std::string>(group + "." + value);
+            return result;
+        } catch(std::exception& msg) {
+            Log::critical(msg.what());
+        }
     }
     return std::string();
 }
 
-std::string sage::IniParser::selectGroup(uint8_t& substanceId) {
+std::string sage::IniParser::selectGroup(int8_t& substanceId) {
     return "Substance_" + std::to_string(substanceId);
+}
+
+std::string sage::IniParser::getMainGroup() {
+    return "Main";
 }
