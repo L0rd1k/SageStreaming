@@ -87,7 +87,6 @@ void PicturePainter::initTextures() {
 void PicturePainter::setDataBuffer(uint8_t textId, const ImageQueue *buffer) {
     std::lock_guard<std::mutex> locker(_mtx);
     if (textId < (int)_textures.size() && textId >= 0) {
-        Log::info((int)textId);
         _textures[textId]->initBuffer(buffer);
     }
 }

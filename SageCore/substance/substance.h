@@ -25,6 +25,7 @@ public:
     void mainSubstanceLoop();
     void startCameraStreaming();
     void connectCallbacks();
+    void updateConfig(const sage::SubstanceState& camState);
 
     const ImageQueue* getImageQueue();
     CamerasHandler* getCamera();
@@ -42,7 +43,7 @@ public:
     Encoder* _encoder = nullptr;  //> Camera encoder base
 
     Signal<const SubstanceState&> sig_sendSubstInfo;  //> State signal(called every second)
-    Signal<const CameraState&> sig_sendSubstState;
+    Signal<const SubstanceState&> sig_sendSubstState;
 
 private:
     Signal<const sage::swImage&> sig_imageDecoded;    //> Decoding signal(called after reading)
@@ -53,8 +54,8 @@ private:
 
     std::thread _mainThread;  //> Main substance thread
     CamerasHandler* _camera = nullptr;              //> Camera base handler
-    sage::Scope<SubstanceState> _subState = nullptr;  //> Current Substance State
-    sage::Scope<CameraState> _camState = nullptr;      //> Currnet CameraState
+    sage::Scope<sage::SubstanceState> _subState = nullptr;  //> Current Substance State
+    sage::Scope<sage::SubstanceState> _camState = nullptr;      //> Currnet CameraState
 
     ElapsedTimer timer;  //> fps counter timer
     ElapsedTimer tst;  //> fps counter timer

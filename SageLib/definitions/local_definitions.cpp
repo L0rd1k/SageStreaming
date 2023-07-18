@@ -1,7 +1,7 @@
 #include "local_definitions.h"
 
 Signal<const std::string&> sage::sig_LogMsgSend;
-Signal<const sage::CameraState&> sage::sig_sendCameraState;
+Signal<const sage::SubstanceState&> sage::sig_sendCameraState;
 
 const char* toString(sage::ImageFormat format) {
     switch (format) {

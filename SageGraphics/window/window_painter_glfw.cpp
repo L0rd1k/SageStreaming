@@ -56,29 +56,21 @@ bool WindowPainterGLFW::createWindow(int argc, char** argv, sage::Size<int> size
 }
 
 void WindowPainterGLFW::reshapeEvent(GLFWwindow* window, int width, int height) {
-    // glViewport(0, 0, width, height); // Set the coord in which part of framebuffer put data
-
     GLint textureWidth, textureHeight;
     glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &textureWidth);
     glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &textureHeight);
     double ratioX = width / (float)textureWidth;
     double ratioY = height / (float)textureHeight;
     double ratio = (ratioX < ratioY) ? ratioX : ratioY;
-
     double viewWidth = textureWidth * ratio;
     double viewHeight = textureHeight * ratio;
     double viewX = (width - textureWidth * ratio) / 2;
     double viewY = (height - textureHeight * ratio) / 2;
     glViewport(viewX, viewY, viewWidth, viewHeight);
-
-    std::cout << width << "x" << height << " " << textureWidth << "x" << textureHeight << std::endl;
-
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-
     _winSize.setWidth(width);
     _winSize.setHeight(height);
-
     glOrtho(0, width, height, 0, -1, 1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -90,7 +82,7 @@ void WindowPainterGLFW::run() {
     _gui->init();
 #endif
     reshapeEvent(_window, _data.width, _data.height);
-    static uint8_t counter;
+    // static uint8_t counter;
     while (!glfwWindowShouldClose(_window)) {
         if (_painter) {
             if (!_painter->_isInited) {
@@ -107,13 +99,13 @@ void WindowPainterGLFW::run() {
 #endif
             glfwPollEvents();
             glfwSwapBuffers(_window);
-            if(_hzTimer.elapsed() > 1) {
-                std::cout << "Hz glfw frame: " << (int)counter << std::endl;
-                counter = 0; 
-                _hzTimer.restart();
-            } else {
-                counter++;
-            }
+            // if(_hzTimer.elapsed() > 1) {
+            //     std::cout << "Hz glfw frame: " << (int)counter << std::endl;
+            //     counter = 0; 
+            //     _hzTimer.restart();
+            // } else {
+            //     counter++;
+            // }
         }
     }
 }

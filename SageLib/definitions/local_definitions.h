@@ -105,20 +105,16 @@ struct SubstanceState {
     sage::ImageFormat format;  //> Stream format
     sage::Size<int> size;      //> Camera Image Size
     int64_t duration;          //> Stream duration in sec
-};
 
-struct CameraState {
-    uint8_t id;
     std::string url;
-    sage::CamTypes camType;
-    sage::DecTypes decType;
-    sage::FFmpegType ffmpegcapType;
-    sage::OpencvType cvcapType;
+    sage::FFmpegType capTypeFFmpeg;
+    sage::OpencvType capTypeOpencv;
+
 };
 
 //< Signals
 extern Signal<const std::string&> sig_LogMsgSend;
-extern Signal<const CameraState&> sig_sendCameraState;
+extern Signal<const SubstanceState&> sig_sendCameraState;
 
 }  // namespace sage
 

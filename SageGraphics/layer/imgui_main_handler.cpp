@@ -31,16 +31,16 @@ MapSubstState* ImgGuiMainHandler::getSubstanceState() {
     return &substanceState;
 }
 
-MapCameraInfo* ImgGuiMainHandler::getCameraInfo() {
+MapSubstState* ImgGuiMainHandler::getCameraInfo() {
     return &cameraInfo;
 }
 
 void ImgGuiMainHandler::firstRunInit(ImVec2& size) {
     ImVec2 availableSize = ImGui::GetContentRegionAvail();
+
     ImGui::DockBuilderRemoveNode(dockspaceId_);  // clear any previous layout
     ImGui::DockBuilderAddNode(dockspaceId_, ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_DockSpace);
     ImGui::DockBuilderSetNodeSize(dockspaceId_, size);
-
     /** Settings main window. **/
     ImGuiID dockSettings = ImGui::DockBuilderSplitNode(dockspaceId_, ImGuiDir_Right, settingsWinCap, nullptr, &dockspaceId_);
     ImGui::DockBuilderDockWindow(settingsWinName.c_str(), dockSettings);
@@ -57,20 +57,17 @@ void ImgGuiMainHandler::firstRunInit(ImVec2& size) {
     ImGuiID dockLogging = ImGui::DockBuilderSplitNode(dockspaceId_, ImGuiDir_Down, loggingWinCap, nullptr, &dockspaceId_);
     ImGui::DockBuilderDockWindow(loggingWinName.c_str(), dockLogging);
     ImGui::DockBuilderFinish(dockLogging);
-
     /** Logging windows **/
     ImGuiID dockManager = ImGui::DockBuilderSplitNode(dockspaceId_, ImGuiDir_Right, managerWinCap, nullptr, &dockspaceId_);
     ImGui::DockBuilderDockWindow(managerWinName.c_str(), dockManager);
     ImGui::DockBuilderFinish(dockManager);
-
     /** Create Viewport Windows **/
     for (int i = 0; i <= WindowPainterGLFW::inst().getPicturePainter()->getTexturesCount(); i++) {
         std::string name = "Viewport" + std::to_string(i);
         ImGui::DockBuilderDockWindow(name.c_str(), dockspaceId_);
         ImGui::DockBuilderFinish(dockspaceId_);
-        _plotInfo.push_back(PlottingSubstInfo());
+        // _plotInfo.push_back(PlottingSubstInfo());
     }
-
     ImGui::DockBuilderFinish(dockspaceId_);
 }
 
@@ -111,7 +108,10 @@ void ImgGuiMainHandler::updateSettingsWindow() {
             if (ImGui::CollapsingHeader("Status", 32)) {
                 ImGui::Text("Channel ID:        %d", cameraInfo.at(i)->id);
                 ImGui::Text("Fps:               %d", cameraInfo.at(i)->fps);
-                ImGui::PlotLines(" ", _plotInfo.at(i).pltFpsValues, 25, 0, NULL, 0.0f, 40.0f, ImVec2(300, 50));
+                // ImGui::PlotLines(" ", _plotInfo.at(i).pltFpsValues, 25, 0, NULL, 0.0f, 40.0f, ImVec2(300, 50));
+
+                ImGui::PlotLines(" ", camSettings_.at(i).plot()->fpsArr, 25, 0, NULL, 0.0f, 40.0f, ImVec2(300, 50));
+
                 ImGui::Text("Resolution:        %s", cameraInfo.at(i)->size.toStr().c_str());
                 ImGui::Text("Stream duration:   %ld sec.", cameraInfo.at(i)->duration);
                 ImGui::Text("Reader Type:       %s", toString(cameraInfo.at(i)->camType));
@@ -119,9 +119,9 @@ void ImgGuiMainHandler::updateSettingsWindow() {
                 ImGui::Text("Decoder Codec:     %s", toString(cameraInfo.at(i)->format));
             }
             if (ImGui::CollapsingHeader("Commands", 32)) {
-                bool* isChecked = camSettings_[i].getAspectRatio();
+                // bool* isChecked = camSettings_[i].getAspectRatio();
                 // std::cout << *isChecked << std::endl;
-                ImGui::Checkbox("Aspect ratio", isChecked);
+                ImGui::Checkbox("Aspect ratio", camSettings_[i].getAspectRatio());
             }
             ImGui::EndGroup();
         }
@@ -155,24 +155,18 @@ void ImgGuiMainHandler::updateViewPort() {
         std::string name = "Viewport" + std::to_string(i);
         ImGui::Begin(name.c_str());
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-
         if (*camSettings_[i - 1].getAspectRatio()) {
             GLint textureWidth, textureHeight;
             glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &textureWidth);
             glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &textureHeight);
             // std::cout << viewportPanelSize.x << "x" <<  viewportPanelSize.y << " " << textureWidth << "x" << textureHeight << std::endl;
-
             double ratioX = viewportPanelSize.x / (float)textureWidth;
             double ratioY = viewportPanelSize.y / (float)textureHeight;
             double ratio = (ratioX < ratioY) ? ratioX : ratioY;
-
             float viewWidth = textureWidth * ratio;
             float viewHeight = textureHeight * ratio;
             float viewX = (viewportPanelSize.x - textureWidth * ratio) / 2;
             float viewY = (viewportPanelSize.y - textureHeight * ratio) / 2;
-
-            // std::cout << viewX << " " << viewY << " " << viewWidth << " " << viewHeight << std::endl;
-
             ImGui::SetCursorPos(ImVec2{viewX, viewY});
             ImGui::Image((void*)(intptr_t)i, ImVec2{viewWidth, viewHeight});
         } else {
@@ -186,22 +180,20 @@ void ImgGuiMainHandler::updateViewPort() {
 
 void ImgGuiMainHandler::updateManager() {
     ImGui::Begin(managerWinName.c_str(), &isShowingWinManager_);
-    char camera_url[256];
-    ImGui::InputText("Camera URL", camera_url, IM_ARRAYSIZE(camera_url));
-    ImGui::Combo("Reader type", &readerType_, combobox_readerTypes);
+    ImGui::InputText("Camera URL", txtBoxCamUrl, IM_ARRAYSIZE(txtBoxCamUrl));
+    ImGui::Combo("Reader type", &readerType_, comboBoxReaderType);
     switch (readerType_) {
         case 0:
-            ImGui::Combo("Transport type", &ffmpegCaptureType_, combobox_ffmpegCapTypes);
+            ImGui::Combo("Transport type", &ffmpegCaptureType_, comboBoxCapTypeFFmpeg);
             break;
         case 1:
-            ImGui::Combo("Capture type", &opencvCaptureType_, combobox_opencvCapTypes);
+            ImGui::Combo("Capture type", &opencvCaptureType_, comboBoxCapTypeOpenCV);
             break;
     }
     ImGui::Separator();
-    ImGui::Combo("Texture size", &textureSize_, combobox_textureSize);
-    ImGui::Combo("Decoder Type", &decoderType_, combobox_decoderType);
+    ImGui::Combo("Texture size", &textureSize_, comboBoxTextureSize);
+    ImGui::Combo("Decoder Type", &decoderType_, comboBoxDecoderType);
     ImGui::SetNextWindowSize(ImVec2(500, 440), ImGuiCond_FirstUseEver);
-
     ImGui::BeginGroup();
     ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing()));  // Leave room for 1 line below us
     ImGui::Separator();
@@ -224,7 +216,6 @@ void ImgGuiMainHandler::updateManager() {
                     ImGui::TableHeader(column_name);
                     ImGui::PopID();
                 }
-
                 int row = 0;
                 for (const auto& elem : substanceState) {
                     ImGui::PushID(std::to_string(elem.second->id).c_str());
@@ -279,27 +270,25 @@ void ImgGuiMainHandler::updateManager() {
     ImGui::EndGroup();
 
     if (ImGui::Button("Create Camera")) {
-        // CameraState cam_state = {
-        //     (uint8_t)-1,
-        //     camera_url,
-        //     static_cast<sage::CamTypes>(readerType),
-        //     static_cast<sage::DecTypes>(decoderType),
-        //     static_cast<sage::FFmpegType>(ffmpegcaptureType),
-        //     static_cast<sage::OpencvType>(cvcaptureType)};
-        // sig_sendCameraState.emit(cam_state);
+        sage::SubstanceState camState;
+        camState.id = (uint8_t)-1;
+        camState.url = txtBoxCamUrl;
+        camState.camType = static_cast<sage::CamTypes>(readerType_);
+        camState.decType = static_cast<sage::DecTypes>(decoderType_);
+        camState.capTypeFFmpeg = static_cast<sage::FFmpegType>(ffmpegCaptureType_);
+        camState.capTypeOpencv = static_cast<sage::OpencvType>(opencvCaptureType_);
+        sage::sig_sendCameraState.emit(camState);
     }
     ImGui::End();
     ImGui::Separator();
 }
 
 void ImgGuiMainHandler::updateSubstancePlot(const sage::SubstanceState& subst) {
-    if (_plotInfo.size() > subst.id) {
-        if (_plotInfo[subst.id].pltTimerFps.elapsed() > 1) {
-            _plotInfo[subst.id].pltFpsValues[_plotInfo[subst.id].pltValOffset] = subst.fps;
-            _plotInfo[subst.id].pltValOffset =
-                (_plotInfo[subst.id].pltValOffset + 1) % IM_ARRAYSIZE(_plotInfo[subst.id].pltFpsValues);
-            _plotInfo[subst.id].pltTimerFps.restart();
-        }
+    if (camSettings_.at(subst.id).plot()->timer.elapsed() > 1) {
+        camSettings_.at(subst.id).plot()->fpsArr[camSettings_.at(subst.id).plot()->offset] = subst.fps;
+        camSettings_.at(subst.id).plot()->offset =
+            (camSettings_.at(subst.id).plot()->offset + 1) % IM_ARRAYSIZE(camSettings_.at(subst.id).plot()->fpsArr);
+        camSettings_.at(subst.id).plot()->timer.restart();
     }
 }
 

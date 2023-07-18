@@ -31,16 +31,20 @@ public:
         return inst;
     }
     virtual ~Core() = default;
-    /** @brief Create substances from config.
-     * @param [in] count Count of contexs **/
-    void createSubstances(uint8_t count);
-    void createSingleSubstance(const sage::CameraState& camState);
+    
+    /** @brief Create substances from config. **/
+    void createSubstances();
+
+    void createSingleSubstance(const sage::SubstanceState& camState);
+
     /** @brief Run created substances. **/
     void runSubstances();
+
     /** @brief Create gui window.
      * @param [in] argc Number of parameters.
      * @param [in] argc Array of pointers to param's string. **/ 
     void createWindow(int argc, char** argv);
+
     /** @brief Connect texture with substance img queue. **/ 
     void connectCamBufToWindow();
     void enableWindow();

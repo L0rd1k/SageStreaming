@@ -36,14 +36,21 @@ void sage::GuiLayer::detach() {
 void sage::GuiLayer::beginDraw() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
+    // Recreate fonts after adding new texture.
+    if(getGuiHandler()->isFirstLaunch_) {
+        ImGui_ImplOpenGL3_CreateFontsTexture();
+    }
     ImGui::NewFrame();
+}
+
+void sage::GuiLayer::initFontsTexture() {
+    ImGui_ImplOpenGL3_CreateFontsTexture();
 }
 
 void sage::GuiLayer::endDraw() {
     ImGuiIO& io = ImGui::GetIO();
     auto size = WindowPainterGLFW::inst()._winSize;
     io.DisplaySize = ImVec2(size.width(), size.height());
-    io.DisplaySize = ImVec2(0, 0);
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
@@ -59,6 +66,9 @@ void sage::GuiLayer::processDraw() {
     dockLog();
 }
 
+ImgGuiMainHandler* sage::GuiLayer::getGuiHandler() {
+    return &imguiHandler_;
+}
 
 void sage::GuiLayer::dockLog() {
     ImGui::Begin(loggingWinName.c_str());
@@ -77,7 +87,7 @@ void sage::GuiLayer::appendSubstInfo(const SubstanceState& subst) {
 
 }
 
-void sage::GuiLayer::appendSubstState(const CameraState& subst) {
+void sage::GuiLayer::appendSubstState(const SubstanceState& subst) {
     std::lock_guard<std::mutex> _locker(_mtx);
     imguiHandler_.getSubstanceState()->insert(std::make_pair(subst.id, &subst));
 }

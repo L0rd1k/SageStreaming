@@ -32,9 +32,9 @@ public:
     void setGuiWindow(GLFWwindow* win);
     void appendLog(const std::string& str);
     void appendSubstInfo(const SubstanceState& subst);
-    void appendSubstState(const CameraState& subst);
-    // static bool first_time;
-
+    void appendSubstState(const SubstanceState& subst);
+    void initFontsTexture();
+    ImgGuiMainHandler* getGuiHandler();
 private:
     void dockMenuBar();
     void dockSettings();
@@ -44,14 +44,9 @@ private:
 
 private:
     ImgGuiMainHandler imguiHandler_;
-
 private:
     GLFWwindow* _winPtr = NULL;
-    // ImGuiID dockspace_id;
-    // static bool _winManager;
     static ImGuiLog log;
-
-
 
     std::mutex _mtx;
 };

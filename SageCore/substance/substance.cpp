@@ -2,8 +2,8 @@
 sage::Substance::Substance(short id, bool newOne)
     : _camera(nullptr), _inProcess(false) {
     _subConfig = std::make_unique<sage::SubstanceConfig>(id);
-    _subState = std::make_unique<SubstanceState>();
-    _camState = std::make_unique<CameraState>();
+    _subState = std::make_unique<sage::SubstanceState>();
+    _camState = std::make_unique<sage::SubstanceState>();
     if (!newOne) {
         _subConfig->init();
     }
@@ -20,7 +20,7 @@ sage::Substance::~Substance() {
 
 bool sage::Substance::initSubstance() {
     _camera = CamerasCreator::inst().createCamera(
-        getConfig()->getCamReaderType(), 
+        getConfig()->getCamReaderType(),
         getConfig()->getCamUrl(),
         getConfig()->getFFmpegCaptureType(),
         getConfig()->getOpenCVCaptureType());
@@ -32,11 +32,12 @@ bool sage::Substance::initSubstance() {
         Log::critical("Decoder wasn't created", getConfig()->getId());
         return false;
     }
-    _encoder = CamerasCreator::inst().createEncoder(getConfig()->getCamEncoderType());
-    if (!_encoder) {
-        Log::critical("Encoder wasn't created", getConfig()->getId());
-        return false;
-    }
+
+    // _encoder = CamerasCreator::inst().createEncoder(getConfig()->getCamEncoderType());
+    // if (!_encoder) {
+    //     Log::critical("Encoder wasn't created", getConfig()->getId());
+    //     return false;
+    // }
 
     /** Substance info. **/
     _subState->camType = getConfig()->getCamReaderType();
@@ -52,6 +53,14 @@ bool sage::Substance::initSubstance() {
     connectCallbacks();
     _isInited = true;
     return true;
+}
+
+void sage::Substance::updateConfig(const sage::SubstanceState& camState) {
+    getConfig()->setCamReaderType(camState.camType);
+    getConfig()->setCamDecoderType(camState.decType);
+    getConfig()->setCamUrl(camState.url);
+    getConfig()->setFFmpegCaptureType(camState.capTypeFFmpeg);
+    getConfig()->setOpenCVCaptureType(camState.capTypeOpencv);
 }
 
 void sage::Substance::connectCallbacks() {
@@ -124,8 +133,7 @@ void sage::Substance::onImageReceived(const sage::swImage& img) {
 
     if (timer.elapsedMs() > 1000) {
         _subState->fps = fps;
-        sig_LogMsgSend.emit(std::to_string(getConfig()->getId()) +
-                            ":  Fps:" + std::to_string(fps) + "\n");
+        sig_LogMsgSend.emit(std::to_string(getConfig()->getId()) + ":  Fps:" + std::to_string(fps) + "\n");
         fps = 0;
         timer.restart();
         onSubstanceInfoSend();  // Send cam info once per second;
@@ -151,7 +159,7 @@ void sage::Substance::onImageDecode(const sage::swImage& img) {
 
 void sage::Substance::onImageEncode(const sage::swImage& img) {
     sage::swImage& encImg = _encoder->getQueue()->next();
-    if(img->imgSize.isValid()) {
+    if (img->imgSize.isValid()) {
         _encoder->encode(img, encImg);
     }
     _encoder->getQueue()->moveNext();

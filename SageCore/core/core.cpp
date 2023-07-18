@@ -1,6 +1,6 @@
 #include "core.h"
 
-void sage::Core::createSubstances(uint8_t count = 0) {
+void sage::Core::createSubstances() {
     for (uint8_t id = 0; id < sage::IniParser::inst().get(CFG_SUBSTANCE_COUNT); id++) {
         _substns[id] = std::make_shared<sage::Substance>(id);
         _substns[id]->initSubstance();
@@ -16,18 +16,14 @@ void sage::Core::runSubstances() {
     }
 }
 
-void sage::Core::createSingleSubstance(const sage::CameraState& camState) {
+void sage::Core::createSingleSubstance(const sage::SubstanceState& camState) {
     Log::info("Create single substance");
     //> Check substance list size.
     uint8_t new_id = _substns.size();
+   
     _substns[new_id] = std::make_shared<sage::Substance>(new_id, true);
-
-    _substns[new_id]->getConfig()->setCamReaderType(camState.camType);
-    _substns[new_id]->getConfig()->setCamDecoderType(camState.decType);
-    _substns[new_id]->getConfig()->setCamUrl(camState.url);
-    _substns[new_id]->getConfig()->setFFmpegCaptureType(camState.ffmpegcapType);
-    _substns[new_id]->getConfig()->setOpenCVCaptureType(camState.cvcapType);
-    
+    // Extract substance config data
+    _substns[new_id]->updateConfig(camState);
     _substns[new_id]->initSubstance();
 
     //> If decoder created, create texture and assign image queue to it.
@@ -38,13 +34,14 @@ void sage::Core::createSingleSubstance(const sage::CameraState& camState) {
     _substns[new_id]->enableSubstance();
 
 #ifdef USE_IMGUI
-    // _window->getGuiLayer()->first_time = true;
+    _window->getGuiLayer()->getGuiHandler()->isFirstLaunch_ = true;
     global_callbacks.push_back(
         std::make_unique<void*>(_substns[new_id]->sig_sendSubstInfo.connect(
             _window->getGuiLayer(), &sage::GuiLayer::appendSubstInfo)));
     global_callbacks.push_back(
         std::make_unique<void*>(_substns[new_id]->sig_sendSubstState.connect(
             _window->getGuiLayer(), &sage::GuiLayer::appendSubstState)));
+            
 #endif
 }
 

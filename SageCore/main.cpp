@@ -8,7 +8,7 @@ int main(int argc, char**argv) {
     sage::IniParser::inst().setIniFile("../data/cameraConf.ini");
 
 	//> Create cameras substances.
-	sage::Core::inst().createSubstances(4);
+	sage::Core::inst().createSubstances();
 	//> Create opengl window
 	sage::Core::inst().createWindow(argc, argv);
 	//> Assign image buffers to textures.

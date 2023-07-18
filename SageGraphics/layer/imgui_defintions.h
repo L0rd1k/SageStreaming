@@ -8,17 +8,6 @@ const std::string settingsWinName = "Settings";
 const std::string loggingWinName = "Logger";
 const std::string managerWinName = "Manager";
 
-struct PlottingSubstInfo {
-    float pltFpsValues[25];
-    int pltValOffset;
-    ElapsedTimer pltTimerFps;
-
-    PlottingSubstInfo()
-        : pltFpsValues{},
-          pltValOffset(0) {
-    }
-};
-
 struct ImGuiCameraSettings {
     ImGuiCameraSettings()
         : isAspectRatio_(false) {
@@ -28,8 +17,23 @@ struct ImGuiCameraSettings {
         return &isAspectRatio_;
     }
 
+    struct PlotFps {
+        PlotFps()
+            : fpsArr{},
+              offset(-1) {
+        }
+        float fpsArr[25];
+        int64_t offset;
+        ElapsedTimer timer;
+    };
+
+    PlotFps* plot() {
+        return &plotFps_;
+    }
+
 private:
     bool isAspectRatio_;
+    PlotFps plotFps_;
 };
 
 const double settingsWinCap = 0.2f;     //< Settings window width
@@ -37,25 +41,25 @@ const double camSettingsWinCap = 0.6f;  //< Camera settings window width
 const double loggingWinCap = 0.2f;      //< Logging window width
 const double managerWinCap = 0.3f;      //< Manager window width
 
-static const char* combobox_readerTypes =
+static const char* comboBoxReaderType =
     "FFmpeg\0"
     "OpenCV\0";
-static const char* combobox_ffmpegCapTypes =
+static const char* comboBoxCapTypeFFmpeg =
     "Tcp\0"
     "Udp\0"
     "V4L\0"
     "Video\0";
-static const char* combobox_opencvCapTypes =
+static const char* comboBoxCapTypeOpenCV =
     "Gstreamer\0"
     "FFmpeg\0"
     "V4L\0"
     "Any\0";
-static const char* combobox_textureSize =
+static const char* comboBoxTextureSize =
     "2048x1536\0"
     "1024x768\0"
     "800x600\0"
     "640x480\0"
     "320x240\0";
 
-static const char* combobox_decoderType =
+static const char* comboBoxDecoderType =
     "FFmpeg\0";
