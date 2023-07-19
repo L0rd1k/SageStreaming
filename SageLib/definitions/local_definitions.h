@@ -118,12 +118,12 @@ extern Signal<const SubstanceState&> sig_sendCameraState;
 
 }  // namespace sage
 
-const char* toString(sage::ImageFormat format);
-const char* toString(sage::ImageSource source);
-const char* toString(sage::DecTypes decoderType);
-const char* toString(sage::OpencvType captureType);
-const char* toString(sage::FFmpegType cameraType);
-const char* toString(sage::CamTypes cameraType);
+std::string toString(sage::ImageFormat format);
+std::string toString(sage::ImageSource source);
+std::string toString(sage::DecTypes decoderType);
+std::string toString(sage::OpencvType captureType);
+std::string toString(sage::FFmpegType cameraType);
+std::string toString(sage::CamTypes cameraType);
 
 sage::CamTypes toCamType(std::string val);
 sage::DecTypes toDecType(std::string val);

@@ -2,6 +2,7 @@
 
 #include "definitions/local_definitions.h"
 #include "config/ini_parser.h"
+#include "config/config_params.h"
 
 namespace sage {
 
@@ -24,6 +25,8 @@ public:
     const sage::OpencvType getOpenCVCaptureType();
     const std::string getCamUrl();
     const short getId();
+
+    void saveToConfigFile(const sage::SubstanceState& camState);
 private:
     short _id;
     sage::CamTypes _camType;        //> Camera Reader Type
@@ -32,6 +35,9 @@ private:
     sage::FFmpegType _ffmpegType;   //> FFmpeg input Type
     sage::OpencvType _opencvType;   //> Opencv input Type
     std::string _url;
+
+
+    
 
 };
 

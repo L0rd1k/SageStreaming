@@ -3,12 +3,16 @@
 sage::SubstanceConfig::SubstanceConfig(short id) : _id(id) {}
 
 const bool sage::SubstanceConfig::init() {
-    _camType = toCamType(sage::IniParser::inst().get("reader_type", _id));
-    _encType = toEncType(sage::IniParser::inst().get("encoder_type", _id));
-    _decType = toDecType(sage::IniParser::inst().get("decoder_type", _id));
-    _ffmpegType = toFFmpegCapType(sage::IniParser::inst().get("ffmpegcap_type", _id));
-    _opencvType = toOpenCVCapType(sage::IniParser::inst().get("cvcap_type", _id));
-    _url = sage::IniParser::inst().get("name", _id);
+    _camType = toCamType(sage::IniParser::inst().get(CFG_DEV_READER_TYPE, _id));
+    _encType = toEncType(sage::IniParser::inst().get(CFG_DEV_ENCODER_TYPE, _id));
+    _decType = toDecType(sage::IniParser::inst().get(CFG_DEV_DECODER_TYPE, _id));
+    _ffmpegType = toFFmpegCapType(sage::IniParser::inst().get(CFG_DEV_FFMPEG_CAPTURE_TYPE, _id));
+    _opencvType = toOpenCVCapType(sage::IniParser::inst().get(CFG_DEV_OPENCV_CAPTURE_TYPE, _id));
+    _url = sage::IniParser::inst().get(CFG_DEV_NAME, _id);
+    if ((_camType == sage::CamTypes::Undefined) || (_decType == sage::DecTypes::Undefined)) {
+        return false;
+    }
+    return true;
 }
 
 void sage::SubstanceConfig::setCamReaderType(const sage::CamTypes type) {
@@ -61,4 +65,14 @@ const std::string sage::SubstanceConfig::getCamUrl() {
 
 const short sage::SubstanceConfig::getId() {
     return _id;
+}
+
+void sage::SubstanceConfig::saveToConfigFile(const sage::SubstanceState& camState) {
+    sage::IniParser::inst().set(CFG_SUBSTANCE_COUNT, sage::IniParser::inst().get(CFG_SUBSTANCE_COUNT) + 1);
+
+    sage::IniParser::inst().set(CFG_DEV_NAME, camState.url, _id);
+    sage::IniParser::inst().set(CFG_DEV_READER_TYPE, toString(camState.camType), _id);
+    sage::IniParser::inst().set(CFG_DEV_DECODER_TYPE, toString(camState.decType), _id);
+    sage::IniParser::inst().set(CFG_DEV_FFMPEG_CAPTURE_TYPE, toString(camState.capTypeFFmpeg), _id);
+    sage::IniParser::inst().set(CFG_DEV_OPENCV_CAPTURE_TYPE, toString(camState.capTypeOpencv), _id);
 }

@@ -61,6 +61,7 @@ void sage::Substance::updateConfig(const sage::SubstanceState& camState) {
     getConfig()->setCamUrl(camState.url);
     getConfig()->setFFmpegCaptureType(camState.capTypeFFmpeg);
     getConfig()->setOpenCVCaptureType(camState.capTypeOpencv);
+    getConfig()->saveToConfigFile(camState);
 }
 
 void sage::Substance::connectCallbacks() {

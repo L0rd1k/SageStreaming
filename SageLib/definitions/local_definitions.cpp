@@ -3,83 +3,83 @@
 Signal<const std::string&> sage::sig_LogMsgSend;
 Signal<const sage::SubstanceState&> sage::sig_sendCameraState;
 
-const char* toString(sage::ImageFormat format) {
+std::string toString(sage::ImageFormat format) {
     switch (format) {
         case sage::ImageFormat::H264:
-            return "H264";
+            return "h264";
         case sage::ImageFormat::JPEG:
-            return "JPEG";
+            return "jpeg";
         case sage::ImageFormat::RAW:
-            return "RAW";
+            return "raw";
         case sage::ImageFormat::MPEG4:
-            return "MPEG4";
+            return "mpeg4";
         case sage::ImageFormat::YUYV:
-            return "YUYV";
+            return "yuyv";
         default:
-            return "Undefined";
+            return "undefined";
     }
 }
 
-const char* toString(sage::ImageSource source) {
+std::string toString(sage::ImageSource source) {
     switch (source) {
         case sage::ImageSource::RTSP:
-            return "RTSP";
+            return "rtsp";
         case sage::ImageSource::DISK:
-            return "DISK";
+            return "disk";
         default:
-            return "Undefined";
+            return "undefined";
     }
 }
 
-const char* toString(sage::DecTypes decoderType) {
+std::string toString(sage::DecTypes decoderType) {
     switch (decoderType) {
         case sage::DecTypes::FFMPEG:
-            return "FFmpeg";
+            return "ffmpeg";
         default:
-            return "Undefined";
+            return "undefined";
     }
 }
 
-const char* toString(sage::OpencvType captureType) {
+std::string toString(sage::OpencvType captureType) {
     switch (captureType) {
         case sage::OpencvType::GSTREAMER:
-            return "Gstreamer";
+            return "gstreamer";
         case sage::OpencvType::FFMPEG:
-            return "FFmpeg";
+            return "ffmpeg";
         case sage::OpencvType::V4L:
-            return "Video4Linux";
+            return "v4l";
         case sage::OpencvType::ANY:
-            return "Default";
+            return "any";
         default:
-            return "Undefined";
+            return "undefined";
     }
 }
 
-const char* toString(sage::FFmpegType captureType) {
+std::string toString(sage::FFmpegType captureType) {
     switch (captureType) {
         case sage::FFmpegType::Tcp:
-            return "Tcp";
+            return "tcp";
         case sage::FFmpegType::Udp:
-            return "Udp";
+            return "udp";
         case sage::FFmpegType::V4l:
-            return "V4l";
+            return "v4l";
         case sage::FFmpegType::Vid:
-            return "Vid";
+            return "vid";
         default:
-            return "Undefined";
+            return "undefined";
     }
 }
 
-const char* toString(sage::CamTypes cameraType) {
+std::string toString(sage::CamTypes cameraType) {
     switch (cameraType) {
         case sage::CamTypes::FFMPEG:
-            return "FFmpeg";
+            return "ffmpeg";
         case sage::CamTypes::OPENCV:
-            return "OpenCV";
+            return "opencv";
         case sage::CamTypes::GSTREAMER:
-            return "Gstreamer";
+            return "gstreamer";
         default:
-            return "Undefined";
+            return "undefined";
     }
 }
 

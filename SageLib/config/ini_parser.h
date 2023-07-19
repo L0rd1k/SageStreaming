@@ -30,6 +30,21 @@ public:
         return T();
     }
 
+
+    template <typename T>
+    void set(const ConfigFields<T>& fieldName, const T value, int8_t substanceId = -1) {
+        if(!fieldName.name().empty()) {
+            std::string group = (substanceId != -1) ? selectGroup(substanceId) : getMainGroup();
+            try {
+                std::cout << group << " " <<  fieldName.name() << " " << value << std::endl;
+                _ini_pt.put(group + "." + fieldName.name(), value);
+                boost::property_tree::ini_parser::write_ini(_iniFilePath, _ini_pt);
+            } catch(std::exception& msg) {
+                Log::critical(msg.what());
+            }
+        }
+    }
+
 private:
     std::string selectGroup(int8_t& substanceId);
     std::string getMainGroup();

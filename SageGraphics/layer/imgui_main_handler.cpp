@@ -114,9 +114,9 @@ void ImgGuiMainHandler::updateSettingsWindow() {
 
                 ImGui::Text("Resolution:        %s", cameraInfo.at(i)->size.toStr().c_str());
                 ImGui::Text("Stream duration:   %ld sec.", cameraInfo.at(i)->duration);
-                ImGui::Text("Reader Type:       %s", toString(cameraInfo.at(i)->camType));
-                ImGui::Text("Decoder Type:      %s", toString(cameraInfo.at(i)->decType));
-                ImGui::Text("Decoder Codec:     %s", toString(cameraInfo.at(i)->format));
+                ImGui::Text("Reader Type:       %s", toString(cameraInfo.at(i)->camType).c_str());
+                ImGui::Text("Decoder Type:      %s", toString(cameraInfo.at(i)->decType).c_str());
+                ImGui::Text("Decoder Codec:     %s", toString(cameraInfo.at(i)->format).c_str());
             }
             if (ImGui::CollapsingHeader("Commands", 32)) {
                 // bool* isChecked = camSettings_[i].getAspectRatio();
@@ -232,11 +232,11 @@ void ImgGuiMainHandler::updateManager() {
                                         break;
                                     }
                                     case 1: {
-                                        ImGui::Text("%s", toString(elem.second->camType));
+                                        ImGui::Text("%s", toString(elem.second->camType).c_str());
                                         break;
                                     }
                                     case 2: {
-                                        ImGui::Text("%s", toString(elem.second->decType));
+                                        ImGui::Text("%s", toString(elem.second->decType).c_str());
                                         break;
                                     }
                                     case 3: {
