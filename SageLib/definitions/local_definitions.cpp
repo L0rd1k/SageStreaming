@@ -1,7 +1,8 @@
 #include "local_definitions.h"
 
-Signal<const std::string&> sage::sig_LogMsgSend;
-Signal<const sage::SubstanceState&> sage::sig_sendCameraState;
+#ifdef USE_IMGUI
+ccflow::Signal<const std::string&, const sage::LogLevels&> sage::sigLogSend;
+#endif
 
 std::string toString(sage::ImageFormat format) {
     switch (format) {
@@ -35,6 +36,15 @@ std::string toString(sage::DecTypes decoderType) {
     switch (decoderType) {
         case sage::DecTypes::FFMPEG:
             return "ffmpeg";
+        default:
+            return "undefined";
+    }
+}
+
+std::string toString(sage::EncTypes encoderType) {
+    switch(encoderType) {
+        case sage::EncTypes::OPENCV: 
+            return "opencv";
         default:
             return "undefined";
     }

@@ -17,6 +17,8 @@ public:
     void setFFmpegCaptureType(const sage::FFmpegType type);
     void setOpenCVCaptureType(const sage::OpencvType type);
     void setCamUrl(const std::string url);
+    void setId(short id);
+    void setSubstEnabled(bool val);
 
     const sage::CamTypes getCamReaderType();
     const sage::DecTypes getCamDecoderType();
@@ -25,6 +27,7 @@ public:
     const sage::OpencvType getOpenCVCaptureType();
     const std::string getCamUrl();
     const short getId();
+    const bool isSubstEnabled();
 
     void saveToConfigFile(const sage::SubstanceState& camState);
 private:
@@ -34,8 +37,8 @@ private:
     sage::DecTypes _decType;        //> Camera Decoder Type
     sage::FFmpegType _ffmpegType;   //> FFmpeg input Type
     sage::OpencvType _opencvType;   //> Opencv input Type
-    std::string _url;
-
+    std::string _url;               //> Camera url address
+    bool _isEnableOnBoot;           //> Is cameras start on start
 
     
 

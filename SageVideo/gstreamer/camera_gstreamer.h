@@ -12,6 +12,7 @@ public:
     virtual ~GstreamerCamera();
     virtual bool start() override;
     virtual bool stop() override;
+    virtual std::string getName() override;
 private:
     void mainLoop();
     std::thread _camThread;

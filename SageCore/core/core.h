@@ -9,6 +9,9 @@
 
 #include <unordered_map>
 #include <mutex>
+#include <utility>
+#include <vector>
+#include <map>
 
 #ifdef USE_GLUT
 #include "window/window_painter_glut.h"
@@ -23,7 +26,10 @@
 namespace sage {
 class Core {
 public:
-    using SubstanceMap = std::unordered_map<uint8_t, sage::Ref<sage::Substance>>;
+    using SubstanceMap = std::map<uint8_t, sage::Ref<sage::Substance>>;
+
+    // using SubstanceVec = std::vector<sage::Scope<sage::Substance>>;
+
     /** @brief Singleton for Core class.
      * @return Reference to Core class. **/  
     static Core& inst() {
@@ -37,8 +43,13 @@ public:
 
     void createSingleSubstance(const sage::SubstanceState& camState);
 
+    void removeSingleSubstance(const uint8_t& id);
+
     /** @brief Run created substances. **/
     void runSubstances();
+
+    void stopSubstances();
+
 
     /** @brief Create gui window.
      * @param [in] argc Number of parameters.
@@ -50,14 +61,20 @@ public:
     void enableWindow();
     void enableCallbacks();
 #ifdef USE_IMGUI
-    void sendLog(const std::string& str);
+    void sendLog(const std::string& str, const sage::LogLevels& lvl);
 #endif
 public:
-    SubstanceMap _substns;  //> Map of substances.
+    // SubstanceVec _substns;  //> Vector of substances.
+    SubstanceMap _activeSubstns;
+    SubstanceMap _unusedSubstns;
+
     sage::Scope<WindowPainterBase> _window; //> Type of window painter
     sage::Ref<PicturePainter> _pic; 
 private:
+    std::multimap<uint8_t, sage::Scope<void*>> substances_callbacks;
     std::vector<sage::Scope<void*>> global_callbacks;
+
+    std::mutex mtx_;
 };
 
 }  // namespace sage

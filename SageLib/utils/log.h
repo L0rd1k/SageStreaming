@@ -6,6 +6,9 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <sstream>
+
+#include "definitions/local_definitions.h"
 
 class Log {
 public:
@@ -41,38 +44,50 @@ public:
 
     template <typename... Args>
     static void error(Args&&... args) {
-        std::cout << "[" << printTime() << "]";
-        ((std::cout << "\033[1;31;49m"
-                    << " " << std::forward<Args>(args)),
-         ...);
-        std::cout << "\033[0m" << std::endl;
+        std::stringstream stream;
+        stream << "[" << printTime() << "][Error]";
+        ((stream << " " << std::forward<Args>(args)), ...);
+        stream << "\n";
+        std::cout << "\033[1;31;49m" << stream.str() << "\033[0m";
+#ifdef USE_IMGUI
+        sage::sigLogSend.emit(stream.str(), sage::LogLevels::Error);
+#endif
     }
 
     template <typename... Args>
     static void warning(Args&&... args) {
-        std::cout << "[" << printTime() << "]";
-        ((std::cout << "\033[1;35;49m"
-                    << " " << std::forward<Args>(args)),
-         ...);
-        std::cout << "\033[0m" << std::endl;
+        std::stringstream stream;
+        stream << "[" << printTime() << "]";
+        ((stream << " " << std::forward<Args>(args)), ...);
+        stream << "\n";
+        std::cout << "\033[1;35;49m" << stream.str() << "\033[0m";
+#ifdef USE_IMGUI
+        sage::sigLogSend.emit(stream.str(), sage::LogLevels::Warning);
+#endif
     }
 
     template <typename... Args>
     static void trace(Args&&... args) {
-        std::cout << "[" << printTime() << "]";
-        ((std::cout << "\033[1;32;49m"
-                    << " " << std::forward<Args>(args)),
-         ...);
-        std::cout << "\033[0m" << std::endl;
+        std::stringstream stream;
+        stream << "[" << printTime() << "]";
+        ((stream << " " << std::forward<Args>(args)), ...);
+        stream << "\n";
+        std::cout << "\033[1;32;49m" << stream.str() << "\033[0m";
+#ifdef USE_IMGUI
+        sage::sigLogSend.emit(stream.str(), sage::LogLevels::Trace);
+#endif
     }
 
     template <typename... Args>
     static void info(Args... args) {
-        std::cout << "[" << printTime() << "]";
-        ((std::cout << "\033[0;34;49m"
-                    << " " << std::forward<Args>(args)),
-         ...);
-        std::cout << "\033[0m" << std::endl;
+        std::stringstream stream;
+        stream << "[" << printTime() << "]";
+        ((stream << " " << std::forward<Args>(args)), ...);
+        stream << "\n";
+        std::cout << "\033[0;34;49m" << stream.str() << "\033[0m";
+#ifdef USE_IMGUI
+        sage::sigLogSend.emit(stream.str(), sage::LogLevels::Info);
+#endif
     }
 
     template <typename... Args>
@@ -83,10 +98,13 @@ public:
 
     template <typename... Args>
     static void critical(Args&&... args) {
-        std::cout << "[" << printTime() << "]";
-        ((std::cout << "\033[1;31;49m"
-                    << " " << std::forward<Args>(args)),
-         ...);
-        std::cout << "\033[0m" << std::endl;
+        std::stringstream stream;
+        stream << "[" << printTime() << "]";
+        ((stream << " " << std::forward<Args>(args)), ...);
+        stream << "\n";
+        std::cout << "\033[1;31;49m" << stream.str() << "\033[0m";
+#ifdef USE_IMGUI
+        sage::sigLogSend.emit(stream.str(), sage::LogLevels::Critical);
+#endif
     }
 };

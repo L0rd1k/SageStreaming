@@ -21,11 +21,17 @@ public:
     PicturePainter(uint8_t textCount = sage::txtCount);
     virtual ~PicturePainter();
     void initTextures();
+    void reinitTextures();
+
     void allocateTextures();
     void createTexture();
+    void removeTexture(uint textureId);
+
     void setDataBuffer(uint8_t textId, const ImageQueue* buffer);
     void show(sage::Size<int> size);
     uint8_t getTexturesCount();
+
+    std::vector<std::shared_ptr<Texture>> &getTextures();
 public:
     std::atomic<bool> _isInited;
     std::mutex _mtx;

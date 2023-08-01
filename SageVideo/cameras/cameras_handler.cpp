@@ -6,6 +6,7 @@ _queue(1000) {
 }
 
 sage::CamerasHandler::~CamerasHandler() {
+    _isStreaming.store(false);
 }
 
 void sage::CamerasHandler::triggerImage(sage::swImage &image) {

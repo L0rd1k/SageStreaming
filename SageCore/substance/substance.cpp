@@ -1,21 +1,29 @@
 #include "substance.h"
 sage::Substance::Substance(short id, bool newOne)
-    : _camera(nullptr), _inProcess(false) {
+    : _camera(nullptr),
+      _inProcess(false) {
     _subConfig = std::make_unique<sage::SubstanceConfig>(id);
     _subState = std::make_unique<sage::SubstanceState>();
-    _camState = std::make_unique<sage::SubstanceState>();
     if (!newOne) {
         _subConfig->init();
+        extractConfigToState();
     }
 }
 
 sage::Substance::~Substance() {
+    _inProcess.store(false);
+    if (_camera && _camera->isStreaming()) {
+        _camera->stop();
+    }
     if (_mainThread.joinable()) {
         _mainThread.join();
     }
-    delete _camera;
-    delete _decoder;
-    delete _encoder;
+    if (_decoder) {
+        delete _decoder;
+    }
+    if (_encoder) {
+        delete _encoder;
+    }
 }
 
 bool sage::Substance::initSubstance() {
@@ -24,35 +32,35 @@ bool sage::Substance::initSubstance() {
         getConfig()->getCamUrl(),
         getConfig()->getFFmpegCaptureType(),
         getConfig()->getOpenCVCaptureType());
+
     if (!_camera) {
         return false;
     }
     _decoder = CamerasCreator::inst().createDecoder(getConfig()->getCamDecoderType());
     if (!getDecoder()) {
-        Log::critical("Decoder wasn't created", getConfig()->getId());
+        Log::error("Decoder wasn't created", getConfig()->getId());
         return false;
     }
 
     // _encoder = CamerasCreator::inst().createEncoder(getConfig()->getCamEncoderType());
     // if (!_encoder) {
-    //     Log::critical("Encoder wasn't created", getConfig()->getId());
+    //     Log::error("Encoder wasn't created", getConfig()->getId());
     //     return false;
     // }
-
-    /** Substance info. **/
-    _subState->camType = getConfig()->getCamReaderType();
-    _subState->decType = getConfig()->getCamDecoderType();
-    _subState->id = getConfig()->getId();
-
-    /** Camera state. **/
-    _camState->id = getConfig()->getId();
-    _camState->url = getConfig()->getCamUrl();
-    _camState->camType = getConfig()->getCamReaderType();
-    _camState->decType = getConfig()->getCamDecoderType();
 
     connectCallbacks();
     _isInited = true;
     return true;
+}
+
+void sage::Substance::extractConfigToState() {
+    /** Substance info. **/
+    if (_subState) {
+        _subState->camType = getConfig()->getCamReaderType();
+        _subState->decType = getConfig()->getCamDecoderType();
+        _subState->id = getConfig()->getId();
+        _subState->url = getConfig()->getCamUrl();
+    }
 }
 
 void sage::Substance::updateConfig(const sage::SubstanceState& camState) {
@@ -61,30 +69,27 @@ void sage::Substance::updateConfig(const sage::SubstanceState& camState) {
     getConfig()->setCamUrl(camState.url);
     getConfig()->setFFmpegCaptureType(camState.capTypeFFmpeg);
     getConfig()->setOpenCVCaptureType(camState.capTypeOpencv);
+
     getConfig()->saveToConfigFile(camState);
 }
 
 void sage::Substance::connectCallbacks() {
     if (_camera) {
-        callbacks.push_back(std::make_unique<void*>(
-            _camera->sig_imageRecieved.connect(this, &sage::Substance::onImageReceived)));
+        connect(&_camera->sig_imageRecieved, this, &sage::Substance::onImageReceived);
     }
     if (_decoder) {
-        callbacks.push_back(std::make_unique<void*>(
-            sig_imageDecoded.connect(this, &sage::Substance::onImageDecode)));
+        connect(&sig_imageDecoded, this, &sage::Substance::onImageDecode);
     }
     if (_encoder) {
-        callbacks.push_back(std::make_unique<void*>(
-            sig_imageEncoded.connect(this, &sage::Substance::onImageEncode)));
+        connect(&sig_imageEncoded, this, &sage::Substance::onImageEncode);
     }
 }
 
 bool sage::Substance::enableSubstance() {
     if (_isInited) {
         if (!isEnabled()) {
-            _inProcess = true;
-            _mainThread =
-                std::thread(&sage::Substance::mainSubstanceLoop, this);
+            _inProcess.store(true);
+            _mainThread = std::thread(&sage::Substance::mainSubstanceLoop, this);
             return true;
         }
     }
@@ -93,7 +98,10 @@ bool sage::Substance::enableSubstance() {
 
 bool sage::Substance::disableSubstance() {
     if (isEnabled()) {
-        _inProcess = false;
+        _inProcess.store(false);
+        if (_mainThread.joinable()) {
+            _mainThread.join();
+        }
         if (_camera->isStreaming()) {
             _camera->stop();
             return true;
@@ -103,27 +111,29 @@ bool sage::Substance::disableSubstance() {
 }
 
 void sage::Substance::startCameraStreaming() {
-    if (!_camera->isStreaming()) {
+    if (_camera && !_camera->isStreaming()) {
         _camera->start();
     }
 }
 
 void sage::Substance::mainSubstanceLoop() {
     startCameraStreaming();
-    while (_inProcess) {
+    onSubstanceInfoSend();
+    while (_inProcess.load()) {
     }
 }
 
 const ImageQueue* sage::Substance::getImageQueue() {
-    auto imageFormat = _camera->getImageFormat();
-    if (imageFormat == sage::ImageFormat::RAW) {
-        return _camera->getQueue();
+    if (_camera) {
+        auto imageFormat = _camera->getImageFormat();
+        if (imageFormat == sage::ImageFormat::RAW) {
+            return _camera->getQueue();
+        }
     }
 }
 
 void sage::Substance::onSubstanceInfoSend() {
-    sig_sendSubstInfo.emit(*_subState);
-    sig_sendSubstState.emit(*_camState);
+    sigSendSubstParams.emit(*_subState);
 }
 
 void sage::Substance::onImageReceived(const sage::swImage& img) {
@@ -134,14 +144,14 @@ void sage::Substance::onImageReceived(const sage::swImage& img) {
 
     if (timer.elapsedMs() > 1000) {
         _subState->fps = fps;
-        sig_LogMsgSend.emit(std::to_string(getConfig()->getId()) + ":  Fps:" + std::to_string(fps) + "\n");
+#ifdef USE_IMGUI
+        Log::trace((int)getConfig()->getId(), "- Fps:", (int)fps);
+#endif
         fps = 0;
         timer.restart();
-        onSubstanceInfoSend();  // Send cam info once per second;
     } else {
         fps++;
     }
-
     sig_imageDecoded.emit(img);
 }
 
@@ -167,10 +177,11 @@ void sage::Substance::onImageEncode(const sage::swImage& img) {
 }
 
 bool sage::Substance::isEnabled() {
-    return _inProcess;
+    std::lock_guard<std::mutex> lock(mtx_);
+    return _inProcess.load();
 }
 
-sage::CamerasHandler* sage::Substance::getCamera() {
+std::shared_ptr<sage::CamerasHandler> sage::Substance::getCamera() {
     return _camera;
 }
 

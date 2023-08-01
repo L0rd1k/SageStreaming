@@ -10,11 +10,16 @@ const std::string managerWinName = "Manager";
 
 struct ImGuiCameraSettings {
     ImGuiCameraSettings()
-        : isAspectRatio_(false) {
+        : isAspectRatio_(true),
+          isCamActive_(false) {
     }
 
     bool* getAspectRatio() {
         return &isAspectRatio_;
+    }
+
+    bool* getCameraActivity() {
+        return &isCamActive_;
     }
 
     struct PlotFps {
@@ -33,13 +38,14 @@ struct ImGuiCameraSettings {
 
 private:
     bool isAspectRatio_;
+    bool isCamActive_;
     PlotFps plotFps_;
 };
 
 const double settingsWinCap = 0.2f;     //< Settings window width
 const double camSettingsWinCap = 0.6f;  //< Camera settings window width
 const double loggingWinCap = 0.2f;      //< Logging window width
-const double managerWinCap = 0.3f;      //< Manager window width
+const double managerWinCap = 1.0f;      //< Manager window width
 
 static const char* comboBoxReaderType =
     "FFmpeg\0"

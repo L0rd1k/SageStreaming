@@ -1,21 +1,20 @@
 #pragma once
 
-#include "callback_list.h"
+#include <mutex>
 
-template <class ...Args>
-class Signal : public CallbackList<void, Args...> {
+#include "callback_handler.h"
+
+namespace ccflow {
+
+template <class... SignalArgs>
+class Signal : public CallbackHandler<void, SignalArgs...> {
 public:
-    Signal() : CallbackList<void, Args...>() {};
-
-    virtual ~Signal()  {};
-
-    void emit(Args&&... args) {
-        std::lock_guard<std::mutex>(Signal::locker);
-        auto& list = Signal::getActiveSlotsList();
-        for (uint i = 0; i < list.size(); ++i){
-            auto action = list[i];
-            (*action)(std::forward<Args>(args)...);
+    Signal() : CallbackHandler<void, SignalArgs...>(){};
+    void emit(SignalArgs &&...args) {
+        for (auto &elem : Signal::getSlots()) {
+            elem->run(std::forward<SignalArgs>(args)...);
         }
     }
-
 };
+
+}  // namespace ccflow

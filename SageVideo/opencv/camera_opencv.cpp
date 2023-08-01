@@ -9,19 +9,23 @@ CameraOpencv::CameraOpencv(std::string url, sage::OpencvType type)
 CameraOpencv::~CameraOpencv() {
 }
 
+std::string CameraOpencv::getName() {
+    return "OpenCV";
+}
+
 bool CameraOpencv::start() {
     if (isStreaming()) {
         Log::critical("Can't start camera, already playing");
         return false;
     }
-    _isStreaming = true;
+    _isStreaming.store(true);
     _camThread = std::thread(&CameraOpencv::mainLoop, this);
     return true;
 }
 
 bool CameraOpencv::stop() {
     if (_camThread.joinable()) {
-        _isStreaming = false;
+        _isStreaming.store(false);
         _cap.release();
         _camThread.join();
     }

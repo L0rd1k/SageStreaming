@@ -13,25 +13,28 @@ CameraFFmpeg::CameraFFmpeg(std::string url, sage::FFmpegType type)
     initializeFFmpeg();
 }
 
+std::string CameraFFmpeg::getName() {
+    return "FFmpeg";
+}
+
 bool CameraFFmpeg::start() {
     if (isStreaming()) {
         Log::critical("Can't start camera, already playing");
         return false;
     }
-    _isStreaming = true;
+    _isStreaming.store(true);
     _camThread = std::thread(&CameraFFmpeg::mainLoop, this);
     return true;
 }
 
 bool CameraFFmpeg::stop() {
     if (_camThread.joinable()) {
-        if (_context) {
-            /** @warning Custom method from prebuild FFMPEG 2.8 **/
-
-            avformat_close_input(&_context);
-        }
-        _isStreaming = false;
+        _isStreaming.store(false);
         _camThread.join();
+        if(_context) {
+            /** @warning Custom method from prebuild FFMPEG 2.8 **/
+            closeContext();
+        }
     }
 }
 
@@ -78,6 +81,7 @@ void CameraFFmpeg::performFpsDelay(AVStream* stream, AVPacket* packet) {
 
 bool CameraFFmpeg::handleVideoFrame(AVStream* stream, AVPacket* packet) {
     std::lock_guard<std::mutex> locker(_mutex);
+
     imgFormat = sage::ImageFormat::Undefined;
     if (stream->codecpar->codec_id == AV_CODEC_ID_MJPEG) {
         // Log::info("[FFmpeg][Reader] MJPEG");
@@ -151,12 +155,12 @@ int blockingOperationCallback(void* sender) {
 
 bool CameraFFmpeg::blockingTimerExpired() {
     _blockTimerExp = _blockTimer.expired(_blockTimerTimeout);
-    return !_isStreaming || _blockTimerExp;
+    return !_isStreaming.load() || _blockTimerExp;
 }
 
 bool CameraFFmpeg::prepareContext() {
     Log::info("[FFmpeg][Reader] Preparare context.");
-    _isStreaming = true;
+    _isStreaming.store(true);
 
     _rtspState = RtspCameraState::Undefined;
 
@@ -262,5 +266,7 @@ std::string CameraFFmpeg::getUrl() {
 }
 
 CameraFFmpeg::~CameraFFmpeg() {
+    std::cout << "Start stopping" << std::endl;
     stop();
+    std::cout << "Stopped" << std::endl;
 }

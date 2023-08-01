@@ -21,7 +21,7 @@ public:
     virtual ~CamerasCreator() = default;
     static CamerasCreator& inst();
 
-    CamerasHandler* createCamera(sage::CamTypes camType = sage::CamTypes::Undefined,
+    std::shared_ptr<CamerasHandler> createCamera(sage::CamTypes camType = sage::CamTypes::Undefined,
                                  std::string name = std::string(), 
                                  sage::FFmpegType ffmpegType = sage::FFmpegType::Undefined, 
                                  sage::OpencvType opencvType = sage::OpencvType::Undefined);

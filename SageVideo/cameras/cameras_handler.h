@@ -16,11 +16,11 @@ public:
     virtual ~CamerasHandler();
     virtual bool start() = 0;
     virtual bool stop() = 0;
+    virtual std::string getName() = 0;
     bool isStreaming();
     const ImageQueue* getQueue();
     virtual sage::ImageFormat getImageFormat();
-    Signal<const sage::swImage&> sig_imageRecieved;
-
+    ccflow::Signal<const sage::swImage&> sig_imageRecieved;
 protected:
     void triggerImage(sage::swImage& image);
     std::atomic<bool> _isStreaming;

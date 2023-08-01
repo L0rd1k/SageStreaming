@@ -6,10 +6,6 @@
 #include "imgui/imgui_impl_opengl3.h"
 #include "window/window_painter_glfw.h"
 
-// bool sage::GuiLayer::_winManager = true;
-// bool sage::GuiLayer::first_time = true;
-ImGuiLog sage::GuiLayer::log;
-
 void sage::GuiLayer::init() {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -63,35 +59,28 @@ void sage::GuiLayer::endDraw() {
 
 void sage::GuiLayer::processDraw() {
     imguiHandler_.mainHandler();
-    dockLog();
+    updateLog();
 }
 
 ImgGuiMainHandler* sage::GuiLayer::getGuiHandler() {
     return &imguiHandler_;
 }
 
-void sage::GuiLayer::dockLog() {
-    ImGui::Begin(loggingWinName.c_str());
-    ImGui::End();
-    log.Draw(loggingWinName.c_str());
+void sage::GuiLayer::updateLog() {
+    log.draw(loggingWinName.c_str());
 }
 
-void sage::GuiLayer::appendLog(const std::string& str) {
-    log.AddLog(str.c_str());
+void sage::GuiLayer::appendLog(const std::string& str, const sage::LogLevels& lvl) {
+    log.addLog(str, lvl);
 }
 
-void sage::GuiLayer::appendSubstInfo(const SubstanceState& subst) {
-    std::lock_guard<std::mutex> _locker(_mtx);
-    imguiHandler_.updateSubstancePlot(subst);
-    imguiHandler_.getCameraInfo()->insert(std::make_pair(subst.id, &subst));
 
-}
 
 void sage::GuiLayer::appendSubstState(const SubstanceState& subst) {
     std::lock_guard<std::mutex> _locker(_mtx);
     imguiHandler_.getSubstanceState()->insert(std::make_pair(subst.id, &subst));
+    imguiHandler_.camSettings.insert({subst.id, ImGuiCameraSettings()});
 }
-
 
 void sage::GuiLayer::setGuiWindow(GLFWwindow* win) {
     _winPtr = win;

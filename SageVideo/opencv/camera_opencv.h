@@ -2,6 +2,7 @@
 
 #include <string>
 #include <unistd.h>
+#include <thread>
 
 #include "cameras/cameras_handler.h"
 #include "image/image.h"
@@ -13,6 +14,7 @@ public:
     virtual ~CameraOpencv();
     virtual bool start() override;
     virtual bool stop() override;
+    virtual std::string getName() override;
     void selectCaptureType();
 private:
     void mainLoop();

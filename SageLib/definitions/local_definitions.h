@@ -91,30 +91,43 @@ enum class CamTypes {
     Undefined = 255
 };
 
-struct SubstanceState {
-    SubstanceState() : id(-1),
-                      fps(0),
-                      camType(sage::CamTypes::Undefined),
-                      decType(sage::DecTypes::Undefined),
-                      format(sage::ImageFormat::Undefined) {
-    }
-    uint8_t id;                //> Identificator
-    uint8_t fps;               //> Frame per second
-    sage::CamTypes camType;    //> Camera Reader Type
-    sage::DecTypes decType;    //> Camera Decoder Type
-    sage::ImageFormat format;  //> Stream format
-    sage::Size<int> size;      //> Camera Image Size
-    int64_t duration;          //> Stream duration in sec
+enum class LogLevels {
+    All = 0,
+    Error = 1,
+    Warning = 2,
+    Trace = 3,
+    Info = 4,
+    Debug = 5,
+    Critical = 6,
+};
 
-    std::string url;
-    sage::FFmpegType capTypeFFmpeg;
-    sage::OpencvType capTypeOpencv;
+struct SubstanceState {
+    SubstanceState()
+        : id(-1),
+          fps(0),
+          camType(sage::CamTypes::Undefined),
+          decType(sage::DecTypes::Undefined),
+          format(sage::ImageFormat::Undefined) {
+    }
+    uint8_t id;                      //> Identificator
+    uint8_t fps;                     //> Frame per second
+    std::string url;                 //> Camera addresss
+    sage::CamTypes camType;          //> Camera Reader Type
+    sage::DecTypes decType;          //> Camera Decoder Type
+    sage::EncTypes encType;          //> Camera Encoder Type
+    sage::FFmpegType capTypeFFmpeg;  //> Opencv capture type
+    sage::OpencvType capTypeOpencv;  //> FFmpeg capture type
+    sage::ImageFormat format;        //> Stream format
+    sage::Size<int> size;            //> Camera Image Size
+    int64_t duration;                //> Stream duration in sec
+    bool isSubstEnabled;             //> Is Substance launched
 
 };
 
 //< Signals
-extern Signal<const std::string&> sig_LogMsgSend;
-extern Signal<const SubstanceState&> sig_sendCameraState;
+#ifdef USE_IMGUI
+extern ccflow::Signal<const std::string&, const sage::LogLevels&> sigLogSend;
+#endif
 
 }  // namespace sage
 
@@ -124,6 +137,7 @@ std::string toString(sage::DecTypes decoderType);
 std::string toString(sage::OpencvType captureType);
 std::string toString(sage::FFmpegType cameraType);
 std::string toString(sage::CamTypes cameraType);
+std::string toString(sage::EncTypes encoderType);
 
 sage::CamTypes toCamType(std::string val);
 sage::DecTypes toDecType(std::string val);

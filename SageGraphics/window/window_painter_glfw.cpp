@@ -47,7 +47,6 @@ bool WindowPainterGLFW::createWindow(int argc, char** argv, sage::Size<int> size
     int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);  //> Make use of existing GLFW loader;
     Log::info("OpenGL renderer:", glGetString(GL_VENDOR), glGetString(GL_RENDERER), glGetString(GL_VERSION));
 #ifdef USE_IMGUI
-    Log::critical("Set window");
     _gui->setGuiWindow(_window);
 #endif
     glfwSetWindowUserPointer(_window, &_data);
@@ -79,10 +78,11 @@ void WindowPainterGLFW::reshapeEvent(GLFWwindow* window, int width, int height) 
 void WindowPainterGLFW::run() {
     /** @todo Find a better way of intital window shaping. **/
 #ifdef USE_IMGUI
+    std::cout << "Init" << std::endl;
     _gui->init();
 #endif
     reshapeEvent(_window, _data.width, _data.height);
-    // static uint8_t counter;
+    static uint8_t counter;
     while (!glfwWindowShouldClose(_window)) {
         if (_painter) {
             if (!_painter->_isInited) {
@@ -99,13 +99,13 @@ void WindowPainterGLFW::run() {
 #endif
             glfwPollEvents();
             glfwSwapBuffers(_window);
-            // if(_hzTimer.elapsed() > 1) {
-            //     std::cout << "Hz glfw frame: " << (int)counter << std::endl;
-            //     counter = 0; 
-            //     _hzTimer.restart();
-            // } else {
-            //     counter++;
-            // }
+            if(_hzTimer.elapsed() > 1) {
+                std::cout << "Hz glfw frame: " << (int)counter << std::endl;
+                counter = 0; 
+                _hzTimer.restart();
+            } else {
+                counter++;
+            }
         }
     }
 }

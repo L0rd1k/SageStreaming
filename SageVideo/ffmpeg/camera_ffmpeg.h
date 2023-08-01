@@ -22,6 +22,8 @@ public:
     virtual ~CameraFFmpeg();
     virtual bool start() override;
     virtual bool stop() override;
+    virtual std::string getName() override;
+
     bool prepareContext();
     bool openContext();
     bool closeContext();

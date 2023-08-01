@@ -30,15 +30,15 @@ public:
     void endDraw();
     void processDraw();
     void setGuiWindow(GLFWwindow* win);
-    void appendLog(const std::string& str);
-    void appendSubstInfo(const SubstanceState& subst);
+    void appendLog(const std::string& str, const sage::LogLevels& lvl);
     void appendSubstState(const SubstanceState& subst);
     void initFontsTexture();
     ImgGuiMainHandler* getGuiHandler();
+
 private:
     void dockMenuBar();
     void dockSettings();
-    void dockLog();
+    void updateLog();
     void dockViewport();
     void winManager();
 
@@ -46,7 +46,7 @@ private:
     ImgGuiMainHandler imguiHandler_;
 private:
     GLFWwindow* _winPtr = NULL;
-    static ImGuiLog log;
+    ImGuiLog log;
 
     std::mutex _mtx;
 };

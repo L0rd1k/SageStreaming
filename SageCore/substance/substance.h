@@ -1,15 +1,16 @@
 #pragma once
 
-#include "cameras/cameras_creator.h"
-#include "decoder/decoder.h"
-#include "encoder/encoder.h"
-#include "definitions/local_definitions.h"
-#include "utils/elapsed_timer.h"
-#include "substance_config.h"
-
-#include <thread>
 #include <future>
 #include <mutex>
+#include <thread>
+
+#include "callbacks/callback.h"
+#include "cameras/cameras_creator.h"
+#include "decoder/decoder.h"
+#include "definitions/local_definitions.h"
+#include "encoder/encoder.h"
+#include "substance_config.h"
+#include "utils/elapsed_timer.h"
 
 namespace sage {
 
@@ -27,8 +28,11 @@ public:
     void connectCallbacks();
     void updateConfig(const sage::SubstanceState& camState);
 
+    void extractConfigToState();
+
+
     const ImageQueue* getImageQueue();
-    CamerasHandler* getCamera();
+    std::shared_ptr<CamerasHandler> getCamera();
     Decoder* getDecoder();
     Encoder* getEncoder();
     sage::Scope<sage::SubstanceConfig>& getConfig();
@@ -42,29 +46,26 @@ public:
     Decoder* _decoder = nullptr;  //> Camera decoder base
     Encoder* _encoder = nullptr;  //> Camera encoder base
 
-    Signal<const SubstanceState&> sig_sendSubstInfo;  //> State signal(called every second)
-    Signal<const SubstanceState&> sig_sendSubstState;
+    ccflow::Signal<const SubstanceState&> sigSendSubstParams;
 
 private:
-    Signal<const sage::swImage&> sig_imageDecoded;    //> Decoding signal(called after reading)
-    Signal<const sage::swImage&> sig_imageEncoded;     //> Encoding signal(called after decoding)
-
+    ccflow::Signal<const sage::swImage&> sig_imageDecoded;  //> Decoding signal(called after reading)
+    ccflow::Signal<const sage::swImage&> sig_imageEncoded;  //> Encoding signal(called after decoding)
 
     sage::Scope<sage::SubstanceConfig> _subConfig;
 
     std::thread _mainThread;  //> Main substance thread
-    CamerasHandler* _camera = nullptr;              //> Camera base handler
+
+    sage::Ref<sage::CamerasHandler> _camera = nullptr;      //> Camera base handler
     sage::Scope<sage::SubstanceState> _subState = nullptr;  //> Current Substance State
-    sage::Scope<sage::SubstanceState> _camState = nullptr;      //> Currnet CameraState
 
     ElapsedTimer timer;  //> fps counter timer
-    ElapsedTimer tst;  //> fps counter timer
+    ElapsedTimer tst;    //> fps counter timer
 
-
-    uint fps;            //> current fps value
-
-    bool _isInited;      //> is substace inited;
-    bool _inProcess;     //> is substance enabled;
+    uint fps;                      //> current fps value
+    std::mutex mtx_;               //> Thread locker
+    bool _isInited;                //> is substace inited;
+    std::atomic<bool> _inProcess;  //> is substance enabled;
 };
 
 }  // namespace sage

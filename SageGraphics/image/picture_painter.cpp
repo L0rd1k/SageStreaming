@@ -29,7 +29,18 @@ void PicturePainter::createTexture() {
     glDisable(GL_TEXTURE_2D);
 }
 
+void PicturePainter::removeTexture(uint textureId) {
+    glDeleteTextures(1, &textureId + 1);
+    if(!_textures.empty()) {
+        _textures.erase(_textures.begin() + textureId);
+    }
+    if(!textures.empty()) {
+        textures.erase(textures.begin() + textureId);
+    }
+}
+
 uint8_t PicturePainter::getTexturesCount() {
+    std::lock_guard<std::mutex> locker(_mtx);
     return _textures.size();
 }
 
@@ -48,7 +59,7 @@ void PicturePainter::show(sage::Size<int> size) {
     for (auto i = 0; i < _textures.size(); i++) {
         if (_textures[i]->getLastDataFromQueue()) {
             // Log::trace("SHOW", i, _textures.size(), size.width(), size.height());
-            _textures[i]->draw(x[i], y[i], sage::Size<int>(size.width()/2, size.height()/2));
+            _textures[i]->draw(x[i], y[i], sage::Size<int>(size.width() / 2, size.height() / 2));
             // _textures[i]->draw(0, 0, sage::Size<int>(size.width(), size.height()));
         }
     }
@@ -82,6 +93,18 @@ void PicturePainter::initTextures() {
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
         _textures[itr]->setId(textures[itr]);
     }
+}
+
+
+void PicturePainter::reinitTextures() {
+    std::lock_guard<std::mutex> locker(_mtx);
+    for (uint itr = 0; itr < _textures.size(); itr++) {
+        _textures[itr]->setId(textures[itr]);
+    }
+}
+
+std::vector<std::shared_ptr<Texture>> &PicturePainter::getTextures() {
+    return _textures;
 }
 
 void PicturePainter::setDataBuffer(uint8_t textId, const ImageQueue *buffer) {

@@ -5,22 +5,22 @@ sage::CamerasCreator& sage::CamerasCreator::inst() {
     return instance;
 }
 
-sage::CamerasHandler* sage::CamerasCreator::createCamera(sage::CamTypes camType,
+std::shared_ptr<sage::CamerasHandler> sage::CamerasCreator::createCamera(sage::CamTypes camType,
                                                          std::string url,
                                                          sage::FFmpegType ffmpegType,
                                                          sage::OpencvType opencvType) {
-    CamerasHandler* camHandler = nullptr;
+    std::shared_ptr<CamerasHandler> camHandler = nullptr;
     switch (camType) {
         case sage::CamTypes::FFMPEG: {
-            camHandler = new CameraFFmpeg(url, ffmpegType);
+            camHandler = std::make_shared<CameraFFmpeg>(url, ffmpegType);
             break;
         }
         case sage::CamTypes::OPENCV: {
-            camHandler = new CameraOpencv(url, opencvType);
+            camHandler = std::make_shared<CameraOpencv>(url, opencvType);
             break;
         }
         case sage::CamTypes::GSTREAMER: {
-            camHandler = new GstreamerCamera(url);
+            camHandler = std::make_shared<GstreamerCamera>(url);
             break;
         }
         default:

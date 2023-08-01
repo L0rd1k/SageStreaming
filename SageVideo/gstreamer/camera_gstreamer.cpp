@@ -4,12 +4,16 @@ GstreamerCamera::GstreamerCamera(const std::string& url) : _url(url) {}
 
 GstreamerCamera::~GstreamerCamera() {}
 
+std::string GstreamerCamera::getName() {
+    return "Gstreamer";
+}
+
 bool GstreamerCamera::start() {
     if (isStreaming()) {
         Log::critical("Can't start camera, already playing");
         return false;
     }
-    _isStreaming = true;
+    _isStreaming.store(true);
     _gstCap = std::make_unique<gstrmr::GStreamerCapture>();
     if (!_gstCap) {
         Log::critical("Gstreamer capture wasn't inited");
@@ -23,7 +27,12 @@ bool GstreamerCamera::start() {
     return true;
 }
 
-bool GstreamerCamera::stop() {}
+bool GstreamerCamera::stop() {
+    if(_camThread.joinable()) {
+        _isStreaming.store(false);
+        _camThread.join();
+    }
+}
 
 void GstreamerCamera::mainLoop() {
     while (isStreaming()) {

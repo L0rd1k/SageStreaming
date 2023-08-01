@@ -14,3 +14,4 @@ static const ConfigFields<std::string> CFG_DEV_ENCODER_TYPE("encoder_type");
 static const ConfigFields<std::string> CFG_DEV_FFMPEG_CAPTURE_TYPE("ffmpegcap_type");
 static const ConfigFields<std::string> CFG_DEV_OPENCV_CAPTURE_TYPE("cvcap_type");
 
+static const ConfigFields<std::string> CFG_DEV_ENABLE_ON_BOOT("enable_on_boot");

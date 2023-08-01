@@ -1,34 +1,34 @@
-#pragma once 
+#pragma once
 
 #include <functional>
-#include "utils/log.h"
+#include <mutex>
+#include <memory>
 
-template<typename RET, typename ...Args>
-class Slot {
+namespace ccflow {
+
+template <class... SlotArgs>
+class Slot final {
 public:
-    Slot(std::function<RET(Args...)> callback) :
-    _callback(callback) {
-    };
-
-    template<typename Class1, typename Class2>
-    Slot(Class1 *inst, 
-        RET(Class2::*callback)(Args...)) :
-        _callback([this, inst, callback](Args&&... args) {
-            return (inst->*callback)(std::forward<Args>(args)...);
-        }) {
+    template <class SlotClass>
+    Slot(SlotClass* slotInst, void (SlotClass::*slotCall)(SlotArgs...))
+        : mtx_(new std::mutex()) {
+        callback_ = [this, slotInst, slotCall](SlotArgs&&... args) {
+            return (slotInst->*slotCall)(std::forward<SlotArgs>(args)...);
+        };
     }
 
-    virtual ~Slot() {};
-
-    virtual void operator()(Args&&... args) {
-        try {
-            _callback(std::forward<Args>(args)...);
-        } catch (std::exception &e){
-            Log() << "Error: " << e.what() << "\n";
-            throw e;
-        }
+    virtual ~Slot() {
+        delete mtx_;
     }
 
-protected:
-    std::function<void(Args...)> _callback;
+    void run(SlotArgs&&... args) {
+        std::lock_guard<std::mutex> lock(*mtx_);
+        callback_(std::forward<SlotArgs>(args)...);
+    }
+
+private:
+    std::function<void(SlotArgs...)> callback_;
+    std::mutex* mtx_;
 };
+
+}  // namespace ccflow
