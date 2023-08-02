@@ -22,6 +22,10 @@ struct ImGuiCameraSettings {
         return &isCamActive_;
     }
 
+    void setCameraActive(bool val) {
+        isCamActive_ = val;
+    }
+
     struct PlotFps {
         PlotFps()
             : fpsArr{},

@@ -23,7 +23,7 @@ public:
     void initTextures();
     void reinitTextures();
 
-    void allocateTextures();
+    void allocateTextures(size_t textSize);
     void createTexture();
     void removeTexture(uint textureId);
 

@@ -61,11 +61,6 @@ void ImgGuiMainHandler::firstRunInit(ImVec2& size) {
         ImGui::DockBuilderDockWindow(name.c_str(), camsSettings);
     }
 
-    // for (int i = WindowPainterGLFW::inst().getPicturePainter()->getTexturesCount(); i >= 1; --i) {
-    //     std::string name = "Cam" + std::to_string(i);
-    //     ImGui::DockBuilderDockWindow(name.c_str(), camsSettings);
-    // }
-
     /** Logging windows **/
     ImGuiID dockLogging = ImGui::DockBuilderSplitNode(dockspaceId_, ImGuiDir_Down, loggingWinCap, nullptr, &dockspaceId_);
     ImGui::DockBuilderDockWindow(loggingWinName.c_str(), dockLogging);
@@ -137,26 +132,28 @@ void ImgGuiMainHandler::updateSettingsWindow() {
     ImGui::Text("Cameras count: %d", WindowPainterGLFW::inst().getPicturePainter()->getTexturesCount());
     int counter = 0;
     for (const auto& elem : substanceState) {
-        updateSubstancePlot(*elem.second);
-        std::string name = "Cam" + std::to_string(counter + 1);
-        ImGui::Begin(name.c_str());
-        ImGui::BeginGroup();
-        if (ImGui::CollapsingHeader("Status", 32)) {
-            ImGui::Text("Channel ID:        %d", elem.second->id);
-            ImGui::Text("Fps:               %d", elem.second->fps);
-            ImGui::PlotLines(" ", camSettings.at(elem.second->id).plot()->fpsArr, 25, 0, NULL, 0.0f, 40.0f, ImVec2(0, 50));
-            ImGui::Text("Resolution:        %s", elem.second->size.toStr().c_str());
-            ImGui::Text("Stream duration:   %ld sec.", elem.second->duration);
-            ImGui::Text("Reader Type:       %s", toString(elem.second->camType).c_str());
-            ImGui::Text("Decoder Type:      %s", toString(elem.second->decType).c_str());
-            ImGui::Text("Decoder Codec:     %s", toString(elem.second->format).c_str());
+        if(elem.second->isSubstEnabled) {
+            updateSubstancePlot(*elem.second);
+            std::string name = "Cam" + std::to_string(counter + 1);
+            ImGui::Begin(name.c_str());
+            ImGui::BeginGroup();
+            if (ImGui::CollapsingHeader("Status", 32)) {
+                ImGui::Text("Channel ID:        %d", elem.second->id);
+                ImGui::Text("Fps:               %d", elem.second->fps);
+                ImGui::PlotLines(" ", camSettings.at(elem.second->id).plot()->fpsArr, 25, 0, NULL, 0.0f, 40.0f, ImVec2(0, 50));
+                ImGui::Text("Resolution:        %s", elem.second->size.toStr().c_str());
+                ImGui::Text("Stream duration:   %ld sec.", elem.second->duration);
+                ImGui::Text("Reader Type:       %s", toString(elem.second->camType).c_str());
+                ImGui::Text("Decoder Type:      %s", toString(elem.second->decType).c_str());
+                ImGui::Text("Decoder Codec:     %s", toString(elem.second->format).c_str());
+            }
+            if (ImGui::CollapsingHeader("Commands", 32)) {
+                ImGui::Checkbox("Aspect ratio", camSettings.at(elem.second->id).getAspectRatio());
+            }
+            ImGui::EndGroup();
+            ImGui::End();
+            ++counter;
         }
-        if (ImGui::CollapsingHeader("Commands", 32)) {
-            ImGui::Checkbox("Aspect ratio", camSettings.at(elem.second->id).getAspectRatio());
-        }
-        ImGui::EndGroup();
-        ImGui::End();
-        ++counter;
     }
     ImGui::End();
 }
@@ -185,30 +182,32 @@ void ImgGuiMainHandler::updateViewPort() {
     std::lock_guard<std::mutex> locker(mtx_);
     int elemPos = 1;
     for (const auto& elem : substanceState) {
-        std::string name = "Viewport" + std::to_string(elemPos);
-        ImGui::Begin(name.c_str());
-        ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-        if (*camSettings[elem.first].getAspectRatio()) {
-            GLint textureWidth, textureHeight;
-            glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &textureWidth);
-            glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &textureHeight);
-            // std::cout << viewportPanelSize.x << "x" <<  viewportPanelSize.y << " " << textureWidth << "x" << textureHeight << std::endl;
-            double ratioX = viewportPanelSize.x / (float)textureWidth;
-            double ratioY = viewportPanelSize.y / (float)textureHeight;
-            double ratio = (ratioX < ratioY) ? ratioX : ratioY;
-            float viewWidth = textureWidth * ratio;
-            float viewHeight = textureHeight * ratio;
-            float viewX = (viewportPanelSize.x - textureWidth * ratio) / 2;
-            float viewY = (viewportPanelSize.y - textureHeight * ratio) / 2;
-            ImGui::SetCursorPos(ImVec2{viewX, viewY});
-            ImGui::Image((void*)(intptr_t)elemPos, ImVec2{viewWidth, viewHeight});
-        } else {
-            float x = viewportPanelSize.x;
-            float y = viewportPanelSize.y;
-            ImGui::Image((void*)(intptr_t)elemPos, ImVec2{x, y});
+        if(elem.second->isSubstEnabled) {
+            std::string name = "Viewport" + std::to_string(elemPos);
+            ImGui::Begin(name.c_str());
+            ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+            if (*camSettings[elem.first].getAspectRatio()) {
+                GLint textureWidth, textureHeight;
+                glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &textureWidth);
+                glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &textureHeight);
+                // std::cout << viewportPanelSize.x << "x" <<  viewportPanelSize.y << " " << textureWidth << "x" << textureHeight << std::endl;
+                double ratioX = viewportPanelSize.x / (float)textureWidth;
+                double ratioY = viewportPanelSize.y / (float)textureHeight;
+                double ratio = (ratioX < ratioY) ? ratioX : ratioY;
+                float viewWidth = textureWidth * ratio;
+                float viewHeight = textureHeight * ratio;
+                float viewX = (viewportPanelSize.x - textureWidth * ratio) / 2;
+                float viewY = (viewportPanelSize.y - textureHeight * ratio) / 2;
+                ImGui::SetCursorPos(ImVec2{viewX, viewY});
+                ImGui::Image((void*)(intptr_t)elemPos, ImVec2{viewWidth, viewHeight});
+            } else {
+                float x = viewportPanelSize.x;
+                float y = viewportPanelSize.y;
+                ImGui::Image((void*)(intptr_t)elemPos, ImVec2{x, y});
+            }
+            ImGui::End();
+            elemPos++;
         }
-        ImGui::End();
-        elemPos++;
     }
 }
 
@@ -252,7 +251,7 @@ void ImgGuiMainHandler::updateManager() {
                     ImGui::PopID();
                 }
                 int row = 0;
-                for (const auto& elem : substanceState) {
+                for (auto& elem : substanceState) {
                     ImGui::PushID(std::to_string(elem.second->id).c_str());
                     ImGui::TableNextRow(ImGuiTableRowFlags_None, 0.0f);
                     for (auto cols = 0; cols < COLUMNS_COUNT; ++cols) {
@@ -286,8 +285,9 @@ void ImgGuiMainHandler::updateManager() {
                                     }
                                     case 5: {
                                         if (ImGui::Button("Remove")) {
-                                            sig_removeCamera.emit(substanceState[row]->id);
+                                            sig_removeCamera.emit(elem.first);
                                             substanceState.erase(elem.first);
+                                            camSettings.erase(elem.first);
                                         }
                                         break;
                                     }
@@ -319,7 +319,7 @@ void ImgGuiMainHandler::updateManager() {
         camState.decType = static_cast<sage::DecTypes>(decoderType_);
         camState.capTypeFFmpeg = static_cast<sage::FFmpegType>(ffmpegCaptureType_);
         camState.capTypeOpencv = static_cast<sage::OpencvType>(opencvCaptureType_);
-
+        camState.isSubstEnabled = true;
         sig_createCamera.emit(camState);
     }
     ImGui::End();

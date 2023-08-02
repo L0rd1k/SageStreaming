@@ -60,6 +60,7 @@ void sage::Substance::extractConfigToState() {
         _subState->decType = getConfig()->getCamDecoderType();
         _subState->id = getConfig()->getId();
         _subState->url = getConfig()->getCamUrl();
+        _subState->isSubstEnabled = getConfig()->isSubstEnabled();
     }
 }
 

@@ -75,6 +75,8 @@ private:
     std::vector<sage::Scope<void*>> global_callbacks;
 
     std::mutex mtx_;
+
+    int activeSubstSize = 0;
 };
 
 }  // namespace sage

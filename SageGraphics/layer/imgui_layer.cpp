@@ -80,6 +80,8 @@ void sage::GuiLayer::appendSubstState(const SubstanceState& subst) {
     std::lock_guard<std::mutex> _locker(_mtx);
     imguiHandler_.getSubstanceState()->insert(std::make_pair(subst.id, &subst));
     imguiHandler_.camSettings.insert({subst.id, ImGuiCameraSettings()});
+    imguiHandler_.camSettings[subst.id].setCameraActive(subst.isSubstEnabled);
+
 }
 
 void sage::GuiLayer::setGuiWindow(GLFWwindow* win) {

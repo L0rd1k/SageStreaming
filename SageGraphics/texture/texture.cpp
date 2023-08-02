@@ -12,6 +12,10 @@ void Texture::setId(GLuint id) {
     _id = id;
 }
 
+uint Texture::getId() {
+    return _id;
+}
+
 void Texture::initBuffer(const ImageQueue* data) {
     Log::warning("Init buffer");
     _queueData = data;

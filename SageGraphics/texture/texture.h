@@ -21,6 +21,7 @@ public:
     Texture(GLuint id);
     virtual ~Texture();
     void setId(GLuint id);
+    uint getId();
     void draw(int x, int y, sage::Size<int> sz);
     void initBuffer(const ImageQueue* data);
     bool getLastDataFromQueue();
