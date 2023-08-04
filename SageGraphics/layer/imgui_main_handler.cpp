@@ -280,6 +280,7 @@ void ImgGuiMainHandler::updateManager() {
                                     case 4: {
                                         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetColumnWidth() - 30);
                                         if (ImGui::Checkbox("", camSettings[elem.second->id].getCameraActivity())) {
+                                            sig_activateCamera.emit(elem.first, camSettings[elem.second->id].getCameraActivity());                                           
                                         }
                                         break;
                                     }

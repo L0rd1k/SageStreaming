@@ -34,7 +34,9 @@ public:
     bool isFirstLaunch_ = true;
 
     ccflow::Signal<const sage::SubstanceState&> sig_createCamera;
+    
     ccflow::Signal<const uint8_t&> sig_removeCamera;
+    ccflow::Signal<const uint8_t&, bool*> sig_activateCamera;
     ccflow::Signal<> sig_stopSubstances;
     ccflow::Signal<> sig_runSubstances;
 

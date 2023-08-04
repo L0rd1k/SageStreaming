@@ -45,6 +45,8 @@ public:
 
     void removeSingleSubstance(const uint8_t& id);
 
+    void activateSubstance(const uint8_t& id, bool*);
+
     /** @brief Run created substances. **/
     void runSubstances();
 

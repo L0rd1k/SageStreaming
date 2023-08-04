@@ -45,11 +45,35 @@ public:
         }
     }
 
+    void remove(int8_t substanceId, size_t nodeCount) {
+        std::cout << "INI ERASE: " << (int)substanceId << " " << nodeCount << std::endl;
+
+        if(substanceId >= nodeCount) {
+            substanceId-=counterPadding;
+        }
+
+        _ini_pt.erase(selectGroup(substanceId));
+
+        std::cout << "INI ERASE 2: " << (int)substanceId << " " << nodeCount << std::endl;
+
+        int8_t nextIdx = substanceId + 1;
+        for(int8_t indx = substanceId; indx < nodeCount; indx++) {
+            std::cout << (int)indx << " " << (int)nextIdx << std::endl;
+            _ini_pt.add_child(selectGroup(indx), _ini_pt.get_child(selectGroup(nextIdx)));
+            _ini_pt.erase(selectGroup(nextIdx)); 
+            nextIdx++;
+        } 
+        counterPadding++;
+        boost::property_tree::ini_parser::write_ini(_iniFilePath, _ini_pt);
+    }
+
 private:
     std::string selectGroup(int8_t& substanceId);
     std::string getMainGroup();
     std::string _iniFilePath;
     boost::property_tree::ptree _ini_pt;
+
+    int counterPadding = 0;
 };
 
 }  // namespace sage

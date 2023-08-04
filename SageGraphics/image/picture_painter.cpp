@@ -11,41 +11,27 @@ PicturePainter::~PicturePainter() {
 
 void PicturePainter::allocateTextures(size_t textSize) {
     std::lock_guard<std::mutex> locker(_mtx);
-    std::cout << "Allocate texture : " << textSize << std::endl; 
     _textures.assign(textSize, nullptr);
     for (auto itr = 0; itr < textSize; itr++) {
         _textures[itr] = std::make_shared<Texture>(-1);
     }
-    std::cout << "Texture size: " << _textures.size() << std::endl;
 }
 
 void PicturePainter::createTexture() {
     std::lock_guard<std::mutex> locker(_mtx);
     glEnable(GL_TEXTURE_2D);
-    Log::critical("Tsize:", _textures.size() + 1);
+    Log::critical("Tsize:", _textures.size(), "_Tsize:", textures.size());
     textures.push_back(_textures.size() + 1);
     _textures.push_back(std::make_shared<Texture>(textures.back()));
-    glGenTextures(1, &textures.back());
     glBindTexture(GL_TEXTURE_2D, textures.back());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
     glDisable(GL_TEXTURE_2D);
+    Log::critical("New Tsize:", _textures.size(), "New _Tsize:", textures.size());
 }
 
 void PicturePainter::removeTexture(uint textureId) {
-    // glEnable(GL_TEXTURE_2D);
-    // glDeleteTextures(1, &textureId + 1);
-    // if(!_textures.empty()) {
-    //     _textures.erase(_textures.begin() + textureId);
-    // }
-    // if(!textures.empty()) {
-    //     textures.pop_back();
-    // }
-    // glDisable(GL_TEXTURE_2D);
-
-
-
     glEnable(GL_TEXTURE_2D);
     glDeleteTextures(_textures.size(), textures.data());
     if(!_textures.empty()) {
@@ -117,19 +103,16 @@ void PicturePainter::initTextures() {
 
 void PicturePainter::reinitTextures() {
     std::lock_guard<std::mutex> locker(_mtx);
-    std::cout << "SIZE: " << _textures.size() << " " << textures.size() << std::endl;
     glEnable(GL_TEXTURE_2D);
     textures.assign(_textures.size(), 0);
     std::iota(std::begin(textures), std::end(textures), 1);
     for (uint itr = 0; itr < _textures.size(); itr++) {
-        // std::cout << (int)textures[itr] << std::endl;
         glBindTexture(GL_TEXTURE_2D, textures[itr]);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
         _textures[itr]->setId(textures[itr]);
     }
-
     glDisable(GL_TEXTURE_2D);
 }
 
