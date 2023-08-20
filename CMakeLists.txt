@@ -80,6 +80,7 @@ if(USE_IMGUI)
     set(USE_GLFW ON)
     set(USE_GLUT OFF)
     set(USE_IMGUI ON)
+    add_subdirectory(3rdParty/imgui)
     add_definitions(-DUSE_IMGUI)
 endif()
 

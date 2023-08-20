@@ -1,10 +1,13 @@
 #include "imgui_layer.h"
 
 #define IMGUI_IMPL_API
-#include "../3rdParty/imgui/imgui_internal.h"
+#include "imgui_internal.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "window/window_painter_glfw.h"
+# include "imgui_node/imgui_node_editor.h"
+
+static ax::NodeEditor::EditorContext* g_Context = nullptr;
 
 void sage::GuiLayer::init() {
     IMGUI_CHECKVERSION();
@@ -21,6 +24,12 @@ void sage::GuiLayer::init() {
     }
     ImGui_ImplGlfw_InitForOpenGL(_winPtr, true);
     ImGui_ImplOpenGL3_Init("#version 300 es");
+
+    ax::NodeEditor::Config config;
+    config.SettingsFile = "Simple.json";
+    g_Context = ax::NodeEditor::CreateEditor(&config);
+
+
 }
 
 void sage::GuiLayer::detach() {
@@ -58,6 +67,27 @@ void sage::GuiLayer::endDraw() {
 }
 
 void sage::GuiLayer::processDraw() {
+    ImGui::Separator();
+    
+
+    ax::NodeEditor::SetCurrentEditor(g_Context);
+    ax::NodeEditor::Begin("My Editor", ImVec2(0.0, 0.0f));
+    int uniqueId = 1;
+    // Start drawing nodes.
+    ax::NodeEditor::BeginNode(uniqueId++);
+        ImGui::Text("Node A");
+        ax::NodeEditor::BeginPin(uniqueId++, ax::NodeEditor::PinKind::Input);
+            ImGui::Text("-> In");
+        ax::NodeEditor::EndPin();
+        ImGui::SameLine();
+        ax::NodeEditor::BeginPin(uniqueId++, ax::NodeEditor::PinKind::Output);
+            ImGui::Text("Out ->");
+        ax::NodeEditor::EndPin();
+    ax::NodeEditor::EndNode();
+    ax::NodeEditor::End();
+    ax::NodeEditor::SetCurrentEditor(nullptr);
+
+
     imguiHandler_.mainHandler();
     updateLog();
 }

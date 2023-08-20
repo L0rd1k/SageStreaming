@@ -49,6 +49,7 @@ private:
     ImGuiLog log;
 
     std::mutex _mtx;
+
 };
 
 }  // namespace sage

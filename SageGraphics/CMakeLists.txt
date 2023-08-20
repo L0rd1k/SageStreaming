@@ -12,6 +12,7 @@ include_directories(.)
 include_directories(../SageLib)
 include_directories(../SageVideo)
 include_directories(../3rdParty/glad)
+include_directories(../3rdParty/imgui)
 
 if(USE_GLFW)
     include_directories(../3rdParty/glfw)
@@ -67,18 +68,23 @@ if(USE_IMGUI)
         ./layer/imgui_main_handler.cpp
         ./imgui/imgui_impl_opengl3.cpp
         ./imgui/imgui_impl_opengl3.h
-        ../3rdParty/imgui/imconfig.h
-        ../3rdParty/imgui/imgui_demo.cpp
-        ../3rdParty/imgui/imgui_draw.cpp
-        ../3rdParty/imgui/imgui_tables.cpp
-        ../3rdParty/imgui/imgui_internal.h
-        ../3rdParty/imgui/imgui_widgets.cpp
-        ../3rdParty/imgui/imgui.cpp
-        ../3rdParty/imgui/imgui.h
-        ../3rdParty/imgui/imstb_rectpack.h
-        ../3rdParty/imgui/imstb_textedit.h
-        ../3rdParty/imgui/imstb_truetype.h
-    )
+
+        ./imgui_node/crude_json.cpp
+        ./imgui_node/crude_json.h
+        ./imgui_node/imgui_bezier_math.h
+        ./imgui_node/imgui_bezier_math.inl
+        ./imgui_node/imgui_canvas.cpp
+        ./imgui_node/imgui_canvas.h
+        ./imgui_node/imgui_extra_math.h
+        ./imgui_node/imgui_extra_math.inl
+        ./imgui_node/imgui_node_editor_api.cpp
+        ./imgui_node/imgui_node_editor_internal.h
+        ./imgui_node/imgui_node_editor_internal.inl
+        ./imgui_node/imgui_node_editor.cpp
+        ./imgui_node/imgui_node_editor.h
+
+        )
+    list(APPEND LIBRARIES ImGui)
 endif()
 
 if(USE_GLUT AND USE_IMGUI)
