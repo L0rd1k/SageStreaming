@@ -18,6 +18,7 @@ public:
     void setOpenCVCaptureType(const sage::OpencvType type);
     void setCamUrl(const std::string url);
     void setId(short id);
+    void setConfigId(short id);
     void setSubstEnabled(bool val);
 
     const sage::CamTypes getCamReaderType();
@@ -27,11 +28,13 @@ public:
     const sage::OpencvType getOpenCVCaptureType();
     const std::string getCamUrl();
     const short getId();
+    const short getConfigId();
     const bool isSubstEnabled();
 
     void saveToConfigFile(const sage::SubstanceState& camState);
 private:
     short _id;
+    short _configId;
     sage::CamTypes _camType;        //> Camera Reader Type
     sage::EncTypes _encType;        //> Camera Encoder Type
     sage::DecTypes _decType;        //> Camera Decoder Type

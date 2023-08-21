@@ -1,6 +1,6 @@
 #include "substance_config.h"
 
-sage::SubstanceConfig::SubstanceConfig(short id) : _id(id) {}
+sage::SubstanceConfig::SubstanceConfig(short id) : _id(id), _configId(id) {}
 
 const bool sage::SubstanceConfig::init() {
     _camType = toCamType(sage::IniParser::inst().get(CFG_DEV_READER_TYPE, _id));
@@ -45,6 +45,10 @@ void sage::SubstanceConfig::setId(short id) {
     _id = id;
 }
 
+void sage::SubstanceConfig::setConfigId(short id) {
+    _configId = id;
+}
+
 void sage::SubstanceConfig::setSubstEnabled(bool val) {
     _isEnableOnBoot = val;
 }
@@ -77,6 +81,10 @@ const short sage::SubstanceConfig::getId() {
     return _id;
 }
 
+const short sage::SubstanceConfig::getConfigId() {
+    return _configId;
+}
+
 const bool sage::SubstanceConfig::isSubstEnabled() {
     return _isEnableOnBoot;
 }
@@ -84,11 +92,11 @@ const bool sage::SubstanceConfig::isSubstEnabled() {
 void sage::SubstanceConfig::saveToConfigFile(const sage::SubstanceState& camState) {
     sage::IniParser::inst().set(CFG_SUBSTANCE_COUNT, sage::IniParser::inst().get(CFG_SUBSTANCE_COUNT) + 1);
 
-    sage::IniParser::inst().set(CFG_DEV_NAME, camState.url, _id);
-    sage::IniParser::inst().set(CFG_DEV_READER_TYPE, toString(camState.camType), _id);
-    sage::IniParser::inst().set(CFG_DEV_DECODER_TYPE, toString(camState.decType), _id);
-    sage::IniParser::inst().set(CFG_DEV_ENCODER_TYPE, toString(camState.encType), _id);
-    sage::IniParser::inst().set(CFG_DEV_FFMPEG_CAPTURE_TYPE, toString(camState.capTypeFFmpeg), _id);
-    sage::IniParser::inst().set(CFG_DEV_OPENCV_CAPTURE_TYPE, toString(camState.capTypeOpencv), _id);
-    sage::IniParser::inst().set(CFG_DEV_ENABLE_ON_BOOT, std::to_string(camState.isSubstEnabled), _id);
+    sage::IniParser::inst().set(CFG_DEV_NAME, camState.url, _configId);
+    sage::IniParser::inst().set(CFG_DEV_READER_TYPE, toString(camState.camType), _configId);
+    sage::IniParser::inst().set(CFG_DEV_DECODER_TYPE, toString(camState.decType), _configId);
+    sage::IniParser::inst().set(CFG_DEV_ENCODER_TYPE, toString(camState.encType), _configId);
+    sage::IniParser::inst().set(CFG_DEV_FFMPEG_CAPTURE_TYPE, toString(camState.capTypeFFmpeg), _configId);
+    sage::IniParser::inst().set(CFG_DEV_OPENCV_CAPTURE_TYPE, toString(camState.capTypeOpencv), _configId);
+    sage::IniParser::inst().set(CFG_DEV_ENABLE_ON_BOOT, std::to_string(camState.isSubstEnabled), _configId);
 }

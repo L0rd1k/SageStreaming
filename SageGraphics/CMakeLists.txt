@@ -68,7 +68,6 @@ if(USE_IMGUI)
         ./layer/imgui_main_handler.cpp
         ./imgui/imgui_impl_opengl3.cpp
         ./imgui/imgui_impl_opengl3.h
-
         ./imgui_node/crude_json.cpp
         ./imgui_node/crude_json.h
         ./imgui_node/imgui_bezier_math.h

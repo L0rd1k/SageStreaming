@@ -31,10 +31,17 @@ void sage::Core::stopSubstances() {
 }
 
 void sage::Core::createSingleSubstance(const sage::SubstanceState& camState) {
+    std::lock_guard<std::mutex> lock(mtx_);
     uint8_t new_id = sage::IniParser::inst().get(CFG_SUBSTANCE_COUNT);
+    if (!_activeSubstns.empty()) {
+        if (new_id <= std::prev(_activeSubstns.end())->first) {
+            new_id = std::prev(_activeSubstns.end())->first + 1;
+        }
+    }
     Log::info("Create new substance: ", (int)new_id);
     _activeSubstns[new_id] = std::make_unique<sage::Substance>(new_id, true);
     // Extract substance config data
+    _activeSubstns[new_id]->getConfig()->setConfigId(sage::IniParser::inst().get(CFG_SUBSTANCE_COUNT));
     _activeSubstns[new_id]->updateConfig(camState);
     _activeSubstns[new_id]->extractConfigToState();
     _activeSubstns[new_id]->initSubstance();
@@ -50,31 +57,42 @@ void sage::Core::createSingleSubstance(const sage::SubstanceState& camState) {
 }
 
 void sage::Core::activateSubstance(const uint8_t& id, bool* isActive) {
-    if(*isActive) {
-        std::cout << (int)id << " - Active: " << *isActive << std::endl; 
+    if (*isActive) {
+        std::cout << (int)id << " - Active: " << *isActive << std::endl;
     } else {
-        std::cout << (int)id << " - Not Active: " << *isActive << std::endl; 
+        std::cout << (int)id << " - Not Active: " << *isActive << std::endl;
     }
-
 }
 
 void sage::Core::removeSingleSubstance(const uint8_t& removeId) {
     std::lock_guard<std::mutex> lock(mtx_);
     uint8_t id = removeId;
+    uint8_t configId = _activeSubstns[id]->getConfig()->getConfigId();
+    std::cout << "CONFIG ID" << (int)configId << std::endl;
     bool onBootEnabled = _activeSubstns[id]->getConfig()->isSubstEnabled();
     _activeSubstns[id]->disableSubstance();  // Stop substance;
-    if(onBootEnabled) {
-        _pic->removeTexture(id);                 // Remove texture
+    if (onBootEnabled) {
+        _pic->removeTexture(id);  // Remove texture
     }
-    _activeSubstns.erase(id);                // Remove substance
-    if(onBootEnabled) {
+
+
+    _activeSubstns.erase(id);  // Remove substance
+    if (onBootEnabled) {
         _pic->allocateTextures(_activeSubstns.size());
         _pic->reinitTextures();
         connectCamBufToWindow();
     }
     sage::IniParser::inst().set(CFG_SUBSTANCE_COUNT, sage::IniParser::inst().get(CFG_SUBSTANCE_COUNT) - 1);
-    sage::IniParser::inst().remove(removeId, _activeSubstns.size());
-    Log::info("Substance removed:", (int)id);
+
+    sage::IniParser::inst().remove(configId, _activeSubstns.size());
+
+    for(auto &sbst : _activeSubstns) {
+        if(sbst.first > id) {
+            sbst.second->getConfig()->setConfigId( sbst.second->getConfig()->getConfigId() - 1);
+        }
+    }
+
+    Log::info("Substance removed:", (int)id, (int)configId);
 }
 
 void sage::Core::createWindow(int argc, char** argv) {
@@ -116,7 +134,6 @@ void sage::Core::enableCallbacks() {
     connect(&_window->getGuiLayer()->getGuiHandler()->sig_createCamera, this, &sage::Core::createSingleSubstance);
     connect(&_window->getGuiLayer()->getGuiHandler()->sig_removeCamera, this, &sage::Core::removeSingleSubstance);
     connect(&_window->getGuiLayer()->getGuiHandler()->sig_activateCamera, this, &sage::Core::activateSubstance);
-
 
     connect(&_window->getGuiLayer()->getGuiHandler()->sig_stopSubstances, this, &sage::Core::stopSubstances);
     connect(&_window->getGuiLayer()->getGuiHandler()->sig_runSubstances, this, &sage::Core::runSubstances);

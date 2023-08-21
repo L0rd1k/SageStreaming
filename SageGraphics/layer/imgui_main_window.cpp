@@ -1,13 +1,12 @@
-#include "imgui_layer.h"
+#include "imgui_main_window.h"
 
 #define IMGUI_IMPL_API
+#include "imgui_internal.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
-#include "imgui_internal.h"
-#include "imgui_node/imgui_node_editor.h"
 #include "window/window_painter_glfw.h"
 
-void sage::GuiLayer::init() {
+void sage::GuiMainWindow::init() {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
@@ -24,27 +23,27 @@ void sage::GuiLayer::init() {
     ImGui_ImplOpenGL3_Init("#version 300 es");
 }
 
-void sage::GuiLayer::detach() {
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
+void sage::GuiMainWindow::detach() {
+    // ImGui::DestroyContext();
+    // ImGui_ImplGlfw_Shutdown();
+    // ImGui_ImplOpenGL3_Shutdown();
 }
 
-void sage::GuiLayer::beginDraw() {
+void sage::GuiMainWindow::beginDraw() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     // Recreate fonts after adding new texture.
-    if (getGuiHandler()->isFirstLaunch_) {
+    if(getGuiHandler()->isFirstLaunch_) {
         ImGui_ImplOpenGL3_CreateFontsTexture();
     }
     ImGui::NewFrame();
 }
 
-void sage::GuiLayer::initFontsTexture() {
+void sage::GuiMainWindow::initFontsTexture() {
     ImGui_ImplOpenGL3_CreateFontsTexture();
 }
 
-void sage::GuiLayer::endDraw() {
+void sage::GuiMainWindow::endDraw() {
     ImGuiIO& io = ImGui::GetIO();
     auto size = WindowPainterGLFW::inst()._winSize;
     io.DisplaySize = ImVec2(size.width(), size.height());
@@ -58,30 +57,30 @@ void sage::GuiLayer::endDraw() {
     }
 }
 
-void sage::GuiLayer::processDraw() {
+void sage::GuiMainWindow::processDraw() {
     imguiHandler_.mainHandler();
     updateLog();
 }
 
-ImgGuiMainHandler* sage::GuiLayer::getGuiHandler() {
+ImgGuiMainHandler* sage::GuiMainWindow::getGuiHandler() {
     return &imguiHandler_;
 }
 
-void sage::GuiLayer::updateLog() {
+void sage::GuiMainWindow::updateLog() {
     log.draw(loggingWinName.c_str());
 }
 
-void sage::GuiLayer::appendLog(const std::string& str, const sage::LogLevels& lvl) {
+void sage::GuiMainWindow::appendLog(const std::string& str, const sage::LogLevels& lvl) {
     log.addLog(str, lvl);
 }
 
-void sage::GuiLayer::appendSubstState(const SubstanceState& subst) {
+void sage::GuiMainWindow::appendSubstState(const SubstanceState& subst) {
     std::lock_guard<std::mutex> _locker(_mtx);
     imguiHandler_.getSubstanceState()->insert(std::make_pair(subst.id, &subst));
     imguiHandler_.camSettings.insert({subst.id, ImGuiCameraSettings()});
     imguiHandler_.camSettings[subst.id].setCameraActive(subst.isSubstEnabled);
 }
 
-void sage::GuiLayer::setGuiWindow(GLFWwindow* win) {
+void sage::GuiMainWindow::setGuiWindow(GLFWwindow* win) {
     _winPtr = win;
 }

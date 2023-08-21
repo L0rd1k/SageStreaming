@@ -36,7 +36,7 @@ public:
         if(!fieldName.name().empty()) {
             std::string group = (substanceId != -1) ? selectGroup(substanceId) : getMainGroup();
             try {
-                std::cout << group << " " <<  fieldName.name() << " " << value << std::endl;
+                // std::cout << group << " " <<  fieldName.name() << " " << value << std::endl;
                 _ini_pt.put(group + "." + fieldName.name(), value);
                 boost::property_tree::ini_parser::write_ini(_iniFilePath, _ini_pt);
             } catch(std::exception& msg) {
@@ -46,16 +46,14 @@ public:
     }
 
     void remove(int8_t substanceId, size_t nodeCount) {
-        std::cout << "INI ERASE: " << (int)substanceId << " " << nodeCount << std::endl;
-
         if(substanceId >= nodeCount) {
+            if(nodeCount == 0) {
+                std::cout << (int)substanceId << std::endl;
+                _ini_pt.erase(selectGroup(substanceId)); 
+            }
             substanceId-=counterPadding;
         }
-
         _ini_pt.erase(selectGroup(substanceId));
-
-        std::cout << "INI ERASE 2: " << (int)substanceId << " " << nodeCount << std::endl;
-
         int8_t nextIdx = substanceId + 1;
         for(int8_t indx = substanceId; indx < nodeCount; indx++) {
             std::cout << (int)indx << " " << (int)nextIdx << std::endl;
