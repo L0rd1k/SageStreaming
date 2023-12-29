@@ -1,6 +1,8 @@
 #include "window_painter_glfw.h"
 
 sage::Size<int> WindowPainterGLFW::_winSize;
+sage::Size<int> WindowPainterGLFW::_textSize;
+
 
 WindowPainterGLFW::WindowPainterGLFW() : WindowPainterBase() {
 #ifdef USE_IMGUI
@@ -30,17 +32,32 @@ sage::GuiLayer* WindowPainterGLFW::getGuiLayer() {
 }
 #endif
 
+void WindowPainterGLFW::extractMonitorSize(uint32_t& height, uint32_t& width) {
+    int count;
+    GLFWmonitor** monitors = glfwGetMonitors(&count);
+    std::cout << "Monitor count:" << count << std::endl;
+    for(uint8_t i = 0; i < count; i++) {
+        GLFWmonitor* mon = monitors[i];
+        const GLFWvidmode* mode = glfwGetVideoMode(mon);
+        if(mode->width > width) {
+            width = mode->width;
+            height = mode->height;
+        }
+    }
+}
+
 bool WindowPainterGLFW::createWindow(int argc, char** argv, sage::Size<int> size) {
-    _winSize = size;
-    _data.height = size.height();
-    _data.width = size.width();
     if (!_isInited) {
         if (!glfwInit()) {
             Log::error("GLFW initialization error.");
         }
+        extractMonitorSize(_data.height, _data.width);
         _isInited = true;
     }
-    _window = glfwCreateWindow(size.width(), size.height(), "SageStreaming", nullptr, nullptr);
+
+    _winSize = sage::Size<int>(_data.width, _data.height);
+    _window = glfwCreateWindow(_data.width, _data.height, "SageStreaming", nullptr, nullptr);
+    // _window = glfwCreateWindow(size.width(), size.height(), "SageStreaming", nullptr, nullptr);
     /** Fullscreen mode. **/
     // _window = glfwCreateWindow(size.width(), size.height(),"SageStreaming", glfwGetPrimaryMonitor(), nullptr);
     glfwMakeContextCurrent(_window);
@@ -55,24 +72,31 @@ bool WindowPainterGLFW::createWindow(int argc, char** argv, sage::Size<int> size
 }
 
 void WindowPainterGLFW::reshapeEvent(GLFWwindow* window, int width, int height) {
-    GLint textureWidth, textureHeight;
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &textureWidth);
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &textureHeight);
-    double ratioX = width / (float)textureWidth;
-    double ratioY = height / (float)textureHeight;
-    double ratio = (ratioX < ratioY) ? ratioX : ratioY;
-    double viewWidth = textureWidth * ratio;
-    double viewHeight = textureHeight * ratio;
-    double viewX = (width - textureWidth * ratio) / 2;
-    double viewY = (height - textureHeight * ratio) / 2;
-    glViewport(viewX, viewY, viewWidth, viewHeight);
+    _winSize.setHeight(height);
+    _winSize.setWidth(width);
+    glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    _winSize.setWidth(width);
-    _winSize.setHeight(height);
     glOrtho(0, width, height, 0, -1, 1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    _painter->retrieveTextureSize(_textSize);
+
+    // double ratioX = width / (float)textureWidth;
+    // double ratioY = height / (float)textureHeight;
+    // double ratio = (ratioX < ratioY) ? ratioX : ratioY;
+    // double viewWidth = textureWidth * ratio;
+    // double viewHeight = textureHeight * ratio;
+    // double viewX = (width - textureWidth * ratio) / 2;
+    // double viewY = (height - textureHeight * ratio) / 2;
+    // glViewport(viewX, viewY, viewWidth, viewHeight);
+    // glMatrixMode(GL_PROJECTION);
+    // glLoadIdentity();
+    // _winSize.setWidth(width);
+    // _winSize.setHeight(height);
+    // glOrtho(0, width, height, 0, -1, 1);
+    // glMatrixMode(GL_MODELVIEW);
+    // glLoadIdentity();
 }
 
 void WindowPainterGLFW::run() {
@@ -93,7 +117,7 @@ void WindowPainterGLFW::run() {
             _gui->beginDraw();
             _gui->processDraw();
 #endif      
-            _painter->show(_winSize);
+            _painter->show(_winSize, _textSize);
 #ifdef USE_IMGUI
             _gui->endDraw();
 #endif

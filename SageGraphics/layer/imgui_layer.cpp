@@ -1,6 +1,8 @@
 #include "imgui_layer.h"
 
 #define IMGUI_IMPL_API
+#include "IconsFontAwesome4.h"
+#include "IconsMaterialDesign.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "imgui_internal.h"
@@ -20,6 +22,20 @@ void sage::GuiLayer::init() {
         style.WindowRounding = 0.0f;
         style.Colors[ImGuiCol_WindowBg].w = 1.0f;
     }
+
+    // ImFontConfig config;
+    // config.MergeMode = true;
+    // config.PixelSnapH = true;
+    // static const ImWchar icons_ranges_fontawesome[] = {ICON_MIN_FA, ICON_MAX_FA, 0};
+    // io.Fonts->AddFontFromFileTTF("/home/ilya/Projects/SageStreaming/SageGraphics/layer/fontawesome-webfont.ttf", 16.0f,
+    //                              &config, icons_ranges_fontawesome);
+    
+    
+    // ImFontConfig config;
+    // config.PixelSnapH = true;
+    // static const ImWchar icons_ranges_googleicon[] = {ICON_MIN_MD, ICON_MAX_MD, 0};
+    // io.Fonts->AddFontFromFileTTF(FONT_ICON_FILE_NAME_MD, 16.0f, &config, icons_ranges_googleicon);
+
     ImGui_ImplGlfw_InitForOpenGL(_winPtr, true);
     ImGui_ImplOpenGL3_Init("#version 300 es");
 }
@@ -60,7 +76,7 @@ void sage::GuiLayer::endDraw() {
 
 void sage::GuiLayer::processDraw() {
     imguiHandler_.mainHandler();
-    updateLog();
+    // updateLog();
 }
 
 ImgGuiMainHandler* sage::GuiLayer::getGuiHandler() {

@@ -59,8 +59,22 @@ void sage::Core::createSingleSubstance(const sage::SubstanceState& camState) {
 void sage::Core::activateSubstance(const uint8_t& id, bool* isActive) {
     if (*isActive) {
         std::cout << (int)id << " - Active: " << *isActive << std::endl;
+        _activeSubstns[id]->getConfig()->setSubstEnabled(true);
     } else {
         std::cout << (int)id << " - Not Active: " << *isActive << std::endl;
+        activeSubstSize--;
+        _activeSubstns[id]->getConfig()->setSubstEnabled(false);
+        _pic->clearTextures();  // Remove texture
+        _pic->allocateTextures(activeSubstSize);
+        _pic->reinitTextures();
+
+
+
+        // _activeSubstns[id]->disableSubstance();  // Stop substance;
+        // _pic->clearTextures();  // Remove texture
+        // _pic->allocateTextures(_activeSubstns.size() - 1);
+        // _pic->reinitTextures();
+        connectCamBufToWindow();
     }
 }
 
@@ -72,10 +86,8 @@ void sage::Core::removeSingleSubstance(const uint8_t& removeId) {
     bool onBootEnabled = _activeSubstns[id]->getConfig()->isSubstEnabled();
     _activeSubstns[id]->disableSubstance();  // Stop substance;
     if (onBootEnabled) {
-        _pic->removeTexture(id);  // Remove texture
+        _pic->clearTextures();  // Remove texture
     }
-
-
     _activeSubstns.erase(id);  // Remove substance
     if (onBootEnabled) {
         _pic->allocateTextures(_activeSubstns.size());
@@ -101,7 +113,9 @@ void sage::Core::createWindow(int argc, char** argv) {
 #elif USE_GLFW
     _window = std::make_unique<WindowPainterGLFW>();
 #endif
-    _window->createWindow(argc, argv, sage::Size<int>(1920, 1080));  //> Create window context.
+    // _window->createWindow(argc, argv, sage::Size<int>(1920, 1080));  //> Create window context.
+    _window->createWindow(argc, argv, sage::Size<int>(0, 0));  //> Create window context.
+
     _pic = std::make_shared<PicturePainter>(activeSubstSize);        //> Create textures in painter for every substance.
     _window->setPicturePainter(_pic);                                //> Set current picture painter.
 }

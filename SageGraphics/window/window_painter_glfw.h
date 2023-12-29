@@ -21,13 +21,17 @@ public:
     void run() override;
     void close();
     static WindowPainterGLFW& inst();
+    
     static sage::Size<int> _winSize;
+    static sage::Size<int> _textSize;
+
     GLFWwindow* getWindow();
 #ifdef USE_IMGUI
     sage::GuiLayer* getGuiLayer() override;
 #endif
 private:
     void setVSync(bool enable);
+    void extractMonitorSize(uint32_t& height, uint32_t& width);
 private:
 #ifdef USE_IMGUI
     sage::GuiLayer* _gui = nullptr;

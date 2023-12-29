@@ -23,12 +23,15 @@ public:
     void initTextures();
     void reinitTextures();
 
+    void retrieveTextureSize(sage::Size<int> &size);
+
     void allocateTextures(size_t textSize);
     void createTexture();
-    void removeTexture(uint textureId);
+    void clearTextures();
+    void popTexture(uint textureId);
 
     void setDataBuffer(uint8_t textId, const ImageQueue* buffer);
-    void show(sage::Size<int> size);
+    void show(const sage::Size<int>& winSize, sage::Size<int>& textSize);
     uint8_t getTexturesCount();
 
     std::vector<std::shared_ptr<Texture>> &getTextures();

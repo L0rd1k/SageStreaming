@@ -30,7 +30,6 @@ public:
 
     void extractConfigToState();
 
-
     const ImageQueue* getImageQueue();
     std::shared_ptr<CamerasHandler> getCamera();
     Decoder* getDecoder();
@@ -45,7 +44,6 @@ public:
     std::vector<sage::Scope<void*> > callbacks;
     Decoder* _decoder = nullptr;  //> Camera decoder base
     Encoder* _encoder = nullptr;  //> Camera encoder base
-
     ccflow::Signal<const SubstanceState&> sigSendSubstParams;
 
 private:

@@ -32,6 +32,7 @@ enum class ImageFormat {
     BAYER = 5,
     Undefined = 255
 };
+
 enum class ImageSource {
     RTSP = 0,
     DISK = 1,

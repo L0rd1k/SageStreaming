@@ -2,39 +2,95 @@
 
 #include "window/window_painter_glfw.h"
 
+void ImgGuiMainHandler::mainHandler2() {
+}
+
+void ImgGuiMainHandler::sideBarMenu() {
+    ImGuiViewportP* viewport = (ImGuiViewportP*)(void*)ImGui::GetMainViewport();
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar;
+    ImGuiStyle* style = &ImGui::GetStyle();
+    float textHeight = ImGui::CalcTextSize("A").y;
+    ImVec2 itemSize = ImVec2{textHeight * 3.0f, textHeight * 3.0f};
+    if (ImGui::BeginViewportSideBar("##MainStatusBar", viewport, ImGuiDir_Left, itemSize.x + (style->WindowPadding.x * 2), window_flags)) {
+        ImGuiSelectableFlags selectableFlags = ImGuiSelectableFlags_NoPadWithHalfSpacing;
+        ImGui::BringWindowToDisplayFront(ImGui::GetCurrentWindow());
+        ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, style->Colors[ImGuiCol_WindowBg]);
+        int i = 0;
+        if (ImGui::Selectable(ICON_FA_HOME, i == selectedItem, selectableFlags, itemSize)) {
+            selectedItem = i;
+        }
+        if (ImGui::Selectable(ICON_FA_FILE_O, i == selectedItem, selectableFlags, itemSize)) {
+            selectedItem = i;
+        }
+        if (ImGui::Selectable(ICON_FA_VIDEO_CAMERA, i == selectedItem, selectableFlags, itemSize)) {
+            selectedItem = i;
+        }
+        if (ImGui::Selectable(ICON_FA_SIGNAL, i == selectedItem, selectableFlags, itemSize)) {
+            selectedItem = i;
+        }
+        if (ImGui::Selectable(ICON_FA_BOOKMARK, i == selectedItem, selectableFlags, itemSize)) {
+            selectedItem = i;
+        }
+        if (ImGui::Selectable(ICON_FA_PICTURE_O, i == selectedItem, selectableFlags, itemSize)) {
+            selectedItem = i;
+        }
+        ImGui::PopStyleColor();
+        ImGui::PopStyleVar();  // ImGuiStyleVar_SelectableTextAlign
+        ImGui::End();
+    }
+}
+
+static inline ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs) { return ImVec2(lhs.x + rhs.x, lhs.y + rhs.y); }
+static inline ImVec2 operator-(const ImVec2& lhs, const ImVec2& rhs) { return ImVec2(lhs.x - rhs.x, lhs.y - rhs.y); }
+
 void ImgGuiMainHandler::mainHandler() {
     // ImGui::ShowDemoWindow(&isShowingDemo_);
-    applicationInfo(&isShowingDemo_);
+    // applicationInfo(&isShowingDemo_);
     if (isDockingEnabled_) {
         createMainWindow();
         ImGuiIO& io = ImGui::GetIO();
-        /** Check if docking is available. **/
-        if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
-            ImVec2 availableSize = ImGui::GetContentRegionAvail();
-            dockspaceId_ = ImGui::GetID("MyDockSpace");
-            ImGui::DockSpace(dockspaceId_, ImVec2(0.0f, 0.0f), dockspace_flags);
-            if (isFirstLaunch_) {
-                firstRunInit(availableSize);
-                isFirstLaunch_ = false;
-            }
-            static bool isStreaming;
-            if (isShowingWinManager_) {
-                if (isStreaming) {
-                    sig_stopSubstances.emit();
-                    isStreaming = false;
-                }
-                updateManager();
-            } else {
-                if (!isStreaming) {
-                    sig_runSubstances.emit();
-                    isStreaming = true;
-                }
-                updateViewPort();
-                updateSettingsWindow();
-            }
-            updateMenuBar();
-            updateLogging();
+
+        if (isFirstLaunch_) {
+            _videoNodeEditor = std::make_unique<sage::ImGuiVideoNodeEditor>();
+            _videoNodeEditor->init();
+            isFirstLaunch_ = false;
         }
+        sideBarMenu();
+        _videoNodeEditor->onFrame();
+
+        auto& editorStyle = ax::NodeEditor::GetStyle();
+        ImGui::BeginHorizontal("Style buttons", ImVec2(paneWidth, 0), 1.0f);
+        ImGui::TextUnformatted("Values");
+        ImGui::Spring();
+
+        /** Check if docking is available. **/
+        // if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
+        //     ImVec2 availableSize = ImGui::GetContentRegionAvail();
+        //     dockspaceId_ = ImGui::GetID("MyDockSpace");
+        //     ImGui::DockSpace(dockspaceId_, ImVec2(0.0f, 0.0f), dockspace_flags);
+        //     if (isFirstLaunch_) {
+        //         firstRunInit(availableSize);
+        //         isFirstLaunch_ = false;
+        //     }
+        //     static bool isStreaming;
+        //     if (isShowingWinManager_) {
+        //         if (isStreaming) {
+        //             sig_stopSubstances.emit();
+        //             isStreaming = false;
+        //         }
+        //         updateManager();
+        //     } else {
+        //         if (!isStreaming) {
+        //             sig_runSubstances.emit();
+        //             isStreaming = true;
+        //         }
+        //         updateViewPort();
+        //         updateSettingsWindow();
+        //     }
+        //     updateMenuBar();
+        //     updateLogging();
+        // }
         closeWindow();
     }
 }
@@ -113,18 +169,18 @@ void ImgGuiMainHandler::createMainWindow() {
         ImGui::SetNextWindowPos(viewport->Pos);
         ImGui::SetNextWindowSize(viewport->Size);
         ImGui::SetNextWindowViewport(viewport->ID);
-        window_flags |= ImGuiWindowFlags_NoTitleBar |
-                        ImGuiWindowFlags_NoCollapse |
-                        ImGuiWindowFlags_NoResize |
-                        ImGuiWindowFlags_NoMove |
-                        ImGuiWindowFlags_NoBringToFrontOnFocus |
-                        ImGuiWindowFlags_NoNavFocus |
-                        ImGuiWindowFlags_NoResize;
+        window_flags |= ImGuiWindowFlags_NoTitleBar |            // Disable title-bar
+                        ImGuiWindowFlags_NoCollapse |            // Disable user collapsing window by double-clicking on it. Also referred to as Window Menu Button (e.g. within a docking node).
+                        ImGuiWindowFlags_NoResize |              // Disable user resizing with the lower-right grip
+                        ImGuiWindowFlags_NoBringToFrontOnFocus;  // Disable bringing window to front when taking focus (e.g. clicking on it or programmatically giving it focus)
+
+        // ImGuiWindowFlags_NoMove |                      // Disable user moving the window
+        // ImGuiWindowFlags_NoNavFocus;               // No focusing toward this window with gamepad/keyboard navigation (e.g. skipped by CTRL+TAB)
     }
     if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode) {
         window_flags |= ImGuiWindowFlags_NoBackground;
     }
-    ImGui::Begin("Raw displaying", &isDockSpaceOpened_, window_flags);
+    ImGui::Begin("CoreDisplay", &isDockSpaceOpened_, window_flags);
 }
 
 void ImgGuiMainHandler::updateSettingsWindow() {
@@ -132,7 +188,7 @@ void ImgGuiMainHandler::updateSettingsWindow() {
     ImGui::Text("Cameras count: %d", WindowPainterGLFW::inst().getPicturePainter()->getTexturesCount());
     int counter = 0;
     for (const auto& elem : substanceState) {
-        if(elem.second->isSubstEnabled) {
+        if (elem.second->isSubstEnabled) {
             updateSubstancePlot(*elem.second);
             std::string name = "Cam" + std::to_string(counter + 1);
             ImGui::Begin(name.c_str());
@@ -182,7 +238,7 @@ void ImgGuiMainHandler::updateViewPort() {
     std::lock_guard<std::mutex> locker(mtx_);
     int elemPos = 1;
     for (const auto& elem : substanceState) {
-        if(elem.second->isSubstEnabled) {
+        if (elem.second->isSubstEnabled) {
             std::string name = "Viewport" + std::to_string(elemPos);
             ImGui::Begin(name.c_str());
             ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
@@ -190,7 +246,8 @@ void ImgGuiMainHandler::updateViewPort() {
                 GLint textureWidth, textureHeight;
                 glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &textureWidth);
                 glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &textureHeight);
-                // std::cout << viewportPanelSize.x << "x" <<  viewportPanelSize.y << " " << textureWidth << "x" << textureHeight << std::endl;
+
+                // std::cout << viewportPanelSize.x << "x" << viewportPanelSize.y << " " << textureWidth << "x" << textureHeight << std::endl;
                 double ratioX = viewportPanelSize.x / (float)textureWidth;
                 double ratioY = viewportPanelSize.y / (float)textureHeight;
                 double ratio = (ratioX < ratioY) ? ratioX : ratioY;
@@ -280,7 +337,7 @@ void ImgGuiMainHandler::updateManager() {
                                     case 4: {
                                         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetColumnWidth() - 30);
                                         if (ImGui::Checkbox("", camSettings[elem.second->id].getCameraActivity())) {
-                                            sig_activateCamera.emit(elem.first, camSettings[elem.second->id].getCameraActivity());                                           
+                                            sig_activateCamera.emit(elem.first, camSettings[elem.second->id].getCameraActivity());
                                         }
                                         break;
                                     }

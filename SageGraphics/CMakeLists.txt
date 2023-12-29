@@ -64,6 +64,13 @@ endif(UNIX)
 
 if(USE_IMGUI)
     list(APPEND SOURCES
+
+        ./layer/node/imgui_video_node.h
+
+        ./layer/node/imgui_video_node_editor.h
+        ./layer/node/imgui_video_node_editor.cpp
+
+
         ./layer/imgui_layer.cpp
         ./layer/imgui_main_handler.cpp
         ./imgui/imgui_impl_opengl3.cpp

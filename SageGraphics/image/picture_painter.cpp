@@ -31,14 +31,26 @@ void PicturePainter::createTexture() {
     Log::critical("New Tsize:", _textures.size(), "New _Tsize:", textures.size());
 }
 
-void PicturePainter::removeTexture(uint textureId) {
+void PicturePainter::clearTextures() {
     glEnable(GL_TEXTURE_2D);
     glDeleteTextures(_textures.size(), textures.data());
-    if(!_textures.empty()) {
+    if (!_textures.empty()) {
         _textures.clear();
     }
-    if(!textures.empty()) {
+    if (!textures.empty()) {
         textures.clear();
+    }
+    glDisable(GL_TEXTURE_2D);
+}
+
+void PicturePainter::popTexture(uint textureId) {
+    glEnable(GL_TEXTURE_2D);
+    glDeleteTextures(1, &textures[textureId + 1]);
+    if (!_textures.empty()) {
+        _textures.pop_back();
+    }
+    if (!textures.empty()) {
+        textures.pop_back();
     }
     glDisable(GL_TEXTURE_2D);
 }
@@ -48,40 +60,55 @@ uint8_t PicturePainter::getTexturesCount() {
     return _textures.size();
 }
 
-void PicturePainter::show(sage::Size<int> size) {
+void PicturePainter::show(const sage::Size<int>& winSize, sage::Size<int>& textSize) {
     unsigned char pix[4] = {0, 0, 0, 255};
     glClearColor(0, 0, 0, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    // std::cout << size.width() << " " << size.height() << std::endl;
+    glClear(GL_COLOR_BUFFER_BIT);   
     // if (_textures[0]->getLastDataFromQueue()) {
-    //     _textures[0]->draw(0, 0, sage::Size<int>(size.width(), size.height()));
+    //     retrieveTextureSize(textSize);
+    //     double ratioX = winSize.width() / (float)textSize.width();
+    //     double ratioY = winSize.height() / (float)textSize.height();
+    //     double ratio = (ratioX < ratioY) ? ratioX : ratioY;
+    //     double viewWidth = textSize.width() * ratio;
+    //     double viewHeight = textSize.height() * ratio;
+    //     double viewX = (winSize.width() - textSize.width() * ratio) / 2;
+    //     double viewY = (winSize.height() - textSize.height() * ratio) / 2;
+    //     _textures[0]->draw(viewX, viewY, sage::Size<int>(viewWidth, viewHeight));
+    //     // _textures[0]->draw(0, 0, sage::Size<int>(winSize.width(), winSize.height()));
     // }
 
-    int x[4] = {0, size.width() / 2, 0, size.width() / 2};
-    int y[4] = {size.height() / 2, size.height() / 2, 0, 0};
+
+
+    int x[4] = {0, winSize.width() / 2, 0, winSize.width() / 2};
+    int y[4] = {winSize.height() / 2, winSize.height() / 2, 0, 0};
     for (auto i = 0; i < _textures.size(); i++) {
         if (_textures[i]->getLastDataFromQueue()) {
-            // Log::trace("SHOW", i, _textures.size(), size.width(), size.height());
-            _textures[i]->draw(x[i], y[i], sage::Size<int>(size.width() / 2, size.height() / 2));
-            // _textures[i]->draw(0, 0, sage::Size<int>(size.width(), size.height()));
+            retrieveTextureSize(textSize);
+            double ratioX = (winSize.width() / 2) / (float)textSize.width();
+            double ratioY = (winSize.height() / 2) / (float)textSize.height();
+            double ratio = (ratioX < ratioY) ? ratioX : ratioY;
+            double viewWidth = textSize.width() * ratio;
+            double viewHeight = textSize.height() * ratio;
+            double viewX = x[i] + (winSize.width() / 2 - textSize.width() * ratio) / 2;
+            double viewY = y[i] + (winSize.height() / 2  - textSize.height() * ratio) / 2;
+            _textures[i]->draw(viewX, viewY, sage::Size<int>(viewWidth, viewHeight));
         }
     }
 
     /** SPLITTER **/
-    // const int thickness = 2;
-    // glLineWidth((GLfloat)thickness);
-    // glColor3f(1, 0, 0);
-    // glBegin(GL_LINES);
-    // glVertex2i(size.width() / 2, 0);
-    // glVertex2i(size.width() / 2, size.height());
-    // glEnd();
-    // glBegin(GL_LINES);
-    // glVertex2i(0, size.height() / 2);
-    // glVertex2i(size.width(), size.height() / 2);
-    // glEnd();
-    // glRasterPos3f(0, 1, 0);
-    // glDrawPixels(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pix);
+    const int thickness = 2;
+    glLineWidth((GLfloat)thickness);
+    glColor3f(1, 0, 0);
+    glBegin(GL_LINES);
+    glVertex2i(winSize.width() / 2, 0);
+    glVertex2i(winSize.width() / 2, winSize.height());
+    glEnd();
+    glBegin(GL_LINES);
+    glVertex2i(0, winSize.height() / 2);
+    glVertex2i(winSize.width(), winSize.height() / 2);
+    glEnd();
+    glRasterPos3f(0, 1, 0);
+    glDrawPixels(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pix);
 }
 
 void PicturePainter::initTextures() {
@@ -97,9 +124,16 @@ void PicturePainter::initTextures() {
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
         _textures[itr]->setId(textures[itr]);
     }
-    glDisable(GL_TEXTURE_2D);
+    // glDisable(GL_TEXTURE_2D);
 }
 
+void PicturePainter::retrieveTextureSize(sage::Size<int> &size) {
+    GLint textureWidth, textureHeight;
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &textureWidth);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &textureHeight);
+    size.setHeight(textureHeight);
+    size.setWidth(textureWidth);
+}
 
 void PicturePainter::reinitTextures() {
     std::lock_guard<std::mutex> locker(_mtx);

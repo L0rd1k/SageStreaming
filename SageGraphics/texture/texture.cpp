@@ -53,6 +53,7 @@ void Texture::draw(int x, int y, sage::Size<int> sz) {
     glBindTexture(GL_TEXTURE_2D, _id);
     glBegin(GL_QUADS);
 
+
     // glTexCoord2f(0.0f, 0.0f);
     // glVertex2f(0.0f, 0.0f);
     // glTexCoord2f(1.0f, 0.0f);
