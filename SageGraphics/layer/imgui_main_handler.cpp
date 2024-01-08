@@ -41,8 +41,8 @@ void ImgGuiMainHandler::sideBarMenu() {
     }
 }
 
-static inline ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs) { return ImVec2(lhs.x + rhs.x, lhs.y + rhs.y); }
-static inline ImVec2 operator-(const ImVec2& lhs, const ImVec2& rhs) { return ImVec2(lhs.x - rhs.x, lhs.y - rhs.y); }
+// static inline ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs) { return ImVec2(lhs.x + rhs.x, lhs.y + rhs.y); }
+// static inline ImVec2 operator-(const ImVec2& lhs, const ImVec2& rhs) { return ImVec2(lhs.x - rhs.x, lhs.y - rhs.y); }
 
 void ImgGuiMainHandler::mainHandler() {
     // ImGui::ShowDemoWindow(&isShowingDemo_);
@@ -52,6 +52,7 @@ void ImgGuiMainHandler::mainHandler() {
         ImGuiIO& io = ImGui::GetIO();
 
         if (isFirstLaunch_) {
+            std::cout << "First Launch" << std::endl;
             _videoNodeEditor = std::make_unique<sage::ImGuiVideoNodeEditor>();
             _videoNodeEditor->init();
             isFirstLaunch_ = false;
@@ -59,10 +60,10 @@ void ImgGuiMainHandler::mainHandler() {
         sideBarMenu();
         _videoNodeEditor->onFrame();
 
-        auto& editorStyle = ax::NodeEditor::GetStyle();
-        ImGui::BeginHorizontal("Style buttons", ImVec2(paneWidth, 0), 1.0f);
-        ImGui::TextUnformatted("Values");
-        ImGui::Spring();
+        // auto& editorStyle = ax::NodeEditor::GetStyle();
+        // ImGui::BeginHorizontal("Style buttons", ImVec2(paneWidth, 0), 1.0f);
+        // ImGui::TextUnformatted("Values");
+        // ImGui::Spring();
 
         /** Check if docking is available. **/
         // if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable) {

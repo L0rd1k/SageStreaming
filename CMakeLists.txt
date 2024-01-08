@@ -81,6 +81,7 @@ if(USE_IMGUI)
     set(USE_GLUT OFF)
     set(USE_IMGUI ON)
     add_subdirectory(3rdParty/imgui)
+    add_subdirectory(3rdParty/stb_image)
     add_definitions(-DUSE_IMGUI)
 endif()
 

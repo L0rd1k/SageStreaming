@@ -69,6 +69,7 @@ bool WindowPainterGLFW::createWindow(int argc, char** argv, sage::Size<int> size
     glfwSetWindowUserPointer(_window, &_data);
     glfwSetWindowSizeCallback(_window, reshapeEvent);
     setVSync(true);
+    return true;
 }
 
 void WindowPainterGLFW::reshapeEvent(GLFWwindow* window, int width, int height) {

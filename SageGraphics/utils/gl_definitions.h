@@ -28,6 +28,7 @@ static GLenum gl_GetColorType(sage::ColorType colorType) {
             return GL_RGB;
         }
     }
+    return GL_NONE;
 }
 
 static GLenum gl_GetInternalFormat(sage::ColorType format) {
@@ -48,4 +49,5 @@ static GLenum gl_GetInternalFormat(sage::ColorType format) {
             return GL_NONE;
         }
     }
+    return GL_NONE;
 }

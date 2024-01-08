@@ -13,12 +13,13 @@ include_directories(../SageLib)
 include_directories(../SageVideo)
 include_directories(../3rdParty/glad)
 include_directories(../3rdParty/imgui)
+include_directories(../3rdParty/stb_image)
 
 if(USE_GLFW)
     include_directories(../3rdParty/glfw)
 endif()
 
-set(LIBRARIES SageLib SageVideo)
+set(LIBRARIES SageLib SageVideo stb_image)
 
 list(APPEND SOURCES
     ./plotting/draw_graph.cpp
@@ -64,15 +65,16 @@ endif(UNIX)
 
 if(USE_IMGUI)
     list(APPEND SOURCES
-
+        ./layer/node/imgui_blueprint_definition.h
+        ./layer/node/imgui_node_spawner.h
+        ./layer/node/imgui_texture.h
         ./layer/node/imgui_video_node.h
-
         ./layer/node/imgui_video_node_editor.h
         ./layer/node/imgui_video_node_editor.cpp
-
-
         ./layer/imgui_layer.cpp
         ./layer/imgui_main_handler.cpp
+
+
         ./imgui/imgui_impl_opengl3.cpp
         ./imgui/imgui_impl_opengl3.h
         ./imgui_node/crude_json.cpp
