@@ -10,7 +10,7 @@
 #include "imgui_node/imgui_node_editor.h"
 #include "imgui_node_spawner.h"
 #include "layer/utils/imgui_utils.h"
-#include "imgui_texture.h"
+#include "texture/imgui_texture_renderer.h"
 
 namespace sage {
 

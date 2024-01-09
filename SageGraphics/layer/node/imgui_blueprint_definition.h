@@ -79,7 +79,7 @@ public:
     const ax::NodeEditor::NodeId& getId() { return _id; }
     const std::string& getName() { return _name; }
     std::string& getState() { return _state; }
-    const std::string& getSavedState() { return _saved_state; }
+    std::string& getSavedState() { return _saved_state; }
     const ImColor& getColor() { return _color; }
     const sage::NodeType& getNodeType() { return _type; };
     const ImVec2& getSize() { return _size; }

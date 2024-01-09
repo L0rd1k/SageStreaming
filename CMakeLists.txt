@@ -132,6 +132,7 @@ message(STATUS "    > USE GLUT: ${USE_GLUT}")
 message(STATUS "    > USE IMGUI: ${USE_IMGUI}")
 message(STATUS "    > USE GSTREAMER: ${USE_GSTREAMER}")
 
-configure_file("./data/cameraConf.ini" "./data/cameraConf.ini" COPYONLY)
-
+# configure_file("./data/cameraConf.ini" "./data/cameraConf.ini" COPYONLY)
+execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/data
+                                                           ${CMAKE_BINARY_DIR}/data)
 add_subdirectory(SageCore)

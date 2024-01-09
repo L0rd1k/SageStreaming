@@ -16,7 +16,6 @@ void sage::ImGuiVideoNodeEditor::init() {
 }
 
 void sage::ImGuiVideoNodeEditor::configurate() {
-    std::cout << "Configurate" << std::endl;
     ax::NodeEditor::Config config;
     config.SettingsFile = "Blueprints.json";
     config.UserPointer = this;
@@ -49,13 +48,16 @@ void sage::ImGuiVideoNodeEditor::configurate() {
     };
 
     if (!_editor) {
-        std::cout << "Create Editor" << std::endl;
         _editor = ax::NodeEditor::CreateEditor(&config);
         ax::NodeEditor::SetCurrentEditor(_editor);
     }
     spawnNodeElements();
     ax::NodeEditor::NavigateToContent();
     NodeSpawner().inst().buildNodes(_nodes);
+
+    _headerBackground = ImGuiTexture::inst().loadTexture("../data/icons/ic_blueprint_background.png");
+    _saveIcon = ImGuiTexture::inst().loadTexture("../data/icons/ic_save_white_24dp.png");
+    _restoreIcon = ImGuiTexture::inst().loadTexture("../data/icons/ic_restore_white_24dp.png");
 }
 
 void sage::ImGuiVideoNodeEditor::spawnNodeElements() {
@@ -101,12 +103,11 @@ void sage::ImGuiVideoNodeEditor::spawnNodeElements() {
 
 void sage::ImGuiVideoNodeEditor::onFrame() {
     ImGui::Begin("Style");
-    static float left_pane_width = 300.0f;
+    static float left_pane_width = 400.0f;
     static float right_pane_width = 800.0f;
     splitter(true, 4.0f, &left_pane_width, &right_pane_width, 50.0f, 50.0f);
     showLeftPanel(left_pane_width - 4.0f);
     ImGui::SameLine(0.0f, 12.0f);
-
     ax::NodeEditor::Begin("Node editor");
     auto cursorTopLeft = ImGui::GetCursorScreenPos();
     for (auto& node : _nodes) {
@@ -121,11 +122,8 @@ void sage::ImGuiVideoNodeEditor::onFrame() {
                 hasOutputDelegates = true;
             }
         }
-
     }
-
     ax::NodeEditor::End();
-
     ImGui::End();
 
     // auto& editorStyle = ax::NodeEditor::GetStyle();
@@ -145,7 +143,6 @@ void sage::ImGuiVideoNodeEditor::showLeftPanel(float width) {
 
     std::vector<ax::NodeEditor::NodeId> selectedNodes;
     std::vector<ax::NodeEditor::LinkId> selectedLinks;
-    // std::cout << ax::NodeEditor::GetSelectedObjectCount() << std::endl;
     selectedNodes.resize(ax::NodeEditor::GetSelectedObjectCount());
     selectedLinks.resize(ax::NodeEditor::GetSelectedObjectCount());
 
@@ -154,6 +151,11 @@ void sage::ImGuiVideoNodeEditor::showLeftPanel(float width) {
 
     selectedNodes.resize(nodeCount);
     selectedLinks.resize(linkCount);
+
+    int saveIconWidth = sage::ImGuiTexture::inst().getTextureWidth(_saveIcon);
+    int saveIconHeight = sage::ImGuiTexture::inst().getTextureHeight(_saveIcon);
+    int restoreIconWidth = sage::ImGuiTexture::inst().getTextureWidth(_restoreIcon);
+    int restoreIconHeight = sage::ImGuiTexture::inst().getTextureHeight(_restoreIcon);
 
     ImGui::GetWindowDrawList()->AddRectFilled(
         ImGui::GetCursorScreenPos(),
@@ -191,13 +193,51 @@ void sage::ImGuiVideoNodeEditor::showLeftPanel(float width) {
         }
         auto id = std::string("(") + std::to_string(reinterpret_cast<uintptr_t>(node.getId().AsPointer())) + ")";
         auto textSize = ImGui::CalcTextSize(id.c_str(), nullptr);
-        // auto iconPanelPos = start + ImVec2(
-        //                                 width - ImGui::GetStyle().FramePadding.x - ImGui::GetStyle().IndentSpacing - saveIconWidth - restoreIconWidth - ImGui::GetStyle().ItemInnerSpacing.x * 1,
-        //                                 (ImGui::GetTextLineHeight() - saveIconHeight) / 2);
-        // ImGui::GetWindowDrawList()->AddText(
-        //     ImVec2(textSize.x - ImGui::GetStyle().ItemInnerSpacing.x, start.y),
-        //     IM_COL32(255, 255, 255, 255), id.c_str(), nullptr);
+        auto iconPanelPos = start + ImVec2(width - ImGui::GetStyle().FramePadding.x - ImGui::GetStyle().IndentSpacing - saveIconWidth - restoreIconWidth - ImGui::GetStyle().ItemInnerSpacing.x * 1,
+                                           (ImGui::GetTextLineHeight() - saveIconHeight) / 2);
+        ImGui::GetWindowDrawList()->AddText(
+            ImVec2(textSize.x - ImGui::GetStyle().ItemInnerSpacing.x, start.y),
+            IM_COL32(255, 255, 255, 255), id.c_str(), nullptr);
         auto drawList = ImGui::GetWindowDrawList();
+        ImGui::SetCursorScreenPos(iconPanelPos);
+        ImGui::SetItemAllowOverlap();
+        if (node.getSavedState().empty()) {
+            if (ImGui::InvisibleButton("save", ImVec2((float)saveIconWidth, (float)saveIconHeight))) {
+                node.setSavedState(node.getState());
+            }
+            if (ImGui::IsItemActive()) {
+                drawList->AddImage(_saveIcon, ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), ImVec2(0, 0), ImVec2(1, 1), IM_COL32(255, 255, 255, 96));
+            } else if (ImGui::IsItemHovered()) {
+                drawList->AddImage(_saveIcon, ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), ImVec2(0, 0), ImVec2(1, 1), IM_COL32(255, 255, 255, 255));
+            } else {
+                drawList->AddImage(_saveIcon, ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), ImVec2(0, 0), ImVec2(1, 1), IM_COL32(255, 255, 255, 160));
+            }
+        } else {
+            ImGui::Dummy(ImVec2((float)saveIconWidth, (float)saveIconHeight));
+            drawList->AddImage(_saveIcon, ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), ImVec2(0, 0), ImVec2(1, 1), IM_COL32(255, 255, 255, 32));
+        }
+        ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
+        ImGui::SetItemAllowOverlap();
+        if (!node.getSavedState().empty()) {
+            if (ImGui::InvisibleButton("restore", ImVec2((float)restoreIconWidth, (float)restoreIconHeight))) {
+                node.setState(node.getSavedState());
+                ax::NodeEditor::RestoreNodeState(node.getId());
+                node.getSavedState().clear();
+            }
+            if (ImGui::IsItemActive()) {
+                drawList->AddImage(_restoreIcon, ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), ImVec2(0, 0), ImVec2(1, 1), IM_COL32(255, 255, 255, 96));
+            } else if (ImGui::IsItemHovered()) {
+                drawList->AddImage(_restoreIcon, ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), ImVec2(0, 0), ImVec2(1, 1), IM_COL32(255, 255, 255, 255));
+            } else {
+                drawList->AddImage(_restoreIcon, ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), ImVec2(0, 0), ImVec2(1, 1), IM_COL32(255, 255, 255, 160));
+            }
+        } else {
+            ImGui::Dummy(ImVec2((float)restoreIconWidth, (float)restoreIconHeight));
+            drawList->AddImage(_restoreIcon, ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), ImVec2(0, 0), ImVec2(1, 1), IM_COL32(255, 255, 255, 32));
+        }
+        ImGui::SameLine(0, 0);
+        ImGui::SetItemAllowOverlap();
+        ImGui::Dummy(ImVec2(0, (float)restoreIconHeight));
         ImGui::PopID();
     }
     ImGui::Unindent();

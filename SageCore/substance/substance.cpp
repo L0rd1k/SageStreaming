@@ -132,6 +132,7 @@ const ImageQueue* sage::Substance::getImageQueue() {
             return _camera->getQueue();
         }
     }
+    return nullptr;
 }
 
 void sage::Substance::onSubstanceInfoSend() {

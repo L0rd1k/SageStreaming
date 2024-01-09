@@ -22,7 +22,6 @@ endif()
 set(LIBRARIES SageLib SageVideo stb_image)
 
 list(APPEND SOURCES
-    ./plotting/draw_graph.cpp
     ./window/window_painter_base.cpp
     ./image/picture_painter.cpp
     ./texture/texture.cpp
@@ -67,7 +66,8 @@ if(USE_IMGUI)
     list(APPEND SOURCES
         ./layer/node/imgui_blueprint_definition.h
         ./layer/node/imgui_node_spawner.h
-        ./layer/node/imgui_texture.h
+        ./texture/imgui_texture_renderer.h
+        ./texture/imgui_texture_renderer.cpp
         ./layer/node/imgui_video_node.h
         ./layer/node/imgui_video_node_editor.h
         ./layer/node/imgui_video_node_editor.cpp
